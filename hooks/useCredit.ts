@@ -1,11 +1,8 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useAccount } from 'wagmi'
-import { useGaslessContracts } from './useGaslessContracts'
+import { useQuery } from '@tanstack/react-query'
 
-export const useCredit = () => {
+export const useCredit = (vaultContract?: any) => {
   const { address } = useAccount()
-  const { vaultContract } = useGaslessContracts()
-  const queryClient = useQueryClient()
 
   const {
     data: credit,
@@ -27,11 +24,10 @@ export const useCredit = () => {
     refetchInterval: 60000, // 1 minute
   })
 
-  // Format credit for display (18 decimals)
   const formattedCredit = credit ? (Number(credit) / 10**18).toFixed(3) : '0.000'
 
-  const refetchCredit = () => {
-    queryClient.invalidateQueries({ queryKey: ['credit', address] })
+  const refetchCredit = async () => {
+    await refetch()
   }
 
   return {
@@ -39,6 +35,6 @@ export const useCredit = () => {
     formattedCredit,
     isLoading,
     error,
-    refetch: refetchCredit
+    refetchCredit
   }
 }

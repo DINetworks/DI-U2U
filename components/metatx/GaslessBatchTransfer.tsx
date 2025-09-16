@@ -1,117 +1,167 @@
 import { useState } from "react";
-import { Link } from "@heroui/link";
 import { Button } from "@heroui/button";
 import { Card, CardBody, CardHeader } from "@heroui/card";
-import { Input } from "@heroui/input";
-import { Select, SelectItem } from "@heroui/select";
+import { Alert } from "@heroui/alert";
 
-const tokens = [
-  { key: "eth", label: "ETH" },
-  { key: "usdc", label: "USDC" },
-  { key: "usdt", label: "USDT" },
-  { key: "dai", label: "DAI" },
-];
-
-interface Transfer {
-  id: number;
-  token: string;
-  receiver: string;
-  amount: string;
-}
-
-interface GaslessBatchTransferProps {
-  transfers: Transfer[];
-  credit: string;
-  onAddTransfer: () => void;
-  onRemoveTransfer: (id: number) => void;
-  onUpdateTransfer: (id: number, field: string, value: string) => void;
-  onStartTransaction: () => void;
-}
+import { useWeb3 } from "@/hooks/useWeb3";
+import { isAddress } from "viem";
+import TransferPreviewDialog from "./TransferPreviewDialog";
+import TransactionSuccessDialog from "./TransactionSuccessDialog";
+import HistoryDialog from "./HistoryDialog";
+import { GaslessBatchTransferProps } from "@/types/metatx";
+import TransferRow from "@/components/metatx/TransferRow";
 
 export default function GaslessBatchTransfer({
-  transfers,
   credit,
-  onAddTransfer,
-  onRemoveTransfer,
-  onUpdateTransfer,
+  approvedTokens,
   onStartTransaction,
 }: GaslessBatchTransferProps) {
+  const { address: accountAddress } = useWeb3();
+  const [isPreviewDialogOpen, setIsPreviewDialogOpen] = useState(false);
+  const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false);
+  const [transactionData, setTransactionData] = useState<any>(null);
+  const [transfers, setTransfers] = useState([{ id: 1, token: "", receiver: "", amount: "" }]);
+  const [nextId, setNextId] = useState(2);
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const [showValidationAlert, setShowValidationAlert] = useState(false);
+  const [isHistoryDialogOpen, setIsHistoryDialogOpen] = useState(false);
+
+  const addTransfer = () => {
+    setTransfers([...transfers, { id: nextId, token: "", receiver: "", amount: "" }]);
+    setNextId(nextId + 1);
+  };
+
+  const removeTransfer = (id: number) => {
+    if (transfers.length > 1) {
+      setTransfers(transfers.filter(t => t.id !== id));
+    }
+  };
+
+  const updateTransfer = (id: number, field: string, value: string) => {
+    setTransfers(transfers.map(t => t.id === id ? { ...t, [field]: value } : t));
+  };
+
+  // Validation function
+  const validateTransfers = () => {
+    const errors: string[] = [];
+
+    transfers.forEach((transfer, index) => {
+      if (!transfer.token) {
+        errors.push(`Transfer ${index + 1}: Please select a token`);
+      }
+      if (!transfer.receiver) {
+        errors.push(`Transfer ${index + 1}: Please enter a receiver address`);
+      } else if (!isAddress(transfer.receiver)) {
+        errors.push(`Transfer ${index + 1}: Invalid receiver address`);
+      }
+      if (!transfer.amount || parseFloat(transfer.amount) <= 0) {
+        errors.push(`Transfer ${index + 1}: Please enter a valid amount`);
+      }
+    });
+
+    return errors;
+  };
+
+  // Handle start transaction with validation
+  const handleStartTransaction = () => {
+    const errors = validateTransfers();
+    if (errors.length > 0) {
+      setValidationErrors(errors);
+      setShowValidationAlert(true);
+      return;
+    }
+
+    // Clear any previous validation errors
+    setValidationErrors([]);
+    setShowValidationAlert(false);
+
+    onStartTransaction();
+  };
+
+  // Handle review transfer with validation
+  const handleReviewTransfer = () => {
+    // Validate all transfers before proceeding
+    const errors = validateTransfers();
+    if (errors.length > 0) {
+      setValidationErrors(errors);
+      setShowValidationAlert(true);
+      return;
+    }
+
+    // Clear any previous validation errors
+    setValidationErrors([]);
+    setShowValidationAlert(false);
+
+    // If validation passes, open preview dialog
+    setIsPreviewDialogOpen(true);
+  };
+
   return (
     <Card className="bg-[#ffffff]/20 text-white backdrop-blur-sm p-8">
       <CardHeader className="pb-4">
-        <div>
-          <h3 className="text-2xl font-bold">Gasless Batch Transfer</h3>
-          <p className="text-gray-300">Send multiple transfers at once without worrying about gas fees</p>
+        <div className="flex items-start justify-between w-full">
+          <div className="flex-1">
+            <h3 className="text-2xl font-bold">Gasless Batch Transfer</h3>
+            <p className="text-gray-300">Send multiple transfers at once without worrying about gas fees</p>
+          </div>
+          <button
+            onClick={() => setIsHistoryDialogOpen(true)}
+            className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors duration-200 group ml-4"
+            title="View transfer history"
+          >
+            <svg
+              className="w-5 h-5 text-white group-hover:text-blue-300 transition-colors duration-200"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+          </button>
         </div>
       </CardHeader>
       <CardBody>
         <div className="space-y-6">
           {transfers.map((transfer, index) => (
-            <div key={transfer.id} className="relative">
-              <div className="flex gap-4 items-end">
-                <div className="flex-1">
-                  <label id={`token-label-${transfer.id}`} className="block text-sm font-medium mb-2">Token</label>
-                  <Select
-                    placeholder="Select token"
-                    selectedKeys={transfer.token ? new Set([transfer.token]) : new Set()}
-                    onSelectionChange={(keys) => {
-                      const selected = Array.from(keys)[0] as string;
-                      onUpdateTransfer(transfer.id, 'token', selected || '');
-                    }}
-                    className="w-full"
-                    aria-labelledby={`token-label-${transfer.id}`}
-                  >
-                    {tokens.map((token) => (
-                      <SelectItem key={token.key}>
-                        {token.label}
-                      </SelectItem>
-                    ))}
-                  </Select>
-                </div>
-                <div className="flex-1">
-                  <label id={`receiver-label-${transfer.id}`} className="block text-sm font-medium mb-2">Receiver Address</label>
-                  <Input
-                    placeholder="0x..."
-                    value={transfer.receiver}
-                    onChange={(e) => onUpdateTransfer(transfer.id, 'receiver', e.target.value)}
-                    className="w-full"
-                    aria-labelledby={`receiver-label-${transfer.id}`}
-                  />
-                </div>
-                <div className="flex-1">
-                  <label id={`amount-label-${transfer.id}`} className="block text-sm font-medium mb-2">Amount</label>
-                  <Input
-                    placeholder="0.00"
-                    type="number"
-                    value={transfer.amount}
-                    onChange={(e) => onUpdateTransfer(transfer.id, 'amount', e.target.value)}
-                    className="w-full"
-                    aria-labelledby={`amount-label-${transfer.id}`}
-                  />
-                </div>
-                <div className="flex-shrink-0 self-end">
-                  {transfers.length > 1 && (
-                    <Button
-                      isIconOnly
-                      color="warning"
-                      variant="flat"
-                      size="sm"
-                      onPress={() => onRemoveTransfer(transfer.id)}
-                      className="rounded-full min-w-unit-10 w-10 h-10"
-                    >
-                      -
-                    </Button>
-                  )}
-                </div>
-              </div>
-            </div>
+            <TransferRow
+              key={transfer.id}
+              transfer={transfer}
+              approvedTokens={approvedTokens}
+              accountAddress={accountAddress || ""}
+              updateTransfer={updateTransfer}
+              removeTransfer={removeTransfer}
+              transfersLength={transfers.length}
+            />
           ))}
+
+          {showValidationAlert && validationErrors.length > 0 && (
+            <Alert
+              color="warning"
+              variant="faded"
+              title="Please fix the following errors before proceeding:"
+              description={
+                <div className="space-y-1">
+                  <ul className="list-disc list-inside space-y-1">
+                    {validationErrors.map((error, index) => (
+                      <li key={index} className="text-sm">{error}</li>
+                    ))}
+                  </ul>
+                </div>
+              }
+              onClose={() => setShowValidationAlert(false)}
+            />
+          )}
 
           <div className="flex justify-between items-center">
             <Button
               color="primary"
               variant="flat"
-              onPress={onAddTransfer}
+              onPress={addTransfer}
               startContent={<span>+</span>}
             >
               Add More
@@ -120,8 +170,8 @@ export default function GaslessBatchTransfer({
             <Button
               className="font-semibold"
               color="success"
-              onPress={onStartTransaction}
-              disabled={parseFloat(credit) <= 0 || transfers.some(t => !t.token || !t.receiver || !t.amount)}
+              onPress={handleReviewTransfer}
+              disabled={parseFloat(credit) <= 0}
             >
               Review Transfer
             </Button>
@@ -134,6 +184,39 @@ export default function GaslessBatchTransfer({
           )}
         </div>
       </CardBody>
+
+      {/* Transfer Preview Dialog */}
+      <TransferPreviewDialog
+        isOpen={isPreviewDialogOpen}
+        onClose={() => setIsPreviewDialogOpen(false)}
+        transfers={transfers}
+        approvedTokens={approvedTokens}
+        onSubmit={(response) => {
+          // Handle successful transaction submission
+          console.log('Transaction submitted:', response);
+          setIsPreviewDialogOpen(false);
+
+          // Show success dialog with transaction details
+          if (response.success && response.data) {
+            setTransactionData(response.data);
+            setIsSuccessDialogOpen(true);
+          }
+        }}
+      />
+
+      {/* Transaction Success Dialog */}
+      <TransactionSuccessDialog
+        isOpen={isSuccessDialogOpen}
+        onClose={() => setIsSuccessDialogOpen(false)}
+        transactionData={transactionData}
+      />
+
+      {/* History Dialog */}
+      <HistoryDialog
+        isOpen={isHistoryDialogOpen}
+        onClose={() => setIsHistoryDialogOpen(false)}
+        initialTab="transfers"
+      />
     </Card>
   );
 }

@@ -12,10 +12,13 @@ import {
   DropdownMenu,
   DropdownItem,
 } from "@heroui/dropdown";
+import { Tooltip } from "@heroui/tooltip";
+import { Image } from "@heroui/image";
 import { useConnect, useDisconnect, useAccount, useBalance, useChainId, useSwitchChain } from "wagmi";
 import { useState, useEffect } from "react";
 import { formatEther } from "viem";
 import { config } from "@/config/web3";
+import { mainnet, bsc, polygon, optimism, arbitrum, avalanche, base, scroll, fantom, linea } from "wagmi/chains";
 
 import { shortenAddress } from "@/utils/token";
 import { useWalletModal } from "@/contexts/WalletContext";
@@ -44,18 +47,23 @@ export function WalletConnect() {
   // Get current chain info
   const currentChain = config.chains.find(chain => chain.id === chainId);
 
+  // Chain logos mapping
+  const CHAIN_LOGOS = {
+    [mainnet.id]: '/images/icons/chains/ethereum.png',
+    [bsc.id]: '/images/icons/chains/bsc.png',
+    [polygon.id]: '/images/icons/chains/polygon.png',
+    [optimism.id]: '/images/icons/chains/optimism.png',
+    [arbitrum.id]: '/images/icons/chains/arbitrum.png',
+    [avalanche.id]: '/images/icons/chains/avalanche.png',
+    [base.id]: '/images/icons/chains/base.png',
+    [scroll.id]: '/images/icons/chains/scroll.png',
+    [fantom.id]: '/images/icons/chains/fantom.png',
+    [linea.id]: '/images/icons/chains/linea.png'
+  };
+
   // Chain icons mapping
   const getChainIcon = (chainId: number) => {
-    switch (chainId) {
-      case 1: return "🔷"; // Ethereum
-      case 56: return "🟡"; // BSC
-      case 137: return "🟣"; // Polygon
-      case 10: return "🔴"; // Optimism
-      case 42161: return "🔵"; // Arbitrum
-      case 43114: return "🔺"; // Avalanche
-      case 8453: return "🔵"; // Base
-      default: return "⛓️";
-    }
+    return CHAIN_LOGOS[chainId as keyof typeof CHAIN_LOGOS] || '/images/icons/chains/default.png';
   };
 
   const handleCopyAddress = async () => {
@@ -88,33 +96,38 @@ export function WalletConnect() {
 
   if (isConnected && address) {
     return (
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-4">
         {/* Chain Icon */}
-        <div
-          className="text-lg cursor-pointer hover:scale-110 transition-transform select-none"
-          onClick={(e) => {
-            e.stopPropagation();
-            console.log("Chain icon clicked, opening modal");
-            console.log("Current modal state:", isChainModalOpen);
-            setIsChainModalOpen(true);
-            console.log("Setting modal to true");
-          }}
-          title="Switch Network"
-        >
-          {getChainIcon(chainId)}
-        </div>
+        <Tooltip content="Switch Network" placement="bottom">
+          <div
+            className="cursor-pointer hover:scale-110 transition-transform select-none"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsChainModalOpen(true);
+            }}
+          >
+            <Image
+              src={getChainIcon(chainId)}
+              alt={`${currentChain?.name || 'Chain'} logo`}
+              width={24}
+              height={24}
+              className="rounded-full"
+            />
+          </div>
+        </Tooltip>
 
         {/* Address Dropdown */}
         <Dropdown>
           <DropdownTrigger>
             <Button
               variant="bordered"
-              className="min-w-0 h-8 px-3 text-sm text-success font-medium"
+              color="success"
+              className="min-w-0 h-10 px-3 text-success font-medium"
               endContent={
                 <svg
                   className="w-4 h-4 text-gray-500"
                   fill="none"
-                  stroke="currentColor"
+                  stroke="#17C964"
                   viewBox="0 0 24 24"
                 >
                   <path
@@ -135,35 +148,59 @@ export function WalletConnect() {
               className="h-auto py-3"
               showDivider
             >
-              <div className="flex items-start justify-between w-full">
-                <div className="flex flex-col flex-1 min-w-0">
-                  <span className="text-xs text-gray-500">Address</span>
+              <div className="flex flex-col flex-1 min-w-0">
+                <span className="text-xs text-gray-400">Address</span>
+                <div className="flex items-start justify-between w-full">
                   <span className="font-mono text-sm break-all leading-tight max-w-60">
                     {address}
                   </span>
-                </div>
-                <div className="flex gap-2 ml-2 flex-shrink-0">
-                  <Button
-                    isIconOnly
-                    size="sm"
-                    variant="light"
-                    onPress={handleCopyAddress}
-                    className="w-6 h-6"
-                  >
-                    📋
-                  </Button>
-                  <Button
-                    isIconOnly
-                    size="sm"
-                    variant="light"
-                    as="a"
-                    href={getBlockExplorerUrl(address)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-6 h-6"
-                  >
-                    🔗
-                  </Button>
+                  <div className="flex gap-1 ml-2 flex-shrink-0">
+                    <Button
+                      isIconOnly
+                      size="sm"
+                      variant="light"
+                      onPress={handleCopyAddress}
+                      className="w-6 h-6"
+                    >
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                        />
+                      </svg>
+                    </Button>
+                    <Button
+                      isIconOnly
+                      size="sm"
+                      variant="light"
+                      as="a"
+                      href={getBlockExplorerUrl(address)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-6 h-6"
+                    >
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                        />
+                      </svg>
+                    </Button>
+                  </div>
                 </div>
               </div>
             </DropdownItem>
@@ -174,14 +211,20 @@ export function WalletConnect() {
             >
               <div className="flex items-center justify-between w-full">
                 <div className="flex items-center gap-3">
-                  <span className="text-lg">{getChainIcon(chainId)}</span>
+                  <Image
+                    src={getChainIcon(chainId)}
+                    alt={`${currentChain?.name || 'Chain'} logo`}
+                    width={20}
+                    height={20}
+                    className="rounded-full"
+                  />
                   <div className="flex flex-col">
-                    <span className="text-xs text-gray-500">Network</span>
+                    <span className="text-xs text-gray-400">Network</span>
                     <span className="font-medium text-sm">{currentChain?.name || "Unknown"}</span>
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-xs text-gray-500">Balance</div>
+                  <div className="text-xs text-gray-400">Balance</div>
                   <div className="font-medium text-sm">
                     {balance ? parseFloat(formatEther(balance.value)).toFixed(4) : "0"}{" "}
                     {currentChain?.nativeCurrency?.symbol || "ETH"}
@@ -196,7 +239,19 @@ export function WalletConnect() {
               onPress={() => disconnect()}
             >
               <div className="flex items-center gap-2 py-2">
-                <span>🔌</span>
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M18.364 5.636l-12.728 12.728m0 0L5 5m5.636 12.728L19 19"
+                  />
+                </svg>
                 <span>Disconnect Wallet</span>
               </div>
             </DropdownItem>
@@ -232,9 +287,13 @@ export function WalletConnect() {
                   disabled={chain.id === chainId}
                 >
                   <div className="flex items-center gap-3">
-                    <span className="text-2xl">
-                      {getChainIcon(chain.id)}
-                    </span>
+                    <Image
+                      src={getChainIcon(chain.id)}
+                      alt={`${chain.name} logo`}
+                      width={24}
+                      height={24}
+                      className="rounded-full"
+                    />
                     <div className="text-left">
                       <div className="font-medium">{chain.name}</div>
                       <div className="text-xs text-gray-400">
@@ -242,8 +301,11 @@ export function WalletConnect() {
                       </div>
                     </div>
                     {chain.id === chainId && (
-                      <div className="ml-auto text-green-500">
-                        ✓ Connected
+                      <div className="ml-auto flex items-center gap-1 text-green-500">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span>Connected</span>
                       </div>
                     )}
                   </div>
@@ -270,11 +332,34 @@ export function WalletConnect() {
             <div className="space-y-3">
               {connectors.map((connector) => {
                 const getWalletIcon = (name: string) => {
-                  if (name.toLowerCase().includes("metamask")) return "🦊";
-                  if (name.toLowerCase().includes("walletconnect")) return "🔗";
-                  if (name.toLowerCase().includes("coinbase")) return "🔵";
+                  if (name.toLowerCase().includes("metamask")) {
+                    return (
+                      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.18.717-.962 1.322-1.652 1.415-.69.093-1.375-.24-1.555-.957-.18-.717.542-1.322 1.232-1.415.69-.093 1.375.24 1.555.957zm-6.124 0c-.18.717-.962 1.322-1.652 1.415-.69.093-1.375-.24-1.555-.957-.18-.717.542-1.322 1.232-1.415.69-.093 1.375.24 1.555.957zm6.124 6.124c-.69.093-1.375-.24-1.555-.957-.18-.717.542-1.322 1.232-1.415.69-.093 1.375.24 1.555.957.18.717-.962 1.322-1.652 1.415zm-6.124 0c-.69.093-1.375-.24-1.555-.957-.18-.717.542-1.322 1.232-1.415.69-.093 1.375.24 1.555.957.18.717-.962 1.322-1.652 1.415z"/>
+                      </svg>
+                    );
+                  }
+                  if (name.toLowerCase().includes("walletconnect")) {
+                    return (
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                      </svg>
+                    );
+                  }
+                  if (name.toLowerCase().includes("coinbase")) {
+                    return (
+                      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M12 6v12M6 12h12" stroke="white" strokeWidth="2" fill="none"/>
+                      </svg>
+                    );
+                  }
 
-                  return "💼";
+                  return (
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4" />
+                    </svg>
+                  );
                 };
 
                 return (
@@ -285,9 +370,9 @@ export function WalletConnect() {
                     onPress={() => handleConnect(connector)}
                   >
                     <div className="flex items-center gap-3">
-                      <span className="text-2xl">
+                      <div className="flex-shrink-0">
                         {getWalletIcon(connector.name)}
-                      </span>
+                      </div>
                       <span className="font-medium">{connector.name}</span>
                     </div>
                   </Button>

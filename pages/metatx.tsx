@@ -14,49 +14,38 @@ import DepositDialog from "@/components/metatx/DepositDialog";
 import WithdrawDialog from "@/components/metatx/WithdrawDialog";
 import ApproveTokenDialog from "@/components/metatx/ApproveTokenDialog";
 import DisapproveTokenDialog from "@/components/metatx/DisapproveTokenDialog";
+import TransactionCompleteDialog from "@/components/metatx/TransactionCompleteDialog";
+import InfoDrawer from "@/components/metatx/InfoDrawer";
+import FirstTimeGuide from "@/components/metatx/FirstTimeGuide";
 import { useTokensWithAllowances } from "@/hooks/useTokensWithAllowances";
+import { useCreditTransactionHistory } from "@/hooks/useCreditTransactionHistory";
 import { CONTRACT_ADDRESSES } from "@/config/web3";
+import { Address, maxUint256 } from "viem";
 
-const GATEWAY = CONTRACT_ADDRESSES.METATX_GATEWAY as `0x${string}`
+const GATEWAY = CONTRACT_ADDRESSES.METATX_GATEWAY as Address
 
 export default function MetaTxPage() {
   const router = useRouter();
-  const { vaultContract, gatewayContract, contractInfo, isLoading, error } = useGaslessContracts();
-  const { formattedCredit, refetch: refetchCredit } = useCredit();
+  const { vaultContract, contractInfo, isLoading, error } = useGaslessContracts();
+  const { formattedCredit, refetchCredit } = useCredit(vaultContract);
   const { approvedTokens, refetchAllowances, tokensInChain } =
     useTokensWithAllowances(GATEWAY)
-
-    console.log('tokensInChain', tokensInChain)
-
-  const [transfers, setTransfers] = useState([{ id: 1, token: "", receiver: "", amount: "" }]);
-  const [nextId, setNextId] = useState(2);
+  const { addTransaction } = useCreditTransactionHistory();
 
   // Dialog states
   const [isDepositDialogOpen, setIsDepositDialogOpen] = useState(false);
   const [isWithdrawDialogOpen, setIsWithdrawDialogOpen] = useState(false);
   const [isApproveDialogOpen, setIsApproveDialogOpen] = useState(false);
   const [isDisapproveDialogOpen, setIsDisapproveDialogOpen] = useState(false);
+  const [isTransactionCompleteDialogOpen, setIsTransactionCompleteDialogOpen] = useState(false);
   const [depositLoading, setDepositLoading] = useState(false);
   const [withdrawLoading, setWithdrawLoading] = useState(false);
   const [approveLoading, setApproveLoading] = useState(false);
   const [disapproveLoading, setDisapproveLoading] = useState(false);
+  const [transactionResult, setTransactionResult] = useState<any>(null);
+  const [isInfoDrawerOpen, setIsInfoDrawerOpen] = useState(false);
+  const [isFirstTimeGuideOpen, setIsFirstTimeGuideOpen] = useState(false);
 
-  // No need for manual credit fetching - useCredit hook handles it
-
-  const addTransfer = () => {
-    setTransfers([...transfers, { id: nextId, token: "", receiver: "", amount: "" }]);
-    setNextId(nextId + 1);
-  };
-
-  const removeTransfer = (id: number) => {
-    if (transfers.length > 1) {
-      setTransfers(transfers.filter(t => t.id !== id));
-    }
-  };
-
-  const updateTransfer = (id: number, field: string, value: string) => {
-    setTransfers(transfers.map(t => t.id === id ? { ...t, [field]: value } : t));
-  };
 
   const navigateToPage = (link: string) => {
     router.push(link);
@@ -67,14 +56,51 @@ export default function MetaTxPage() {
     navigateToPage("/swap");
   };
 
-  const handleDeposit = async (tokenAddress: `0x${string}`, amount: bigint) => {
+  const handleDeposit = async (tokenAddress: Address, amount: bigint, selectedToken?: any) => {
     if (!vaultContract) return;
 
     try {
       setDepositLoading(true);
-      await vaultContract.deposit(tokenAddress, amount);
-      // Refresh credit balance
-      refetchCredit();
+
+      // Capture credit before deposit
+      const creditBefore = formattedCredit;
+
+      const txHash = await vaultContract.deposit(tokenAddress, amount);
+
+      // Get updated credit balance directly from contract
+      const creditAfterRaw = await vaultContract.getCredits();
+      const creditAfter = (Number(creditAfterRaw) / Math.pow(10, 18)).toFixed(6);
+      const creditAdded = (parseFloat(creditAfter) - parseFloat(creditBefore)).toFixed(3);
+
+      // Find the token info
+      const tokenInfo = tokensInChain?.find(t => t.address.toLowerCase() === tokenAddress.toLowerCase());
+
+      // Format amount for display
+      const decimals = tokenInfo?.decimals || 18;
+      const displayAmount = (Number(amount) / Math.pow(10, decimals)).toFixed(6);
+
+      // Add to credit transaction history
+      addTransaction({
+        type: 'deposit',
+        token: tokenInfo,
+        amount: displayAmount,
+        creditBefore,
+        creditAfter,
+        creditChanged: creditAdded,
+        txHash,
+      });
+
+      // Set transaction result
+      setTransactionResult({
+        type: 'deposit',
+        token: tokenInfo,
+        amount: displayAmount,
+        creditBefore,
+        creditAfter,
+        creditAdded,
+      });
+
+      setIsTransactionCompleteDialogOpen(true);
     } catch (error) {
       console.error("Deposit failed:", error);
       throw error; // Re-throw to let dialog handle error display
@@ -88,9 +114,40 @@ export default function MetaTxPage() {
 
     try {
       setWithdrawLoading(true);
-      await vaultContract.withdraw(creditAmount);
-      // Refresh credit balance
-      refetchCredit();
+
+      // Capture credit before withdrawal
+      const creditBefore = formattedCredit;
+
+      const txHash = await vaultContract.withdraw(creditAmount);
+
+      // Get updated credit balance directly from contract
+      const creditAfterRaw = await vaultContract.getCredits();
+      const creditAfter = (Number(creditAfterRaw) / Math.pow(10, 18)).toFixed(6);
+      const creditWithdrawn = (parseFloat(creditBefore) - parseFloat(creditAfter)).toFixed(3);
+
+      // Format amount for display (convert from wei to U2U)
+      const displayAmount = (Number(creditAmount) / Math.pow(10, 18)).toFixed(6);
+
+      // Add to credit transaction history
+      addTransaction({
+        type: 'withdraw',
+        amount: displayAmount,
+        creditBefore,
+        creditAfter,
+        creditChanged: creditWithdrawn,
+        txHash,
+      });
+
+      // Set transaction result
+      setTransactionResult({
+        type: 'withdraw',
+        amount: displayAmount,
+        creditBefore,
+        creditAfter,
+        creditAdded: creditWithdrawn,
+      });
+
+      setIsTransactionCompleteDialogOpen(true);
     } catch (error) {
       console.error("Withdraw failed:", error);
       throw error; // Re-throw to let dialog handle error display
@@ -104,8 +161,8 @@ export default function MetaTxPage() {
 
     try {
       setApproveLoading(true);
-      // Approve token for the gateway contract
-      await vaultContract.approveForGateway(tokenAddress, BigInt(2**256 - 1)); // Max approval
+      // Approve token for the gateway contract (max uint256 value)
+      await vaultContract.approveForGateway(tokenAddress, maxUint256);
       // Refresh allowances and credit
       refetchAllowances();
       refetchCredit();
@@ -114,6 +171,18 @@ export default function MetaTxPage() {
       throw error;
     } finally {
       setApproveLoading(false);
+    }
+  };
+
+  const handleApproveForVault = async (tokenAddress: `0x${string}`, amount: bigint) => {
+    if (!vaultContract) return;
+
+    try {
+      // Use the vault contract's approve method for vault deposits
+      await vaultContract.approve(tokenAddress, amount);
+    } catch (error) {
+      console.error("Vault approval failed:", error);
+      throw error;
     }
   };
 
@@ -135,6 +204,37 @@ export default function MetaTxPage() {
     }
   };
 
+  // Check if user has seen the first-time guide
+  useEffect(() => {
+    const hasSeenGuide = localStorage.getItem('metatx-guide-seen');
+    console.log('Guide check - hasSeenGuide:', hasSeenGuide);
+
+    // Show guide if user hasn't explicitly chosen "don't show again"
+    if (hasSeenGuide !== 'true') {
+      console.log('Showing first-time guide');
+      // Show guide after a short delay to let the page load
+      const timer = setTimeout(() => {
+        setIsFirstTimeGuideOpen(true);
+      }, 1500);
+      return () => clearTimeout(timer);
+    } else {
+      console.log('Skipping guide - user chose not to show again');
+    }
+  }, []);
+
+  // Debug function to reset guide (can be called from browser console)
+  const resetGuide = () => {
+    localStorage.removeItem('metatx-guide-seen');
+    console.log('Guide reset - will show on next page load');
+  };
+
+  // Make resetGuide available globally for debugging
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      (window as any).resetGuide = resetGuide;
+    }
+  }, []);
+
   return (
     <DefaultLayout>
       {/* Hero Section */}
@@ -145,9 +245,41 @@ export default function MetaTxPage() {
           initial={{ opacity: 0, y: 20 }}
           transition={{ duration: 0.5 }}
         >
-          <h1 className={title({ size: "lg", class: "gradient-metal" })}>
-            Gasless Meta-Transactions
-          </h1>
+          <div className="flex items-center justify-center gap-4">
+            <h1 className={title({ size: "lg", class: "gradient-metal" })}>
+              Gasless Meta-Transactions
+            </h1>
+            <motion.button
+              onClick={() => setIsInfoDrawerOpen(true)}
+              className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors duration-200 group"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              animate={{
+                rotate: [0, 5, -5, 0],
+              }}
+              transition={{
+                rotate: {
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }
+              }}
+            >
+              <svg
+                className="w-6 h-6 text-white group-hover:text-blue-300 transition-colors duration-200"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </motion.button>
+          </div>
           <h2 className={subtitle({ class: "mt-4 text-gray-300" })}>
             Pay Gas Fees in U2U Across All Chains
           </h2>
@@ -162,11 +294,8 @@ export default function MetaTxPage() {
                 whileInView={{ opacity: 1, y: 0 }}
               >
                 <GaslessBatchTransfer
-                  transfers={transfers}
                   credit={formattedCredit}
-                  onAddTransfer={addTransfer}
-                  onRemoveTransfer={removeTransfer}
-                  onUpdateTransfer={updateTransfer}
+                  approvedTokens={approvedTokens || []}
                   onStartTransaction={handleStartTransaction}
                 />
               </motion.div>
@@ -212,8 +341,11 @@ export default function MetaTxPage() {
       <DepositDialog
         isOpen={isDepositDialogOpen}
         onClose={() => setIsDepositDialogOpen(false)}
-        onDeposit={handleDeposit}
+        onDeposit={(tokenAddress, amount, selectedToken) => handleDeposit(tokenAddress, amount, selectedToken)}
+        onApproveForVault={handleApproveForVault}
         isLoading={depositLoading}
+        tokensInChain={tokensInChain || []}
+        whitelistedTokens={[...(contractInfo?.whitelistedTokens || [])]}
       />
 
       <WithdrawDialog
@@ -239,6 +371,22 @@ export default function MetaTxPage() {
         onDisapprove={handleDisapproveToken}
         isLoading={disapproveLoading}
         approvedTokens={approvedTokens || []}
+      />
+
+      <TransactionCompleteDialog
+        isOpen={isTransactionCompleteDialogOpen}
+        onClose={() => setIsTransactionCompleteDialogOpen(false)}
+        result={transactionResult}
+      />
+
+      <InfoDrawer
+        isOpen={isInfoDrawerOpen}
+        onClose={() => setIsInfoDrawerOpen(false)}
+      />
+
+      <FirstTimeGuide
+        isOpen={isFirstTimeGuideOpen}
+        onClose={() => setIsFirstTimeGuideOpen(false)}
       />
 
     </DefaultLayout>

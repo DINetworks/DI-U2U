@@ -9,14 +9,8 @@ import {
   Input,
   Slider,
 } from "@heroui/react";
-
-interface WithdrawDialogProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onWithdraw: (creditAmount: bigint) => Promise<void>;
-  isLoading: boolean;
-  credit: string;
-}
+import { parseUnits } from "viem";
+import { WithdrawDialogProps } from "@/types/component";
 
 export default function WithdrawDialog({
   isOpen,
@@ -72,7 +66,9 @@ export default function WithdrawDialog({
     if (!amount || parseFloat(amount) <= 0) return;
 
     try {
-      await onWithdraw(BigInt(amount));
+      // Convert decimal string to BigInt with 18 decimals (same as credits)
+      const amountInWei = parseUnits(amount, 18);
+      await onWithdraw(amountInWei);
       setAmount("");
       onClose();
     } catch (error) {
@@ -148,13 +144,13 @@ export default function WithdrawDialog({
               minValue={0}
               maxValue={100}
             />
-            <div className="text-xs text-gray-400 mt-1">
-              Available credit: {credit} U2U
+            <div className="text-xs text-gray-400 mt-8">
+              Available credit: {credit}
             </div>
           </div>
 
           <div className="text-sm text-gray-400">
-            💡 Available to withdraw: {credit} U2U
+            💡 Available to withdraw: {credit}
           </div>
 
           <div className="text-sm text-yellow-400 bg-yellow-400/10 p-3 rounded-lg">
