@@ -8,14 +8,20 @@ export const siteConfig = {
       label: "Gasless",
       href: "/metatx",
     },
-    
+    {
+      label: "Bridge",
+      href: "/bridge",
+    },
   ],
   navMenuItems: [
     {
       label: "Gasless",
       href: "/metatx",
     },
-    
+    {
+      label: "Bridge",
+      href: "/bridge",
+    },
   ],
   links: {
     github: "https://github.com/doma-auction",

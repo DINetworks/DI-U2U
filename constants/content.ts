@@ -255,6 +255,113 @@ export const APP_CONTENT = {
     },
   },
 
+  // Bridge content
+  bridge: {
+    title: "IU2U Cross-Chain Bridge",
+    subtitle: "Seamlessly transfer IU2U tokens across multiple blockchain networks",
+    description: "Experience true interoperability with IU2U's decentralized bridge protocol. Transfer tokens, execute cross-chain contracts, and interact with dApps across supported chains.",
+
+    tabs: {
+      deposit: {
+        title: "Deposit/Withdraw",
+        description: "Convert between native U2U and IU2U tokens"
+      },
+      transfer: {
+        title: "Cross-Chain Transfer",
+        description: "Send IU2U tokens to other blockchain networks"
+      },
+      contract: {
+        title: "Contract Interaction",
+        description: "Execute smart contracts across different chains"
+      }
+    },
+
+    operations: {
+      deposit: {
+        title: "Deposit U2U → IU2U",
+        description: "Convert your native U2U tokens to IU2U tokens for cross-chain use",
+        buttonText: "Deposit Tokens"
+      },
+      withdraw: {
+        title: "Withdraw IU2U → U2U",
+        description: "Convert IU2U tokens back to native U2U tokens",
+        buttonText: "Withdraw Tokens"
+      },
+      transfer: {
+        title: "Cross-Chain Transfer",
+        description: "Send IU2U tokens to any supported blockchain network",
+        buttonText: "Transfer Tokens"
+      },
+      contractCall: {
+        title: "Contract Call",
+        description: "Execute smart contract functions across different chains",
+        buttonText: "Execute Contract"
+      },
+      contractCallWithToken: {
+        title: "Contract Call with Tokens",
+        description: "Execute contracts while sending IU2U tokens",
+        buttonText: "Execute with Tokens"
+      }
+    },
+
+    labels: {
+      fromChain: "From Chain",
+      toChain: "To Chain",
+      amount: "Amount",
+      recipient: "Recipient Address",
+      contractAddress: "Contract Address",
+      functionData: "Function Call Data",
+      balance: "Balance",
+      max: "MAX",
+      sendWithCall: "Send IU2U with call"
+    },
+
+    placeholders: {
+      enterAmount: "Enter amount",
+      enterAddress: "0x...",
+      enterContractAddress: "0x...",
+      enterFunctionData: "0x..."
+    },
+
+    messages: {
+      connectWallet: "Please connect your wallet to use the IU2U Bridge",
+      insufficientBalance: "Insufficient balance",
+      invalidAddress: "Invalid address format",
+      transactionPending: "Transaction pending...",
+      transactionSuccess: "Transaction completed successfully",
+      transactionFailed: "Transaction failed",
+      preparingSignature: "Preparing signature...",
+      estimatingCost: "Estimating transaction cost...",
+      switchNetwork: "Please switch to the correct network"
+    },
+
+    supportedChains: {
+      u2uTestnet: "U2U Nebulas Testnet",
+      polygon: "Polygon",
+      bsc: "BSC",
+      base: "Base"
+    },
+
+    features: [
+      {
+        title: "Cross-Chain Transfers",
+        description: "Send IU2U tokens seamlessly between supported blockchain networks"
+      },
+      {
+        title: "Contract Interactions",
+        description: "Execute smart contract functions across different chains"
+      },
+      {
+        title: "Decentralized Security",
+        description: "Powered by decentralized relayers ensuring secure cross-chain communication"
+      },
+      {
+        title: "Real-time Tracking",
+        description: "Monitor your cross-chain transactions with real-time status updates"
+      }
+    ]
+  },
+
   // Tooltips and help text
   tooltips: {
     switchNetwork: "Switch Network",

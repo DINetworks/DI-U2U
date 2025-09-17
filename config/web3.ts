@@ -3,33 +3,33 @@ import { http } from "viem";
 import { injected, metaMask, walletConnect } from "@wagmi/connectors";
 import {mainnet, bsc, optimism, base, polygon, arbitrum, avalanche} from "viem/chains"
 
-// export const domaChain = {
-//   id: 97476,
-//   name: "Doma Testnet",
-//   nativeCurrency: {
-//     decimals: 18,
-//     name: "DOMA",
-//     symbol: "DOMA",
-//   },
-//   rpcUrls: {
-//     default: {
-//       http: ["https://rpc-testnet.doma.xyz"],
-//     },
-//   },
-//   blockExplorers: {
-//     default: {
-//       name: "Explorer",
-//       url:
-//         process.env.NEXT_PUBLIC_DOMA_BLOCK_EXPLORER ||
-//         "https://explorer-testnet.doma.xyz",
-//     },
-//   },
-// };
+// U2U Nebulas Testnet
+export const u2uTestnet = {
+  id: 2484,
+  name: "U2U Nebulas Testnet",
+  nativeCurrency: {
+    decimals: 18,
+    name: "U2U",
+    symbol: "U2U",
+  },
+  rpcUrls: {
+    default: {
+      http: ["https://rpc-nebulas-testnet.uniultra.xyz/"],
+    },
+  },
+  blockExplorers: {
+    default: {
+      name: "U2U Scan",
+      url: "https://testnet.u2uscan.xyz",
+    },
+  },
+  testnet: true,
+};
 
 const ALCHEMY_API_KEY = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY
 
 export const config = createConfig({
-  chains: [mainnet, bsc, optimism, base, polygon, arbitrum, avalanche],
+  chains: [mainnet, bsc, optimism, base, polygon, arbitrum, avalanche, u2uTestnet],
   connectors: [
     injected(),
     metaMask(),
@@ -52,17 +52,30 @@ export const config = createConfig({
     [avalanche.id]: http(
       `https://avalanche-mainnet.alchemyapi.io/v2/${ALCHEMY_API_KEY}`
     ),
-    [base.id]: http(`https://base-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}`)
+    [base.id]: http(`https://base-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}`),
+    [u2uTestnet.id]: http('https://rpc-nebulas-testnet.uniultra.xyz/')
   },
 });
 
 export const DOMA_CHAINID = 97476;
 
 export const CONTRACT_ADDRESSES = {
-  HYBRID_DUTCH_AUCTION: "0xE680A0F580f742a536B33C142757b4C8BE5CfB40",
-  AUCTION_BETTING: "0x5A11663fc4cBfa62E01C3bbCfDb10f37549B38D2",
-  LOYALTY_NFT: "0x04B36cADFD85F2561c0e8A676E0aCe5cBA8c7485",
-  OWNERSHIP_TOKEN: "0x424bDf2E8a6F52Bd2c1C81D9437b0DC0309DF90f",
   CREDIT_VAULT: "0x3AA775651fad6271C870762F8A9069ff94E7B542",
-  METATX_GATEWAY: "0xbee9591415128F7d52279C8df327614d8fD8a9b2"
+  METATX_GATEWAY: "0xbee9591415128F7d52279C8df327614d8fD8a9b2",
+
+  // IU2U Bridge Contracts
+  IU2U_TOKEN: {
+    [mainnet.id]: "0x9649a304bD0cd3c4dbe72116199990df06d87329",
+    [polygon.id]: "0x9649a304bD0cd3c4dbe72116199990df06d87329",
+    [bsc.id]: "0x365235b4ea2F5439f27b10f746C52B0B47c33761",
+    [base.id]: "0xF69C5FB9359a4641469cd457412C7086fd32041D",
+    [u2uTestnet.id]: "0x2551f9E86a20bf4627332A053BEE14DA623d1007"
+  },
+  IU2U_GATEWAY: {
+    [mainnet.id]: "0xe5DE1F17974B1758703C4bF9a8885F7e24983bb7",
+    [polygon.id]: "0xe5DE1F17974B1758703C4bF9a8885F7e24983bb7",
+    [bsc.id]: "0xe4A31447871c39eD854279acCEAeB023e79dDCC5",
+    [base.id]: "0x9649a304bD0cd3c4dbe72116199990df06d87329",
+    [u2uTestnet.id]: "0x7Ccba78c7224577DDDEa5B3302b81db7915e5377"
+  }
 };

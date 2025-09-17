@@ -49,25 +49,17 @@ export const Footer = () => {
               <li>
                 <Link
                   className="text-gray-400 hover:text-gray-900"
-                  href="/hybrid"
+                  href="/metatx"
                 >
-                  Hybrid Auctions
+                  Gasless Transactions
                 </Link>
               </li>
               <li>
                 <Link
                   className="text-gray-400 hover:text-gray-900"
-                  href="/create"
+                  href="/bridge"
                 >
-                  Premium Auction
-                </Link>
-              </li>
-              <li>
-                <Link
-                  className="text-gray-400 hover:text-gray-900"
-                  href="/my-auctions"
-                >
-                  My Dashboard
+                  IU2U Bridge
                 </Link>
               </li>
             </ul>
@@ -101,7 +93,7 @@ export const Footer = () => {
         </div>
 
         <div className="border-t border-divider mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-sm text-gray-500">© 2025 DomaAuction.</p>
+          <p className="text-sm text-gray-500">© 2025 DI Networks.</p>
           <div className="flex gap-6 mt-4 md:mt-0 text-sm text-gray-500">
             <span>Privacy Policy</span>
             <span>Terms of Service</span>

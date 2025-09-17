@@ -18,10 +18,10 @@ import { useConnect, useDisconnect, useAccount, useBalance, useChainId, useSwitc
 import { useState, useEffect } from "react";
 import { formatEther } from "viem";
 import { config } from "@/config/web3";
-import { mainnet, bsc, polygon, optimism, arbitrum, avalanche, base, scroll, fantom, linea } from "wagmi/chains";
 
 import { shortenAddress } from "@/utils/token";
 import { useWalletModal } from "@/contexts/WalletContext";
+import { getChainLogo } from "@/config/chains";
 
 export function WalletConnect() {
   const { address, isConnected } = useAccount();
@@ -46,25 +46,6 @@ export function WalletConnect() {
 
   // Get current chain info
   const currentChain = config.chains.find(chain => chain.id === chainId);
-
-  // Chain logos mapping
-  const CHAIN_LOGOS = {
-    [mainnet.id]: '/images/icons/chains/ethereum.png',
-    [bsc.id]: '/images/icons/chains/bsc.png',
-    [polygon.id]: '/images/icons/chains/polygon.png',
-    [optimism.id]: '/images/icons/chains/optimism.png',
-    [arbitrum.id]: '/images/icons/chains/arbitrum.png',
-    [avalanche.id]: '/images/icons/chains/avalanche.png',
-    [base.id]: '/images/icons/chains/base.png',
-    [scroll.id]: '/images/icons/chains/scroll.png',
-    [fantom.id]: '/images/icons/chains/fantom.png',
-    [linea.id]: '/images/icons/chains/linea.png'
-  };
-
-  // Chain icons mapping
-  const getChainIcon = (chainId: number) => {
-    return CHAIN_LOGOS[chainId as keyof typeof CHAIN_LOGOS] || '/images/icons/chains/default.png';
-  };
 
   const handleCopyAddress = async () => {
     if (address) {
@@ -107,7 +88,7 @@ export function WalletConnect() {
             }}
           >
             <Image
-              src={getChainIcon(chainId)}
+              src={getChainLogo(chainId)}
               alt={`${currentChain?.name || 'Chain'} logo`}
               width={24}
               height={24}
@@ -212,7 +193,7 @@ export function WalletConnect() {
               <div className="flex items-center justify-between w-full">
                 <div className="flex items-center gap-3">
                   <Image
-                    src={getChainIcon(chainId)}
+                    src={getChainLogo(chainId)}
                     alt={`${currentChain?.name || 'Chain'} logo`}
                     width={20}
                     height={20}
@@ -288,7 +269,7 @@ export function WalletConnect() {
                 >
                   <div className="flex items-center gap-3">
                     <Image
-                      src={getChainIcon(chain.id)}
+                      src={getChainLogo(chain.id)}
                       alt={`${chain.name} logo`}
                       width={24}
                       height={24}

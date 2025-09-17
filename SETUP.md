@@ -1,4 +1,4 @@
-# DomaAuction Frontend Setup Guide
+# DI Networks Frontend Setup Guide
 
 ## Quick Start
 
