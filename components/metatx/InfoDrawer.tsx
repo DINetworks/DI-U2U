@@ -5,6 +5,7 @@ import {
 } from "@heroui/drawer";
 import { Button } from "@heroui/button";
 import { Card, CardBody, CardHeader } from "@heroui/card";
+import { APP_CONTENT } from "@/constants/content";
 
 interface InfoDrawerProps {
   isOpen: boolean;
@@ -25,9 +26,9 @@ export default function InfoDrawer({ isOpen, onClose }: InfoDrawerProps) {
           <DrawerContent className="h-full flex flex-col">
             {/* Fixed Header */}
             <div className="p-6 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
-              <h3 className="text-xl font-bold">Gasless Meta-Transactions Guide</h3>
+              <h3 className="text-xl font-bold">{APP_CONTENT.infoDrawer.header.title}</h3>
               <p className="text-sm text-gray-500 mt-1">
-                Learn how gasless transactions work and explore all features
+                {APP_CONTENT.infoDrawer.header.subtitle}
               </p>
             </div>
 
@@ -37,16 +38,16 @@ export default function InfoDrawer({ isOpen, onClose }: InfoDrawerProps) {
               <Card className="bg-blue-50 dark:bg-blue-900/20 overflow-visible">
                 <CardHeader>
                   <h4 className="text-lg font-semibold text-blue-800 dark:text-blue-200">
-                    🚀 What are Gasless Transactions?
+                    🚀 {APP_CONTENT.infoDrawer.sections.whatAreGasless.title}
                   </h4>
                 </CardHeader>
                 <CardBody className="space-y-3">
                   <p className="text-sm text-gray-700 dark:text-gray-300">
-                    Gasless transactions allow you to execute blockchain operations without paying gas fees in the native token of the chain. Instead, you pay in U2U tokens, which are converted to cover your gas costs across all supported chains.
+                    {APP_CONTENT.infoDrawer.sections.whatAreGasless.content}
                   </p>
                   <div className="bg-white dark:bg-gray-800 p-3 rounded-lg">
                     <p className="text-xs text-gray-600 dark:text-gray-400">
-                      <strong>Benefits:</strong> No need to hold native tokens, unified payment system, cross-chain compatibility
+                      <strong>Benefits:</strong> {APP_CONTENT.infoDrawer.sections.whatAreGasless.benefits}
                     </p>
                   </div>
                 </CardBody>
@@ -56,46 +57,24 @@ export default function InfoDrawer({ isOpen, onClose }: InfoDrawerProps) {
               <Card className="bg-green-50 dark:bg-green-900/20 overflow-visible">
                 <CardHeader>
                   <h4 className="text-lg font-semibold text-green-800 dark:text-green-200">
-                    ⚙️ How It Works
+                    ⚙️ {APP_CONTENT.infoDrawer.sections.howItWorks.title}
                   </h4>
                 </CardHeader>
                 <CardBody className="space-y-3">
                   <div className="space-y-4">
-                    <div className="flex items-start gap-3">
-                      <div className="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">
-                        1
+                    {APP_CONTENT.infoDrawer.sections.howItWorks.steps.map((step, index) => (
+                      <div key={index} className="flex items-start gap-3">
+                        <div className="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">
+                          {index + 1}
+                        </div>
+                        <div>
+                          <h5 className="font-medium">{step.title}</h5>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">
+                            {step.content}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <h5 className="font-medium">Deposit U2U Tokens</h5>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
-                          Deposit U2U tokens into your gas credit vault to build up credits for gasless transactions.
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start gap-3">
-                      <div className="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">
-                        2
-                      </div>
-                      <div>
-                        <h5 className="font-medium">Approve Tokens</h5>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
-                          Approve tokens you want to transfer gaslessly through the meta-transaction gateway.
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start gap-3">
-                      <div className="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">
-                        3
-                      </div>
-                      <div>
-                        <h5 className="font-medium">Execute Gasless Transfers</h5>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
-                          Create batch transfers that execute without paying gas fees in native tokens.
-                        </p>
-                      </div>
-                    </div>
+                    ))}
                   </div>
                 </CardBody>
               </Card>
@@ -104,38 +83,19 @@ export default function InfoDrawer({ isOpen, onClose }: InfoDrawerProps) {
               <Card className="bg-purple-50 dark:bg-purple-900/20 overflow-visible">
                 <CardHeader>
                   <h4 className="text-lg font-semibold text-purple-800 dark:text-purple-200">
-                    🧩 Component Guide
+                    🧩 {APP_CONTENT.infoDrawer.sections.componentGuide.title}
                   </h4>
                 </CardHeader>
                 <CardBody className="space-y-4">
                   <div className="space-y-3">
-                    <div>
-                      <h5 className="font-medium text-purple-700 dark:text-purple-300">Gasless Batch Transfer</h5>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        Main component for creating multiple token transfers. Add/remove transfer rows, select tokens, enter amounts and recipient addresses.
-                      </p>
-                    </div>
-
-                    <div>
-                      <h5 className="font-medium text-purple-700 dark:text-purple-300">Gas Credit Card</h5>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        Shows your current U2U credit balance. Use deposit/withdraw buttons to manage your gas credits.
-                      </p>
-                    </div>
-
-                    <div>
-                      <h5 className="font-medium text-purple-700 dark:text-purple-300">Approved Tokens Card</h5>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        Lists all tokens you've approved for gasless transfers. Add new approvals or remove existing ones.
-                      </p>
-                    </div>
-
-                    <div>
-                      <h5 className="font-medium text-purple-700 dark:text-purple-300">Contracts Info</h5>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        Displays important contract addresses and network information for transparency.
-                      </p>
-                    </div>
+                    {APP_CONTENT.infoDrawer.sections.componentGuide.components.map((component, index) => (
+                      <div key={index}>
+                        <h5 className="font-medium text-purple-700 dark:text-purple-300">{component.title}</h5>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          {component.content}
+                        </p>
+                      </div>
+                    ))}
                   </div>
                 </CardBody>
               </Card>
@@ -144,27 +104,17 @@ export default function InfoDrawer({ isOpen, onClose }: InfoDrawerProps) {
               <Card className="bg-yellow-50 dark:bg-yellow-900/20 overflow-visible">
                 <CardHeader>
                   <h4 className="text-lg font-semibold text-yellow-800 dark:text-yellow-200">
-                    💡 Pro Tips
+                    💡 {APP_CONTENT.infoDrawer.sections.proTips.title}
                   </h4>
                 </CardHeader>
                 <CardBody className="space-y-3">
                   <ul className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
-                    <li className="flex items-start gap-2">
-                      <span className="text-yellow-500">•</span>
-                      <span>Maintain sufficient U2U balance for gas credits</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-yellow-500">•</span>
-                      <span>Batch multiple transfers to save on overall gas costs</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-yellow-500">•</span>
-                      <span>Check gas estimates before confirming transactions</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-yellow-500">•</span>
-                      <span>Approved tokens remain approved until manually disapproved</span>
-                    </li>
+                    {APP_CONTENT.infoDrawer.sections.proTips.tips.map((tip, index) => (
+                      <li key={index} className="flex items-start gap-2">
+                        <span className="text-yellow-500">•</span>
+                        <span>{tip}</span>
+                      </li>
+                    ))}
                   </ul>
                 </CardBody>
               </Card>
@@ -173,7 +123,7 @@ export default function InfoDrawer({ isOpen, onClose }: InfoDrawerProps) {
             {/* Fixed Footer */}
             <div className="p-6 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
               <Button color="primary" onPress={onClose} className="w-full">
-                Got it!
+                {APP_CONTENT.infoDrawer.footer.buttonText}
               </Button>
             </div>
           </DrawerContent>

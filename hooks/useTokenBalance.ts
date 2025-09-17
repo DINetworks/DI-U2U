@@ -1,6 +1,5 @@
-import { ERC20_ABI } from "@/contracts/abi";
 import { useQuery } from "@tanstack/react-query";
-import { Address, formatUnits } from "viem";
+import { Address, erc20Abi, formatUnits } from "viem";
 import { usePublicClient } from "wagmi";
 
 interface UseTokenBalanceProps {
@@ -23,7 +22,7 @@ export function useTokenBalance({
 
       const balance = await publicClient.readContract({
         address: tokenAddress,
-        abi: ERC20_ABI,
+        abi: erc20Abi,
         functionName: "balanceOf",
         args: [accountAddress],
       }) as bigint;

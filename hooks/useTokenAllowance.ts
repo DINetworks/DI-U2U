@@ -1,6 +1,5 @@
-import { ERC20_ABI } from "@/contracts/abi";
 import { useQuery } from "@tanstack/react-query";
-import { Address } from "viem";
+import { Address, erc20Abi } from "viem";
 import { usePublicClient } from "wagmi";
 
 interface UseTokenAllowanceProps {
@@ -23,7 +22,7 @@ export function useTokenAllowance({
 
       const allowance = await publicClient.readContract({
         address: tokenAddress,
-        abi: ERC20_ABI,
+        abi: erc20Abi,
         functionName: "allowance",
         args: [ownerAddress, spenderAddress],
       }) as bigint;
