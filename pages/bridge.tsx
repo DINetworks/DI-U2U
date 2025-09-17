@@ -1,11 +1,12 @@
 // IU2U Bridge Page
-import { useState, useEffect } from 'react';
+import { Chain } from 'viem';
 import { NextPage } from 'next';
 import Head from 'next/head';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardBody, CardHeader } from '@heroui/card';
-import { Button } from '@heroui/button';
 import { Tabs, Tab } from '@heroui/tabs';
+import { Select, SelectItem } from '@heroui/select';
 import { title, subtitle } from '@/components/primitives';
 import DefaultLayout from '@/layouts/default';
 import { useWeb3 } from '@/hooks/useWeb3';
@@ -17,29 +18,36 @@ import TokenAmountInput from '@/components/bridge/TokenAmountInput';
 import AddressInput from '@/components/bridge/AddressInput';
 import BridgeActionButton from '@/components/bridge/BridgeActionButton';
 import BridgeTransactionHistory from '@/components/bridge/BridgeTransactionHistory';
-import { APP_CONTENT } from '@/constants/content';
-import { Chain } from 'viem';
+import { useWalletModal } from '@/contexts/WalletContext';
 
 const BridgePage: NextPage = () => {
-  const { isConnected, address } = useWeb3();
+  const { isConnected, chain } = useWeb3();
 
   // Bridge state
   const [selectedSourceChain, setSelectedSourceChain] = useState<Chain | null>(null);
   const [selectedDestinationChain, setSelectedDestinationChain] = useState<Chain | null>(null);
   const [amount, setAmount] = useState('');
+  const [bridgeAmount, setBridgeAmount] = useState('')
+  const [callAmount, setCallAmount] = useState('')
   const [recipientAddress, setRecipientAddress] = useState('');
   const [contractAddress, setContractAddress] = useState('');
   const [payload, setPayload] = useState('');
   const [isDepositMode, setIsDepositMode] = useState(true);
   const [isContractCall, setIsContractCall] = useState(false);
-  const [activeTab, setActiveTab] = useState('deposit');
+  const [activeTab, setActiveTab] = useState('operations');
   const [transactions, setTransactions] = useState<BridgeTransaction[]>([]);
+  const {openConnectModal} = useWalletModal()
 
   // IU2U hooks
   const { formattedBalance: iu2uBalance, isLoading: balanceLoading, refetch: refetchBalance } = useIU2UBalance();
   const { formattedBalance: nativeU2UBalance, isLoading: nativeBalanceLoading } = useNativeU2UBalance();
   const tokenOps = useIU2UTokenOperations();
   const gatewayOps = useIU2UGatewayOperations();
+
+  // Determine which balance to show based on active tab
+  const displayBalance = isDepositMode ? nativeU2UBalance : iu2uBalance;
+  const displayBalanceLoading = isDepositMode ? nativeBalanceLoading : balanceLoading;
+  const displayTokenSymbol = isDepositMode ? 'U2U' : 'IU2U';
 
   // Initialize default chains
   useEffect(() => {
@@ -48,6 +56,13 @@ const BridgePage: NextPage = () => {
       setSelectedDestinationChain(SUPPORTED_BRIDGE_CHAINS[1]); // Polygon
     }
   }, []);
+
+  // Fix source chain to U2U testnet for deposit/withdraw operations
+  useEffect(() => {
+    if (activeTab === 'deposit' && SUPPORTED_BRIDGE_CHAINS.length > 0) {
+      setSelectedSourceChain(SUPPORTED_BRIDGE_CHAINS[0]); // Always U2U Nebulas Testnet
+    }
+  }, [activeTab]);
 
   // Handle deposit U2U -> IU2U
   const handleDeposit = async () => {
@@ -107,14 +122,14 @@ const BridgePage: NextPage = () => {
 
   // Handle cross-chain token transfer
   const handleSendToken = async () => {
-    if (!selectedDestinationChain || !recipientAddress || !amount) return;
+    if (!selectedDestinationChain || !recipientAddress || !bridgeAmount) return;
 
     try {
       const receipt = await gatewayOps.sendToken(
         selectedDestinationChain.name,
         recipientAddress,
         'IU2U',
-        amount
+        bridgeAmount
       );
       console.log('Cross-chain transfer successful:', receipt);
 
@@ -125,7 +140,7 @@ const BridgePage: NextPage = () => {
         sourceChain: selectedSourceChain?.name || '',
         destinationChain: selectedDestinationChain.name,
         recipient: recipientAddress,
-        amount,
+        amount: bridgeAmount,
         symbol: 'IU2U',
         status: 'pending',
         timestamp: Date.now()
@@ -133,7 +148,7 @@ const BridgePage: NextPage = () => {
       setTransactions(prev => [transaction, ...prev]);
 
       // Reset form
-      setAmount('');
+      setBridgeAmount('');
       setRecipientAddress('');
       refetchBalance();
     } catch (error) {
@@ -146,13 +161,13 @@ const BridgePage: NextPage = () => {
     if (!selectedDestinationChain || !contractAddress || !payload) return;
 
     try {
-      const receipt = isContractCall && amount
+      const receipt = isContractCall && callAmount
         ? await gatewayOps.callContractWithToken(
             selectedDestinationChain.name,
             contractAddress,
             payload,
             'IU2U',
-            amount
+            callAmount
           )
         : await gatewayOps.callContract(
             selectedDestinationChain.name,
@@ -165,11 +180,11 @@ const BridgePage: NextPage = () => {
       // Add transaction to history
       const transaction: BridgeTransaction = {
         id: Date.now().toString(),
-        type: isContractCall && amount ? 'callContractWithToken' : 'callContract',
+        type: isContractCall && callAmount ? 'callContractWithToken' : 'callContract',
         sourceChain: selectedSourceChain?.name || '',
         destinationChain: selectedDestinationChain.name,
         contractAddress,
-        amount: isContractCall && amount ? amount : '',
+        amount: isContractCall && callAmount ? callAmount : '',
         symbol: 'IU2U',
         status: 'pending',
         timestamp: Date.now()
@@ -177,7 +192,7 @@ const BridgePage: NextPage = () => {
       setTransactions(prev => [transaction, ...prev]);
 
       // Reset form
-      setAmount('');
+      setCallAmount('');
       setContractAddress('');
       setPayload('');
       refetchBalance();
@@ -262,52 +277,73 @@ const BridgePage: NextPage = () => {
                     onSelectionChange={(key) => setActiveTab(key as string)}
                     className="w-full"
                   >
-                    <Tab key="deposit" title="Deposit/Withdraw">
+                    <Tab key="operations" title="Deposit/Withdraw">
                       <div className="space-y-4 mt-4">
+                        {/* Operation Type Selector */}
+                        <div>
+                          <label className="block text-sm font-medium mb-2 text-white">
+                            Operation Type
+                          </label>
+                          <Select
+                            placeholder="Select operation"
+                            selectedKeys={new Set([isDepositMode ? 'deposit' : 'withdraw'])}
+                            onSelectionChange={(keys) => {
+                              const selected = Array.from(keys)[0] as string;
+                              setIsDepositMode(selected === 'deposit');
+                            }}
+                            className="w-full"
+                          >
+                            <SelectItem key="deposit" textValue="Deposit U2U → IU2U">
+                              <div className="flex items-center gap-2">
+                                <span>Deposit U2U → IU2U</span>
+                                <span className="text-xs text-gray-400">(Native U2U to IU2U Token)</span>
+                              </div>
+                            </SelectItem>
+                            <SelectItem key="withdraw" textValue="Withdraw IU2U → U2U">
+                              <div className="flex items-center gap-2">
+                                <span>Withdraw IU2U → U2U</span>
+                                <span className="text-xs text-gray-400">(IU2U Token to Native U2U)</span>
+                              </div>
+                            </SelectItem>
+                          </Select>
+                        </div>
+
                         {/* Chain Selector */}
                         <ChainSelector
                           chains={SUPPORTED_BRIDGE_CHAINS}
                           selectedChain={selectedSourceChain}
                           onChainSelect={setSelectedSourceChain}
-                          label="Select Chain"
+                          label="Chain (Fixed to U2U Testnet)"
+                          disabled
                         />
 
                         {/* Amount Input */}
                         <TokenAmountInput
                           amount={amount}
                           onAmountChange={setAmount}
-                          balance={iu2uBalance}
-                          symbol="IU2U"
-                          maxAmount={iu2uBalance}
+                          balance={displayBalance}
+                          symbol={displayTokenSymbol}
+                          maxAmount={displayBalance}
+                          label={`Amount (${displayTokenSymbol})`}
                         />
 
-                        {/* Action Buttons */}
+                        {/* Action Button */}
                         <div className="flex gap-4">
                           {isConnected ? (
-                            <>
-                              <BridgeActionButton
-                                onClick={handleDeposit}
-                                disabled={!amount || parseFloat(amount) <= 0 || tokenOps.isLoading}
-                                loading={tokenOps.isLoading}
-                              >
-                                Deposit U2U → IU2U
-                              </BridgeActionButton>
-
-                              <BridgeActionButton
-                                onClick={handleWithdraw}
-                                disabled={!amount || parseFloat(amount) <= 0 || tokenOps.isLoading}
-                                loading={tokenOps.isLoading}
-                              >
-                                Withdraw IU2U → U2U
-                              </BridgeActionButton>
-                            </>
+                            <BridgeActionButton
+                              onClick={isDepositMode ? handleDeposit : handleWithdraw}
+                              disabled={!amount || parseFloat(amount) <= 0 || tokenOps.isLoading}
+                              loading={tokenOps.isLoading}
+                            >
+                              {isDepositMode ? 'Deposit U2U → IU2U' : 'Withdraw IU2U → U2U'}
+                            </BridgeActionButton>
                           ) : (
                             <BridgeActionButton
                               onClick={() => {/* TODO: Connect wallet */}}
                               disabled={false}
                               loading={false}
                             >
-                              Connect Wallet to Deposit/Withdraw
+                              Connect Wallet to Perform Operation
                             </BridgeActionButton>
                           )}
                         </div>
@@ -342,8 +378,8 @@ const BridgePage: NextPage = () => {
 
                         {/* Amount Input */}
                         <TokenAmountInput
-                          amount={amount}
-                          onAmountChange={setAmount}
+                          amount={bridgeAmount}
+                          onAmountChange={setBridgeAmount}
                           balance={iu2uBalance}
                           symbol="IU2U"
                           maxAmount={iu2uBalance}
@@ -353,7 +389,7 @@ const BridgePage: NextPage = () => {
                         {isConnected ? (
                           <BridgeActionButton
                             onClick={handleSendToken}
-                            disabled={!selectedDestinationChain || !recipientAddress || !amount || gatewayOps.isLoading}
+                            disabled={!selectedDestinationChain || !recipientAddress || !bridgeAmount || gatewayOps.isLoading}
                             loading={gatewayOps.isLoading}
                           >
                             Send IU2U Cross-Chain
@@ -424,8 +460,8 @@ const BridgePage: NextPage = () => {
 
                           {isContractCall && (
                             <TokenAmountInput
-                              amount={amount}
-                              onAmountChange={setAmount}
+                              amount={callAmount}
+                              onAmountChange={setCallAmount}
                               balance={iu2uBalance}
                               symbol="IU2U"
                               maxAmount={iu2uBalance}
@@ -437,14 +473,14 @@ const BridgePage: NextPage = () => {
                         {isConnected ? (
                           <BridgeActionButton
                             onClick={handleContractCall}
-                            disabled={!selectedDestinationChain || !contractAddress || !payload || gatewayOps.isLoading}
+                            disabled={!selectedDestinationChain || !contractAddress || !payload || (isContractCall && !callAmount) || gatewayOps.isLoading}
                             loading={gatewayOps.isLoading}
                           >
-                            {isContractCall && amount ? 'Call Contract with IU2U' : 'Call Contract'}
+                            {isContractCall && callAmount ? 'Call Contract with IU2U' : 'Call Contract'}
                           </BridgeActionButton>
                         ) : (
                           <BridgeActionButton
-                            onClick={() => {/* TODO: Connect wallet */}}
+                            onClick={() => openConnectModal?.()}
                             disabled={false}
                             loading={false}
                           >
@@ -478,27 +514,25 @@ const BridgePage: NextPage = () => {
               transition={{ duration: 0.5, delay: 0.2 }}
             >
               <Card className="bg-[#ffffff]/25 backdrop-blur-sm p-6">
-                <CardBody className="text-center space-y-4">
+                <CardBody className="text-center">
                   <div className="text-white">
-                    <p className="text-sm opacity-75">Your IU2U Balance</p>
+                    <p className="text-sm opacity-75">U2U Balance</p>
                     <p className="text-2xl font-bold">
                       {isConnected ? (
-                        balanceLoading ? '...' : `${iu2uBalance} IU2U`
+                        displayBalanceLoading ? '...' : `${parseFloat(nativeU2UBalance).toFixed(3)} U2U`
                       ) : (
                         <span className="text-gray-400 text-lg">Connect wallet to view balance</span>
                       )}
                     </p>
+                    <p className="text-sm opacity-75 mt-2">IU2U Balance ({chain?.name})</p>
+                    <p className="text-2xl font-bold">
+                      {isConnected ? (
+                        displayBalanceLoading ? '...' : `${iu2uBalance} IU2U`
+                      ) : (
+                        <span className="text-gray-400 text-lg">Connect wallet to view balance</span>
+                      )}
+                    </p>                    
                   </div>
-
-                  {/* Show native U2U balance when on U2U testnet */}
-                  {isConnected && selectedSourceChain?.id === 2484 && (
-                    <div className="text-white border-t border-white/20 pt-4">
-                      <p className="text-sm opacity-75">Your U2U Balance (Native)</p>
-                      <p className="text-xl font-semibold">
-                        {nativeBalanceLoading ? '...' : `${nativeU2UBalance} U2U`}
-                      </p>
-                    </div>
-                  )}
                 </CardBody>
               </Card>
             </motion.div>

@@ -64,6 +64,7 @@ export interface TokenAmountInputProps {
   symbol: string;
   maxAmount?: string;
   disabled?: boolean;
+  label?: string;
 }
 
 export interface AddressInputProps {

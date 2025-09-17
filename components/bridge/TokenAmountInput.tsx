@@ -9,7 +9,8 @@ export default function TokenAmountInput({
   balance,
   symbol,
   maxAmount,
-  disabled = false
+  disabled = false,
+  label
 }: TokenAmountInputProps) {
   const handleMaxClick = () => {
     if (maxAmount) {
@@ -20,7 +21,7 @@ export default function TokenAmountInput({
   return (
     <div>
       <label className="block text-sm font-medium mb-2 text-white">
-        Amount ({symbol})
+        {label || `Amount (${symbol})`}
       </label>
       <div className="relative">
         <Input
