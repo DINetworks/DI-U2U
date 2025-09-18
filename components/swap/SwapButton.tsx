@@ -7,6 +7,7 @@ export default function SwapButton({
   disabled,
   loading,
   children,
+  canGetQuote,
   quote
 }: SwapButtonProps) {
   const getButtonText = () => {
@@ -18,6 +19,10 @@ export default function SwapButton({
       );
     }
 
+    if (!canGetQuote) {
+      return 'Select Token or Amount'
+    }
+
     if (!quote) {
       return "No available route";
     }
@@ -26,8 +31,8 @@ export default function SwapButton({
   };
 
   const getButtonColor = () => {
-    if (!quote) return "primary";
     if (disabled) return "default";
+    if (!quote) return "primary";
     return "success";
   };
 

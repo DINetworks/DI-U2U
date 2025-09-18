@@ -184,6 +184,7 @@ export interface SwapButtonProps {
   disabled: boolean;
   loading: boolean;
   children: React.ReactNode;
+  canGetQuote: boolean;
   quote?: SwapQuote | null;
 }
 
