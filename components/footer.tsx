@@ -15,8 +15,8 @@ export const Footer = () => {
               </span>
             </div>
             <p className="text-sm text-gray-400 max-w-md">
-              Next-generation hybrid Dutch auction protocol for domain NFTs
-              featuring batch auctions, gamified bidding, and dynamic royalties.
+              Next-generation cross-chain DeFi infrastructure featuring gasless transactions,
+              programmable bridges, and DEX aggregation across 30+ exchanges.
             </p>
             <div className="flex gap-4 mt-6">
               <Link
@@ -60,6 +60,14 @@ export const Footer = () => {
                   href="/bridge"
                 >
                   IU2U Bridge
+                </Link>
+              </li>
+              <li>
+                <Link
+                  className="text-gray-400 hover:text-gray-900"
+                  href="/swap"
+                >
+                  Cross-Chain Swap
                 </Link>
               </li>
             </ul>

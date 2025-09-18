@@ -11,6 +11,7 @@ export const useTokenAndChains = () => {
 
 	const {
 			tokens: allTokens,
+			chains,
 			initializedAt,
 			setTokenAndChain
 	} = useTokenAndChainStore(state => state)
@@ -53,5 +54,6 @@ export const useTokenAndChains = () => {
 
 	return {
 		tokens,
+		chains
 	}
 }

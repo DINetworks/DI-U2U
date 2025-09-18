@@ -19,6 +19,9 @@ import AddressInput from '@/components/bridge/AddressInput';
 import BridgeActionButton from '@/components/bridge/BridgeActionButton';
 import BridgeTransactionHistory from '@/components/bridge/BridgeTransactionHistory';
 import { useWalletModal } from '@/contexts/WalletContext';
+import BridgeInfoDrawer from '@/components/bridge/BridgeInfoDrawer';
+import BridgeFirstTimeGuide from '@/components/bridge/BridgeFirstTimeGuide';
+import { useTokenAndChains } from '@/hooks/useTokenAndChains';
 
 const BridgePage: NextPage = () => {
   const { isConnected, chain } = useWeb3();
@@ -36,6 +39,8 @@ const BridgePage: NextPage = () => {
   const [isContractCall, setIsContractCall] = useState(false);
   const [activeTab, setActiveTab] = useState('operations');
   const [transactions, setTransactions] = useState<BridgeTransaction[]>([]);
+  const [isInfoDrawerOpen, setIsInfoDrawerOpen] = useState(false);
+  const [isFirstTimeGuideOpen, setIsFirstTimeGuideOpen] = useState(false);
   const {openConnectModal} = useWalletModal()
 
   // IU2U hooks
@@ -221,36 +226,61 @@ const BridgePage: NextPage = () => {
             <h1 className={title({ size: "lg", class: "gradient-metal" })}>
               IU2U Cross-Chain Bridge
             </h1>
-            <motion.button
-              onClick={() => {/* TODO: Add info drawer */}}
-              className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors duration-200 group"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              animate={{
-                rotate: [0, 5, -5, 0],
-              }}
-              transition={{
-                rotate: {
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }
-              }}
-            >
-              <svg
-                className="w-6 h-6 text-white group-hover:text-blue-300 transition-colors duration-200"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+            <div className="flex items-center gap-2">
+              <motion.button
+                onClick={() => setIsInfoDrawerOpen(true)}
+                className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors duration-200 group"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                animate={{
+                  rotate: [0, 5, -5, 0],
+                }}
+                transition={{
+                  rotate: {
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }
+                }}
+                title="Help & Information"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-            </motion.button>
+                <svg
+                  className="w-6 h-6 text-white group-hover:text-blue-300 transition-colors duration-200"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              </motion.button>
+
+              <motion.button
+                onClick={() => setIsFirstTimeGuideOpen(true)}
+                className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors duration-200 group"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                title="First Time Guide"
+              >
+                <svg
+                  className="w-6 h-6 text-white group-hover:text-green-300 transition-colors duration-200"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                  />
+                </svg>
+              </motion.button>
+            </div>
           </div>
           <h2 className={subtitle({ class: "mt-4 text-gray-300" })}>
             Transfer IU2U tokens seamlessly across multiple blockchains
@@ -309,13 +339,15 @@ const BridgePage: NextPage = () => {
                         </div>
 
                         {/* Chain Selector */}
-                        <ChainSelector
-                          chains={SUPPORTED_BRIDGE_CHAINS}
-                          selectedChain={selectedSourceChain}
-                          onChainSelect={setSelectedSourceChain}
-                          label="Chain (Fixed to U2U Testnet)"
-                          disabled
-                        />
+                        <div suppressHydrationWarning>
+                          <ChainSelector
+                            chains={SUPPORTED_BRIDGE_CHAINS}
+                            selectedChain={selectedSourceChain}
+                            onChainSelect={setSelectedSourceChain}
+                            label="Chain (Fixed to U2U Testnet)"
+                            disabled
+                          />
+                        </div>
 
                         {/* Amount Input */}
                         <TokenAmountInput
@@ -353,20 +385,24 @@ const BridgePage: NextPage = () => {
                     <Tab key="transfer" title="Cross-Chain Transfer">
                       <div className="space-y-4 mt-4">
                         {/* Source Chain */}
-                        <ChainSelector
-                          chains={SUPPORTED_BRIDGE_CHAINS}
-                          selectedChain={selectedSourceChain}
-                          onChainSelect={setSelectedSourceChain}
-                          label="From Chain"
-                        />
+                        <div suppressHydrationWarning>
+                          <ChainSelector
+                            chains={SUPPORTED_BRIDGE_CHAINS}
+                            selectedChain={selectedSourceChain}
+                            onChainSelect={setSelectedSourceChain}
+                            label="From Chain"
+                          />
+                        </div>
 
                         {/* Destination Chain */}
-                        <ChainSelector
-                          chains={SUPPORTED_BRIDGE_CHAINS}
-                          selectedChain={selectedDestinationChain}
-                          onChainSelect={setSelectedDestinationChain}
-                          label="To Chain"
-                        />
+                        <div suppressHydrationWarning>
+                          <ChainSelector
+                            chains={SUPPORTED_BRIDGE_CHAINS}
+                            selectedChain={selectedDestinationChain}
+                            onChainSelect={setSelectedDestinationChain}
+                            label="To Chain"
+                          />
+                        </div>
 
                         {/* Recipient Address */}
                         <AddressInput
@@ -409,20 +445,24 @@ const BridgePage: NextPage = () => {
                     <Tab key="contract" title="Contract Call">
                       <div className="space-y-4 mt-4">
                         {/* Source Chain */}
-                        <ChainSelector
-                          chains={SUPPORTED_BRIDGE_CHAINS}
-                          selectedChain={selectedSourceChain}
-                          onChainSelect={setSelectedSourceChain}
-                          label="From Chain"
-                        />
+                        <div suppressHydrationWarning>
+                          <ChainSelector
+                            chains={SUPPORTED_BRIDGE_CHAINS}
+                            selectedChain={selectedSourceChain}
+                            onChainSelect={setSelectedSourceChain}
+                            label="From Chain"
+                          />
+                        </div>
 
                         {/* Destination Chain */}
-                        <ChainSelector
-                          chains={SUPPORTED_BRIDGE_CHAINS}
-                          selectedChain={selectedDestinationChain}
-                          onChainSelect={setSelectedDestinationChain}
-                          label="To Chain"
-                        />
+                        <div suppressHydrationWarning>
+                          <ChainSelector
+                            chains={SUPPORTED_BRIDGE_CHAINS}
+                            selectedChain={selectedDestinationChain}
+                            onChainSelect={setSelectedDestinationChain}
+                            label="To Chain"
+                          />
+                        </div>
 
                         {/* Contract Address */}
                         <AddressInput
@@ -524,7 +564,7 @@ const BridgePage: NextPage = () => {
                         <span className="text-gray-400 text-lg">Connect wallet to view balance</span>
                       )}
                     </p>
-                    <p className="text-sm opacity-75 mt-2">IU2U Balance ({chain?.name})</p>
+                    <p className="text-sm opacity-75 mt-2" suppressHydrationWarning>IU2U Balance ({chain?.name || 'Not Connected'})</p>
                     <p className="text-2xl font-bold">
                       {isConnected ? (
                         displayBalanceLoading ? '...' : `${iu2uBalance} IU2U`
@@ -539,6 +579,18 @@ const BridgePage: NextPage = () => {
           </div>
         </div>
       </section>
+
+      {/* Bridge Info Drawer */}
+      <BridgeInfoDrawer
+        isOpen={isInfoDrawerOpen}
+        onClose={() => setIsInfoDrawerOpen(false)}
+      />
+
+      {/* Bridge First Time Guide */}
+      <BridgeFirstTimeGuide
+        isOpen={isFirstTimeGuideOpen}
+        onClose={() => setIsFirstTimeGuideOpen(false)}
+      />
     </DefaultLayout>
   );
 };

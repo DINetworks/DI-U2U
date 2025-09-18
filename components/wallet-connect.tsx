@@ -306,7 +306,7 @@ export function WalletConnect() {
         Connect Wallet
       </Button>
 
-      <Modal backdrop="blur" isOpen={isOpen} onClose={onClose}>
+      <Modal className="p-4" backdrop="blur" isOpen={isOpen} onClose={onClose}>
         <ModalContent>
           <ModalHeader>Connect Wallet</ModalHeader>
           <ModalBody className="pb-6">

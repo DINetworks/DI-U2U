@@ -159,7 +159,7 @@ export default function GaslessBatchTransfer({
 
           <div className="flex justify-between items-center">
             <Button
-              color="warning"
+              color="success"
               variant="flat"
               onPress={addTransfer}
               startContent={<span>+</span>}
