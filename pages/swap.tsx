@@ -12,6 +12,7 @@ import DefaultLayout from '@/layouts/default';
 import { useWeb3 } from '@/hooks/useWeb3';
 import { useTokenAndChainStore } from '@/store/useTokenAndChainStore';
 import { useTokenBalance } from '@/hooks/useTokenBalance';
+import { useSwapQuote } from '@/hooks/useSwapQuote';
 
 import GasFeeDisplay from '@/components/swap/GasFeeDisplay';
 import RouterStepsModal from '@/components/swap/RouterStepsModal';
@@ -19,9 +20,9 @@ import SwapButton from '@/components/swap/SwapButton';
 import TokenChainSelector from '@/components/swap/TokenChainSelector';
 import ChainTokenSelectionModal from '@/components/swap/ChainTokenSelectionModal';
 
-import { SwapToken, SwapChain, SwapQuote, CrossChainRoute } from '@/types/swap';
-import { getSwapRoutes, executeSwap } from '@/utils/mockSwapApi';
-import { normalizeTokenLogoURI } from '@/utils/token';
+import { SwapToken, SwapChain, CrossChainRoute } from '@/types/swap';
+import { executeSwap } from '@/utils/mockSwapApi';
+// import { normalizeTokenLogoURI } from '@/utils/token';
 
 const SwapPage: NextPage = () => {
   const { isConnected, address } = useWeb3();
@@ -36,10 +37,7 @@ const SwapPage: NextPage = () => {
   const [slippage, setSlippage] = useState(0.5); // 0.5%
 
   // UI state
-  const [isLoadingQuote, setIsLoadingQuote] = useState(false);
   const [isExecutingSwap, setIsExecutingSwap] = useState(false);
-  const [quote, setQuote] = useState<SwapQuote | null>(null);
-  const [error, setError] = useState<string | null>(null);
   const [isRouterModalOpen, setIsRouterModalOpen] = useState(false);
   const [selectedRoute, setSelectedRoute] = useState<CrossChainRoute | null>(null);
 
@@ -69,6 +67,17 @@ const SwapPage: NextPage = () => {
     decimals: sourceToken?.decimals || 18,
   });
 
+  // Use the swap quote hook with auto-refresh
+  const { quote, isLoading: isLoadingQuote, isError, error, refetch } = useSwapQuote({
+    sourceChain,
+    destinationChain,
+    sourceToken,
+    destinationToken,
+    amount,
+    slippage,
+    enabled: !!sourceChain && !!destinationChain && !!sourceToken && !!destinationToken && !!amount
+  });
+
   // Initialize default chains
   useEffect(() => {
     if (evmChains.length > 0 && !sourceChain) {
@@ -82,56 +91,12 @@ const SwapPage: NextPage = () => {
     }
   }, [evmChains, sourceChain]);
 
-  // Get swap quote
-  const getQuote = useCallback(async () => {
-    if (!sourceChain || !destinationChain || !sourceToken || !destinationToken || !amount) {
-      return;
-    }
-
-    setIsLoadingQuote(true);
-    setError(null);
-
-    try {
-      const request = {
-        sourceChainId: sourceChain.id,
-        destinationChainId: destinationChain.id,
-        sourceTokenAddress: sourceToken.address,
-        destinationTokenAddress: destinationToken.address,
-        amount,
-        slippage
-      };
-
-      const response = await getSwapRoutes(request);
-
-      if (response.success && response.data) {
-        setQuote(response.data);
-      } else {
-        setError(response.error || 'Failed to get quote');
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to get quote');
-    } finally {
-      setIsLoadingQuote(false);
-    }
-  }, [sourceChain, destinationChain, sourceToken, destinationToken, amount, slippage]);
-
-  // Auto-get quote when parameters change
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      if (sourceChain && destinationChain && sourceToken && destinationToken && amount) {
-        getQuote();
-      }
-    }, 1000); // Debounce for 1 second
-
-    return () => clearTimeout(timeoutId);
-  }, [sourceChain, destinationChain, sourceToken, destinationToken, amount, getQuote]);
 
   // Execute swap
   const handleSwap = async () => {
     if (!quote || !address) return;
 
     setIsExecutingSwap(true);
-    setError(null);
 
     try {
       const request = {
@@ -147,12 +112,11 @@ const SwapPage: NextPage = () => {
         console.log('Swap executed successfully:', response.data);
         // Reset form
         setAmount('');
-        setQuote(null);
       } else {
-        setError(response.error || 'Swap execution failed');
+        console.error('Swap execution failed:', response.error || 'Unknown error');
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Swap execution failed');
+      console.error('Swap execution failed:', err instanceof Error ? err.message : 'Unknown error');
     } finally {
       setIsExecutingSwap(false);
     }
@@ -167,7 +131,6 @@ const SwapPage: NextPage = () => {
     setSourceToken(destinationToken);
     setDestinationChain(tempChain);
     setDestinationToken(tempToken);
-    setQuote(null);
   };
 
   // Open router modal
@@ -236,21 +199,18 @@ const SwapPage: NextPage = () => {
       <section className="relative z-10 flex flex-col items-center justify-center gap-4 py-6 md:py-12">
         <motion.div
           animate={{ opacity: 1, y: 0 }}
-          className="inline-block max-w-3xl text-center justify-center"
+          className="inline-block max-w-2xl text-center justify-center"
           initial={{ opacity: 0, y: 20 }}
           transition={{ duration: 0.5 }}
         >
           <div className="flex items-center justify-center gap-4">
             <h1 className={title({ size: "lg", class: "gradient-metal" })}>
-              IU2U Cross-Chain Swap
+              Cross-Chain Swap
             </h1>
           </div>
-          <h2 className={subtitle({ class: "mt-4 text-gray-300" })}>
-            Swap tokens across chains with optimal routing powered by 30+ DEXes
-          </h2>
         </motion.div>
 
-        <div className="w-full max-w-3xl">
+        <div className="w-full max-w-2xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             transition={{ duration: 0.5, delay: 0.2 }}
@@ -259,7 +219,7 @@ const SwapPage: NextPage = () => {
             <Card className="bg-[#ffffff]/25 backdrop-blur-sm p-6">
               <CardHeader>
                 <div className='flex flex-col gap-2'>
-                  <h2 className="text-2xl font-bold text-white">Cross-Chain Swap</h2>
+                  <h2 className="text-2xl font-bold text-white">Exchange</h2>
                   <p className="text-gray-300 text-sm">
                     Find the best rates across multiple DEXes and chains
                   </p>
@@ -337,7 +297,7 @@ const SwapPage: NextPage = () => {
                             />
                           </svg>
                         </Button>
-                        </motion.div>
+                      </motion.div>
 
                       {/* Destination Token & Chain Selector */}
                       <TokenChainSelector
@@ -387,6 +347,7 @@ const SwapPage: NextPage = () => {
                               <h4 className="text-lg font-semibold text-green-400">Best Route Found</h4>
                               <Button
                                 size="sm"
+                                color="success"
                                 variant="flat"
                                 onPress={() => openRouterModal(quote.bestRoute)}
                                 className="text-xs"
@@ -436,12 +397,20 @@ const SwapPage: NextPage = () => {
                       )}
 
                       {/* Error Display */}
-                      {error && (
+                      {isError && error && (
                         <Card className="bg-red-900/20 border border-red-500/20">
                           <CardBody className="p-4">
-                            <p className="text-red-400 text-sm">{error}</p>
+                            <p className="text-red-400 text-sm">{error.message}</p>
                           </CardBody>
                         </Card>
+                      )}
+
+                      {/* Loading State */}
+                      {isLoadingQuote && (
+                        <div className="flex items-center justify-center gap-3 py-4">
+                          <Spinner size="sm" />
+                          <span className="text-gray-300">Finding optimal routes across 30+ DEXes...</span>
+                        </div>
                       )}
 
                       {/* Swap Button */}
@@ -451,22 +420,16 @@ const SwapPage: NextPage = () => {
                         transition={{ delay: 0.6, duration: 0.4 }}
                       >
                         <SwapButton
-                          onClick={quote ? handleSwap : getQuote}
-                          disabled={!canGetQuote}
+                          onClick={handleSwap}
+                          disabled={!canGetQuote || !quote}
                           loading={isLoadingQuote || isExecutingSwap}
                           quote={quote}
                         >
-                          {quote ? 'Execute Swap' : 'Get Quote'}
+                          Execute Swap
                         </SwapButton>
                       </motion.div>
 
-                      {/* Loading State */}
-                      {isLoadingQuote && (
-                        <div className="flex items-center justify-center gap-3 py-4">
-                          <Spinner size="sm" />
-                          <span className="text-gray-300">Finding optimal routes across 30+ DEXes...</span>
-                        </div>
-                      )}
+                      
                     </CardBody>
                   </motion.div>
                 ) : (

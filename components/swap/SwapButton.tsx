@@ -13,17 +13,16 @@ export default function SwapButton({
     if (loading) {
       return (
         <div className="flex items-center gap-2">
-          <Spinner size="sm" color="white" />
-          <span>Processing...</span>
+          <span>Finding best routes...</span>
         </div>
       );
     }
 
     if (!quote) {
-      return "Get Quote";
+      return "No available route";
     }
 
-    return children || "Swap Tokens";
+    return children || "Exchange Token";
   };
 
   const getButtonColor = () => {

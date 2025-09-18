@@ -73,6 +73,7 @@ export default function ChainTokenSelectionModal({
           <Button
             size="sm"
             variant="flat"
+            color="warning"
             onPress={onCancel}
           >
             Cancel

@@ -118,7 +118,7 @@ function generateMockCrossChainRoute(
 export async function getSwapRoutes(request: RouteRequest): Promise<RouteResponse> {
   try {
     // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 1500 + Math.random() * 1000));
+    await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 1000));
 
     // Mock chains and tokens (in real app, these would come from useTokenAndChains hook)
     const mockChains = [
@@ -130,7 +130,7 @@ export async function getSwapRoutes(request: RouteRequest): Promise<RouteRespons
     ];
 
     const mockTokens = [
-      { address: '0xA0b86a33E6441e88C5F2712C3E9b74F5c4d6E3E', symbol: 'ETH', usdPrice: 2500, chainId: '1' },
+      { address: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee', symbol: 'ETH', usdPrice: 2500, chainId: '1' },
       { address: '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d', symbol: 'USDC', usdPrice: 1, chainId: '56' },
       { address: '0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0', symbol: 'MATIC', usdPrice: 0.8, chainId: '137' },
       { address: '0x912CE59144191C1204E64559FE8253a0e49E6548', symbol: 'ARB', usdPrice: 1.2, chainId: '42161' },
