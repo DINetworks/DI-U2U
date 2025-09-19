@@ -1,6 +1,7 @@
-import { Button } from '@heroui/button';
-import { useRouter } from 'next/router';
-import PoolCard from './PoolCard';
+import { Button } from "@heroui/button";
+import { useRouter } from "next/router";
+
+import PoolCard from "./PoolCard";
 
 interface Pool {
   chainId: number;
@@ -21,7 +22,11 @@ interface CategorySectionProps {
   category: string;
 }
 
-export default function CategorySection({ title, pools, category }: CategorySectionProps) {
+export default function CategorySection({
+  title,
+  pools,
+  category,
+}: CategorySectionProps) {
   const router = useRouter();
 
   return (
@@ -29,9 +34,9 @@ export default function CategorySection({ title, pools, category }: CategorySect
       <div className="flex items-center justify-between">
         <h3 className="text-xl font-semibold text-white">{title}</h3>
         <Button
+          color="primary"
           size="sm"
           variant="flat"
-          color="primary"
           onPress={() => router.push(`/earn/pools?category=${category}`)}
         >
           View All
@@ -41,7 +46,11 @@ export default function CategorySection({ title, pools, category }: CategorySect
       {pools.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {pools.slice(0, 9).map((pool, index) => (
-            <PoolCard key={`${pool.address}-${index}`} pool={pool} category={category} />
+            <PoolCard
+              key={`${pool.address}-${index}`}
+              category={category}
+              pool={pool}
+            />
           ))}
         </div>
       ) : (

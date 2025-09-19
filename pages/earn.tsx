@@ -1,20 +1,23 @@
-import { useState, useEffect } from 'react';
-import { NextPage } from 'next';
-import Head from 'next/head';
-import { motion } from 'framer-motion';
-import { Card, CardBody, CardHeader } from '@heroui/card';
-import { Button } from '@heroui/button';
-import { Spinner } from '@heroui/spinner';
-import { title, subtitle } from '@/components/primitives';
-import DefaultLayout from '@/layouts/default';
-import { useRouter } from 'next/router';
-import axios from 'axios';
-import CategorySection from '@/components/earn/CategorySection';
-import { EarnPoolsResponse, Pool } from '@/types/earn';
+import { useState, useEffect } from "react";
+import { NextPage } from "next";
+import Head from "next/head";
+import { motion } from "framer-motion";
+import { Card, CardBody, CardHeader } from "@heroui/card";
+import { Button } from "@heroui/button";
+import { Spinner } from "@heroui/spinner";
+import { useRouter } from "next/router";
+import axios from "axios";
+
+import { title, subtitle } from "@/components/primitives";
+import DefaultLayout from "@/layouts/default";
+import CategorySection from "@/components/earn/CategorySection";
+import { EarnPoolsResponse } from "@/types/earn";
 
 const EarnPage: NextPage = () => {
   const router = useRouter();
-  const [poolsData, setPoolsData] = useState<EarnPoolsResponse['data'] | null>(null);
+  const [poolsData, setPoolsData] = useState<EarnPoolsResponse["data"] | null>(
+    null,
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -23,17 +26,17 @@ const EarnPage: NextPage = () => {
       try {
         const response = await axios.get<EarnPoolsResponse>(
           process.env.NEXT_PUBLIC_EARN_POOLS!,
-          { timeout: 30000 }
+          { timeout: 30000 },
         );
 
         if (response.data.code === 0) {
           setPoolsData(response.data.data);
         } else {
-          setError('Failed to fetch pools data');
+          setError("Failed to fetch pools data");
         }
       } catch (err) {
-        console.error('Error fetching pools data:', err);
-        setError('Failed to load pools data');
+        console.error("Error fetching pools data:", err);
+        setError("Failed to load pools data");
       } finally {
         setIsLoading(false);
       }
@@ -42,12 +45,14 @@ const EarnPage: NextPage = () => {
     fetchPoolsData();
   }, []);
 
-
   return (
     <DefaultLayout>
       <Head>
         <title>Smart Earn - IU2U</title>
-        <meta name="description" content="Earn from Liquidity Provisioning with Zap Technology" />
+        <meta
+          content="Earn from Liquidity Provisioning with Zap Technology"
+          name="description"
+        />
       </Head>
 
       {/* Hero Section */}
@@ -64,7 +69,9 @@ const EarnPage: NextPage = () => {
             </h1>
           </div>
           <p className={subtitle({ class: "text-gray-300" })}>
-            Unlock the full potential of your assets. Offering data, tools, and utilities—centered around Zap technology—to help you maximize earnings from your liquidity across various DeFi protocols.
+            Unlock the full potential of your assets. Offering data, tools, and
+            utilities—centered around Zap technology—to help you maximize
+            earnings from your liquidity across various DeFi protocols.
           </p>
         </motion.div>
 
@@ -78,17 +85,20 @@ const EarnPage: NextPage = () => {
               {/* Liquidity Pools Card */}
               <Card className="bg-[#ffffff]/25 backdrop-blur-sm p-4">
                 <CardHeader>
-                  <h3 className="text-xl font-bold text-white">Liquidity Pools</h3>
+                  <h3 className="text-xl font-bold text-white">
+                    Liquidity Pools
+                  </h3>
                 </CardHeader>
                 <CardBody>
                   <p className="text-gray-300 mb-4">
-                    Explore and instantly add liquidity to high-APY pools the easy way with Zap Technology.
+                    Explore and instantly add liquidity to high-APY pools the
+                    easy way with Zap Technology.
                   </p>
                   <Button
+                    className="w-full"
                     color="primary"
                     variant="solid"
-                    onPress={() => router.push('/earn/pools')}
-                    className="w-full"
+                    onPress={() => router.push("/earn/pools")}
                   >
                     Explore Pools
                   </Button>
@@ -98,17 +108,20 @@ const EarnPage: NextPage = () => {
               {/* Liquidity Positions Card */}
               <Card className="bg-[#ffffff]/25 backdrop-blur-sm p-4">
                 <CardHeader>
-                  <h3 className="text-xl font-bold text-white">Liquidity Positions</h3>
+                  <h3 className="text-xl font-bold text-white">
+                    Liquidity Positions
+                  </h3>
                 </CardHeader>
                 <CardBody>
                   <p className="text-gray-300 mb-4">
-                    Track, adjust, and optimize your positions to stay in control of your DeFi journey.
+                    Track, adjust, and optimize your positions to stay in
+                    control of your DeFi journey.
                   </p>
                   <Button
+                    className="w-full"
                     color="success"
                     variant="solid"
-                    onPress={() => router.push('/earn/positions')}
-                    className="w-full"
+                    onPress={() => router.push("/earn/positions")}
                   >
                     Explore My Positions
                   </Button>
@@ -130,33 +143,33 @@ const EarnPage: NextPage = () => {
               ) : poolsData ? (
                 <>
                   <CategorySection
-                    title="🚜 Farming Pools"
-                    pools={poolsData.farmingPools || []}
                     category="farming_pool"
+                    pools={poolsData.farmingPools || []}
+                    title="🚜 Farming Pools"
                   />
 
                   <CategorySection
-                    title="🔥 Highlighted Pools"
-                    pools={poolsData.highlightedPools}
                     category="highlighted_pool"
+                    pools={poolsData.highlightedPools}
+                    title="🔥 Highlighted Pools"
                   />
 
                   <CategorySection
-                    title="📈 High APR"
-                    pools={poolsData.highAPR}
                     category="high_apr"
+                    pools={poolsData.highAPR}
+                    title="📈 High APR"
                   />
 
                   <CategorySection
-                    title="💎 Solid Earning"
-                    pools={poolsData.solidEarning}
                     category="solid_earning"
+                    pools={poolsData.solidEarning}
+                    title="💎 Solid Earning"
                   />
 
                   <CategorySection
-                    title="🛡️ Low Volatility"
-                    pools={poolsData.lowVolatility}
                     category="low_volatility"
+                    pools={poolsData.lowVolatility}
+                    title="🛡️ Low Volatility"
                   />
                 </>
               ) : null}

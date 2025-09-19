@@ -7,9 +7,10 @@ import {
   ModalFooter,
   Button,
   Image,
-  Input
+  Input,
 } from "@heroui/react";
 import { Address } from "viem";
+
 import { normalizeTokenLogoURI } from "@/utils/token";
 
 interface Token {
@@ -50,19 +51,21 @@ export default function ApproveTokenDialog({
       const timer = setTimeout(() => {
         searchInputRef.current?.focus();
       }, 100);
+
       return () => clearTimeout(timer);
     }
   }, [isOpen]);
 
   // Sort tokens: approved tokens first, then unapproved, with search filtering
   const sortedTokens = useMemo(() => {
-    const approvedAddresses = new Set(approvedTokens.map(t => t.address));
+    const approvedAddresses = new Set(approvedTokens.map((t) => t.address));
 
     // Filter tokens based on search query
-    const filteredTokens = tokensInChain.filter(token => {
+    const filteredTokens = tokensInChain.filter((token) => {
       if (!searchQuery.trim()) return true;
 
       const query = searchQuery.toLowerCase();
+
       return (
         token.name.toLowerCase().includes(query) ||
         token.symbol.toLowerCase().includes(query) ||
@@ -70,8 +73,13 @@ export default function ApproveTokenDialog({
       );
     });
 
-    const approved = filteredTokens.filter(token => approvedAddresses.has(token.address));
-    const unapproved = filteredTokens.filter(token => !approvedAddresses.has(token.address));
+    const approved = filteredTokens.filter((token) =>
+      approvedAddresses.has(token.address),
+    );
+    const unapproved = filteredTokens.filter(
+      (token) => !approvedAddresses.has(token.address),
+    );
+
     return [...approved, ...unapproved];
   }, [tokensInChain, approvedTokens, searchQuery]);
 
@@ -91,48 +99,66 @@ export default function ApproveTokenDialog({
     }
   };
 
-  const title = 'Approve Token';
-  const buttonText = 'Approve';
-  const buttonColor = 'success';
+  const title = "Approve Token";
+  const buttonText = "Approve";
+  const buttonColor = "success";
 
   return (
     <Modal
+      aria-describedby="approve-token-modal-description"
+      aria-labelledby="approve-token-modal-title"
       backdrop="blur"
-      isOpen={isOpen}
-      onClose={onClose}
-      size="lg"
       className="p-4"
       disableAnimation={true}
-      aria-labelledby="approve-token-modal-title"
-      aria-describedby="approve-token-modal-description"
+      isOpen={isOpen}
+      size="lg"
+      onClose={onClose}
     >
       <ModalContent>
         <ModalHeader>
-          <h3 id="approve-token-modal-title" className="text-xl font-bold">{title}</h3>
+          <h3 className="text-xl font-bold" id="approve-token-modal-title">
+            {title}
+          </h3>
         </ModalHeader>
         <ModalBody className="space-y-4">
-          <div id="approve-token-modal-description" className="text-sm text-gray-400 mb-4">
-            💡 Approve tokens to enable gasless transactions through the meta-transaction gateway.
+          <div
+            className="text-sm text-gray-400 mb-4"
+            id="approve-token-modal-description"
+          >
+            💡 Approve tokens to enable gasless transactions through the
+            meta-transaction gateway.
           </div>
 
           {/* Search Input */}
           <Input
             ref={searchInputRef}
-            placeholder="Search tokens by name, symbol, or address..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
             className="mb-4"
+            placeholder="Search tokens by name, symbol, or address..."
             startContent={
-              <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              <svg
+                className="w-4 h-4 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                />
               </svg>
             }
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
           />
 
           {/* Token List */}
           <div className="h-96 overflow-y-auto space-y-2 pr-2">
             {sortedTokens.map((token) => {
-              const isApproved = approvedTokens.some(t => t.address === token.address);
+              const isApproved = approvedTokens.some(
+                (t) => t.address === token.address,
+              );
               const isSelected = selectedToken?.address === token.address;
 
               return (
@@ -140,19 +166,27 @@ export default function ApproveTokenDialog({
                   key={token.address}
                   className={`p-3 rounded-lg border cursor-pointer transition-all duration-200 ${
                     isSelected
-                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                      : 'border-gray-200 dark:border-gray-700 hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/10'
+                      ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
+                      : "border-gray-200 dark:border-gray-700 hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/10"
                   }`}
+                  role="button"
+                  tabIndex={0}
                   onClick={() => handleTokenSelect(token)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      handleTokenSelect(token);
+                    }
+                  }}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 relative flex-shrink-0">
                         <Image
-                          src={normalizeTokenLogoURI(token.logoURI)}
                           alt={token.symbol}
                           className="rounded-full object-cover"
-                          fallbackSrc='/images/token-placeholder.png'
+                          fallbackSrc="/images/token-placeholder.png"
+                          src={normalizeTokenLogoURI(token.logoURI)}
                         />
                       </div>
                       <div>
@@ -170,8 +204,16 @@ export default function ApproveTokenDialog({
                       )}
                       {isSelected && (
                         <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
-                          <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                          <svg
+                            className="w-3 h-3 text-white"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
+                            <path
+                              clipRule="evenodd"
+                              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                              fillRule="evenodd"
+                            />
                           </svg>
                         </div>
                       )}
@@ -187,13 +229,15 @@ export default function ApproveTokenDialog({
               <div className="text-sm font-medium">Selected Token:</div>
               <div className="flex items-center gap-2 mt-1">
                 <Image
-                  src={normalizeTokenLogoURI(selectedToken.logoURI)}
                   alt={selectedToken.symbol}
-                  width={20}
-                  height={20}
                   className="rounded-full"
+                  height={20}
+                  src={normalizeTokenLogoURI(selectedToken.logoURI)}
+                  width={20}
                 />
-                <span className="text-sm">{selectedToken.name} ({selectedToken.symbol})</span>
+                <span className="text-sm">
+                  {selectedToken.name} ({selectedToken.symbol})
+                </span>
               </div>
             </div>
           )}
@@ -204,9 +248,9 @@ export default function ApproveTokenDialog({
           </Button>
           <Button
             color={buttonColor as any}
-            onPress={handleSubmit}
-            isLoading={isLoading}
             disabled={!selectedToken}
+            isLoading={isLoading}
+            onPress={handleSubmit}
           >
             {isLoading ? `${buttonText}ing...` : buttonText}
           </Button>

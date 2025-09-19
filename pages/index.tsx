@@ -2,7 +2,6 @@ import { useRouter } from "next/router";
 import { Link } from "@heroui/link";
 import { Button } from "@heroui/button";
 import { Card, CardBody, CardHeader } from "@heroui/card";
-import { Chip } from "@heroui/chip";
 import { motion } from "framer-motion";
 
 import { title, subtitle } from "@/components/primitives";
@@ -26,10 +25,12 @@ export default function IndexPage() {
           transition={{ duration: 0.5 }}
         >
           <h1 className={title({ size: "lg", class: "gradient-metal" })}>
-             Decentralized Interoperability <br/>DI Protocol
+            Decentralized Interoperability <br />
+            DI Protocol
           </h1>
           <h2 className={subtitle({ class: "mt-4 text-gray-300" })}>
-            Revolutionizing Cross-Chain Interoperability with U2U as the Universal Gas Token & Gateway
+            Revolutionizing Cross-Chain Interoperability with U2U as the
+            Universal Gas Token & Gateway
           </h2>
         </motion.div>
 
@@ -150,7 +151,9 @@ export default function IndexPage() {
                     <li>• U2U as primary gas token across all chains</li>
                     <li>• Off-chain transaction signing</li>
                     <li>• Automatic U2U-to-native gas conversion</li>
-                    <li>• Meta-transaction relayers execute on behalf of users</li>
+                    <li>
+                      • Meta-transaction relayers execute on behalf of users
+                    </li>
                   </ul>
                 </CardBody>
               </Card>
@@ -232,63 +235,6 @@ export default function IndexPage() {
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              whileInView={{ opacity: 1, y: 0 }}
-            >
-              <Card className="h-full bg-[#ffffff]/20 text-white hover:scale-105 transition-transform duration-300 p-4 backdrop-blur-sm">
-                <CardHeader className="pb-0 pt-6 px-6 text-center">
-                  <div className="w-full">
-                    <div className="flex justify-center">
-                      <svg
-                        fill="none"
-                        height="60"
-                        viewBox="0 0 24 24"
-                        width="60"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <rect
-                          height="14"
-                          rx="2"
-                          stroke="white"
-                          strokeWidth="2"
-                          width="20"
-                          x="2"
-                          y="3"
-                        />
-                        <circle
-                          cx="8"
-                          cy="14"
-                          r="2"
-                          stroke="white"
-                          strokeWidth="2"
-                        />
-                        <path
-                          d="M16 10L18 8L20 10"
-                          stroke="white"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                        />
-                      </svg>
-                    </div>
-                    <h3 className="text-2xl font-bold text-white mt-4">
-                      Cross-Chain Swap
-                    </h3>
-                  </div>
-                </CardHeader>
-                <CardBody className="px-6 pb-6">
-                  <ul className="space-y-2 text-sm text-white/90 font-medium">
-                    <li>• DEX Aggregator & Liquidity Router</li>
-                    <li>• Slippage optimization</li>
-                    <li>• Batch transactions</li>
-                    <li>• Optimal routing algorithms</li>
-                  </ul>
-                </CardBody>
-              </Card>
-            </motion.div>
-
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               transition={{ duration: 0.5, delay: 0.2 }}
@@ -396,6 +342,63 @@ export default function IndexPage() {
                 </CardBody>
               </Card>
             </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              whileInView={{ opacity: 1, y: 0 }}
+            >
+              <Card className="h-full bg-[#ffffff]/20 text-white hover:scale-105 transition-transform duration-300 p-4 backdrop-blur-sm">
+                <CardHeader className="pb-0 pt-6 px-6 text-center">
+                  <div className="w-full">
+                    <div className="flex justify-center">
+                      <svg
+                        fill="none"
+                        height="60"
+                        viewBox="0 0 24 24"
+                        width="60"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <rect
+                          height="14"
+                          rx="2"
+                          stroke="white"
+                          strokeWidth="2"
+                          width="20"
+                          x="2"
+                          y="3"
+                        />
+                        <circle
+                          cx="8"
+                          cy="14"
+                          r="2"
+                          stroke="white"
+                          strokeWidth="2"
+                        />
+                        <path
+                          d="M16 10L18 8L20 10"
+                          stroke="white"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                        />
+                      </svg>
+                    </div>
+                    <h3 className="text-2xl font-bold text-white mt-4">
+                      Cross-Chain Swap
+                    </h3>
+                  </div>
+                </CardHeader>
+                <CardBody className="px-6 pb-6">
+                  <ul className="space-y-2 text-sm text-white/90 font-medium">
+                    <li>• DEX Aggregator & Liquidity Router</li>
+                    <li>• Slippage optimization</li>
+                    <li>• Batch transactions</li>
+                    <li>• Optimal routing algorithms</li>
+                  </ul>
+                </CardBody>
+              </Card>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -427,7 +430,9 @@ export default function IndexPage() {
                 <CardBody className="text-center">
                   <div className="text-4xl mb-4">🚀</div>
                   <h3 className="text-lg font-bold mb-2">DEX Aggregators</h3>
-                  <p className="text-sm text-white/80">Cross-chain swap platforms</p>
+                  <p className="text-sm text-white/80">
+                    Cross-chain swap platforms
+                  </p>
                 </CardBody>
               </Card>
             </motion.div>
@@ -441,7 +446,9 @@ export default function IndexPage() {
                 <CardBody className="text-center">
                   <div className="text-4xl mb-4">💰</div>
                   <h3 className="text-lg font-bold mb-2">Lending Protocols</h3>
-                  <p className="text-sm text-white/80">Cross-chain borrowing & lending</p>
+                  <p className="text-sm text-white/80">
+                    Cross-chain borrowing & lending
+                  </p>
                 </CardBody>
               </Card>
             </motion.div>
@@ -454,8 +461,12 @@ export default function IndexPage() {
               <Card className="h-full bg-[#ffffff]/20 text-white hover:scale-105 transition-transform duration-300 p-4 backdrop-blur-sm">
                 <CardBody className="text-center">
                   <div className="text-4xl mb-4">📊</div>
-                  <h3 className="text-lg font-bold mb-2">Liquidity Provisioning</h3>
-                  <p className="text-sm text-white/80">Multi-chain yield aggregation</p>
+                  <h3 className="text-lg font-bold mb-2">
+                    Liquidity Provisioning
+                  </h3>
+                  <p className="text-sm text-white/80">
+                    Multi-chain yield aggregation
+                  </p>
                 </CardBody>
               </Card>
             </motion.div>
@@ -469,7 +480,9 @@ export default function IndexPage() {
                 <CardBody className="text-center">
                   <div className="text-4xl mb-4">🔗</div>
                   <h3 className="text-lg font-bold mb-2">Staking & Farming</h3>
-                  <p className="text-sm text-white/80">Cross-chain yield farming</p>
+                  <p className="text-sm text-white/80">
+                    Cross-chain yield farming
+                  </p>
                 </CardBody>
               </Card>
             </motion.div>
@@ -488,8 +501,17 @@ export default function IndexPage() {
           <h2 className={title({ size: "lg", class: "gradient-metal" })}>
             Strategic Impact for U2U
           </h2>
-          <p className={subtitle({ class: "mt-4 mb-8 max-w-4xl mx-auto" })}>
-            By implementing DI Protocol, U2U establishes itself as a leader in blockchain interoperability, significantly enhancing U2U's core utility while driving adoption and network growth. This solution lays the groundwork for truly seamless, gas-efficient, and highly programmable cross-chain transactions—a critical step toward scaling DeFi beyond siloed ecosystems.
+          <p
+            className={subtitle({
+              class: "mt-4 mb-8 max-w-4xl mx-auto text-gray-400",
+            })}
+          >
+            By implementing DI Protocol, U2U establishes itself as a leader in
+            blockchain interoperability, significantly enhancing U2U&apos;s core
+            utility while driving adoption and network growth. This solution
+            lays the groundwork for truly seamless, gas-efficient, and highly
+            programmable cross-chain transactions—a critical step toward scaling
+            DeFi beyond siloed ecosystems.
           </p>
           <div className="flex gap-8 justify-center">
             <Button

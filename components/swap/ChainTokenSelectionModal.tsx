@@ -1,12 +1,13 @@
-import { motion } from 'framer-motion';
-import { Button } from '@heroui/button';
-import { Input } from '@heroui/input';
-import { Image } from '@heroui/image';
-import { SwapToken, SwapChain } from '@/types/swap';
-import { normalizeTokenLogoURI } from '@/utils/token';
+import { motion } from "framer-motion";
+import { Button } from "@heroui/button";
+import { Input } from "@heroui/input";
+import { Image } from "@heroui/image";
+
+import { SwapToken, SwapChain } from "@/types/swap";
+import { normalizeTokenLogoURI } from "@/utils/token";
 
 interface ChainTokenSelectionModalProps {
-  selectionType: 'source' | 'destination';
+  selectionType: "source" | "destination";
   chains: SwapChain[];
   tokens: SwapToken[];
   selectedChain: SwapChain | null;
@@ -30,52 +31,52 @@ export default function ChainTokenSelectionModal({
   onTokenSearchChange,
   onChainClick,
   onTokenSelect,
-  onCancel
+  onCancel,
 }: ChainTokenSelectionModalProps) {
   // Filter chains based on search
-  const filteredChains = chains.filter(chain =>
-    chain.networkName.toLowerCase().includes(chainSearch.toLowerCase()) ||
-    chain.nativeCurrency.symbol.toLowerCase().includes(chainSearch.toLowerCase())
+  const filteredChains = chains.filter(
+    (chain) =>
+      chain.networkName.toLowerCase().includes(chainSearch.toLowerCase()) ||
+      chain.nativeCurrency.symbol
+        .toLowerCase()
+        .includes(chainSearch.toLowerCase()),
   );
 
   // Filter tokens based on selected chain and search
   const availableTokens = selectedChain
-    ? tokens.filter(token =>
-        token.chainId.toString() === selectedChain.id &&
-        (token.symbol.toLowerCase().includes(tokenSearch.toLowerCase()) ||
-         token.name.toLowerCase().includes(tokenSearch.toLowerCase()))
+    ? tokens.filter(
+        (token) =>
+          token.chainId.toString() === selectedChain.id &&
+          (token.symbol.toLowerCase().includes(tokenSearch.toLowerCase()) ||
+            token.name.toLowerCase().includes(tokenSearch.toLowerCase())),
       )
     : [];
 
   return (
     <motion.div
       key="selection-interface"
-      initial={{ opacity: 0, x: 20, scale: 0.98 }}
       animate={{ opacity: 1, x: 0, scale: 1 }}
       exit={{ opacity: 0, x: 20, scale: 0.98 }}
+      initial={{ opacity: 0, x: 20, scale: 0.98 }}
       transition={{
         duration: 0.4,
         ease: [0.25, 0.46, 0.45, 0.94],
-        scale: { duration: 0.3 }
+        scale: { duration: 0.3 },
       }}
     >
       <div className="p-6">
         {/* Header */}
         <motion.div
+          animate={{ opacity: 1, y: 0 }}
           className="flex items-center justify-between mb-6"
           initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1, duration: 0.3 }}
         >
           <h3 className="text-lg font-semibold text-white">
-            Select {selectionType === 'source' ? 'Source' : 'Destination'} Token & Chain
+            Select {selectionType === "source" ? "Source" : "Destination"} Token
+            & Chain
           </h3>
-          <Button
-            size="sm"
-            variant="flat"
-            color="warning"
-            onPress={onCancel}
-          >
+          <Button color="warning" size="sm" variant="flat" onPress={onCancel}>
             Cancel
           </Button>
         </motion.div>
@@ -84,22 +85,24 @@ export default function ChainTokenSelectionModal({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Chains Column */}
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, x: -20 }}
             transition={{ delay: 0.2, duration: 0.4 }}
           >
-            <h4 className="text-sm font-medium text-white mb-3">Select Chain</h4>
+            <h4 className="text-sm font-medium text-white mb-3">
+              Select Chain
+            </h4>
 
             {/* Chain Search */}
             <Input
-              placeholder="Search chains..."
-              value={chainSearch}
-              onChange={(e) => onChainSearchChange(e.target.value)}
               className="mb-4"
               classNames={{
                 input: "bg-white/10 text-white placeholder-gray-400",
-                inputWrapper: "bg-white/10 border-white/20"
+                inputWrapper: "bg-white/10 border-white/20",
               }}
+              placeholder="Search chains..."
+              value={chainSearch}
+              onChange={(e) => onChainSearchChange(e.target.value)}
             />
 
             {/* Chains List */}
@@ -107,22 +110,24 @@ export default function ChainTokenSelectionModal({
               {filteredChains.map((chain) => (
                 <button
                   key={chain.id}
-                  onClick={() => onChainClick(chain)}
                   className={`w-full flex items-center gap-3 p-3 rounded-lg transition-colors ${
                     selectedChain?.id === chain.id
-                      ? 'bg-blue-500/20 border border-blue-500/50'
-                      : 'hover:bg-white/10'
+                      ? "bg-blue-500/20 border border-blue-500/50"
+                      : "hover:bg-white/10"
                   }`}
+                  onClick={() => onChainClick(chain)}
                 >
                   <Image
-                    src={chain.chainIconURI}
                     alt={chain.networkName}
-                    width={32}
-                    height={32}
                     className="rounded-full"
+                    height={32}
+                    src={chain.chainIconURI}
+                    width={32}
                   />
                   <div className="text-left">
-                    <div className="font-medium text-white">{chain.networkName}</div>
+                    <div className="font-medium text-white">
+                      {chain.networkName}
+                    </div>
                     <div className="text-sm text-gray-400">
                       {chain.nativeCurrency.symbol}
                     </div>
@@ -134,25 +139,27 @@ export default function ChainTokenSelectionModal({
 
           {/* Tokens Column */}
           <motion.div
-            initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, x: 20 }}
             transition={{ delay: 0.3, duration: 0.4 }}
           >
             <h4 className="text-sm font-medium text-white mb-3">
-              {selectedChain ? `Tokens on ${selectedChain.networkName}` : 'Select a chain first'}
+              {selectedChain
+                ? `Tokens on ${selectedChain.networkName}`
+                : "Select a chain first"}
             </h4>
 
             {/* Token Search */}
             <Input
-              placeholder="Search tokens..."
-              value={tokenSearch}
-              onChange={(e) => onTokenSearchChange(e.target.value)}
-              disabled={!selectedChain}
               className="mb-4"
               classNames={{
                 input: "bg-white/10 text-white placeholder-gray-400",
-                inputWrapper: "bg-white/10 border-white/20"
+                inputWrapper: "bg-white/10 border-white/20",
               }}
+              disabled={!selectedChain}
+              placeholder="Search tokens..."
+              value={tokenSearch}
+              onChange={(e) => onTokenSearchChange(e.target.value)}
             />
 
             {/* Tokens List */}
@@ -162,23 +169,27 @@ export default function ChainTokenSelectionModal({
                   availableTokens.map((token) => (
                     <button
                       key={token.address}
-                      onClick={() => onTokenSelect(token, selectedChain)}
                       className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-colors"
+                      onClick={() => onTokenSelect(token, selectedChain)}
                     >
                       <Image
-                        src={normalizeTokenLogoURI(token.logoURI)}
                         alt={token.symbol}
-                        width={32}
-                        height={32}
                         className="rounded-full"
+                        height={32}
+                        src={normalizeTokenLogoURI(token.logoURI)}
+                        width={32}
                       />
                       <div className="text-left flex-1">
-                        <div className="font-medium text-white">{token.symbol}</div>
-                        <div className="text-sm text-gray-400">{token.name}</div>
+                        <div className="font-medium text-white">
+                          {token.symbol}
+                        </div>
+                        <div className="text-sm text-gray-400">
+                          {token.name}
+                        </div>
                       </div>
                       <div className="text-right">
                         <div className="text-sm text-gray-400">
-                          ${token.usdPrice?.toFixed(4) || 'N/A'}
+                          ${token.usdPrice?.toFixed(4) || "N/A"}
                         </div>
                       </div>
                     </button>

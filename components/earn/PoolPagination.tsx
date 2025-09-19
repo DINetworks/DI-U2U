@@ -1,4 +1,4 @@
-import { Pagination } from '@heroui/pagination';
+import { Pagination } from "@heroui/pagination";
 
 interface PoolPaginationProps {
   currentPage: number;
@@ -17,7 +17,7 @@ export default function PoolPagination({
     return null;
   }
 
-  const startItem = ((currentPage - 1) * pageSize) + 1;
+  const startItem = (currentPage - 1) * pageSize + 1;
   const endItem = Math.min(currentPage * pageSize, totalItems);
 
   return (
@@ -26,13 +26,13 @@ export default function PoolPagination({
         Showing {startItem} to {endItem} of {totalItems} pools
       </div>
       <Pagination
-        total={Math.ceil(totalItems / pageSize)}
-        page={currentPage}
-        onChange={onPageChange}
-        size="sm"
         showControls
         showShadow
         color="primary"
+        page={currentPage}
+        size="sm"
+        total={Math.ceil(totalItems / pageSize)}
+        onChange={onPageChange}
       />
     </div>
   );

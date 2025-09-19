@@ -13,6 +13,7 @@ import {
   Image,
 } from "@heroui/react";
 import { Address, parseUnits } from "viem";
+
 import { useWeb3 } from "@/hooks/useWeb3";
 import { useTokenBalance } from "@/hooks/useTokenBalance";
 import { useTokenAllowance } from "@/hooks/useTokenAllowance";
@@ -40,9 +41,12 @@ export default function DepositDialog({
   // Filter tokens by whitelisted addresses
   const availableTokens = useMemo(() => {
     if (!tokensInChain || !whitelistedTokens) return [];
-    const whitelistedSet = new Set(whitelistedTokens.map(addr => addr.toLowerCase()));
-    return tokensInChain.filter(token =>
-      whitelistedSet.has(token.address.toLowerCase())
+    const whitelistedSet = new Set(
+      whitelistedTokens.map((addr) => addr.toLowerCase()),
+    );
+
+    return tokensInChain.filter((token) =>
+      whitelistedSet.has(token.address.toLowerCase()),
     );
   }, [tokensInChain, whitelistedTokens]);
 
@@ -62,8 +66,12 @@ export default function DepositDialog({
 
   const tokenBalance = balanceData?.formatted || "0";
   const allowance = allowanceData || BigInt(0);
-  const depositAmount = amount && selectedToken ? parseUnits(amount, selectedToken.decimals) : BigInt(0);
-  const needsApproval = selectedToken && depositAmount > 0 && allowance < depositAmount;
+  const depositAmount =
+    amount && selectedToken
+      ? parseUnits(amount, selectedToken.decimals)
+      : BigInt(0);
+  const needsApproval =
+    selectedToken && depositAmount > 0 && allowance < depositAmount;
 
   // Use refs to track update sources and prevent circular updates
   const isUpdatingFromSlider = useRef(false);
@@ -74,6 +82,7 @@ export default function DepositDialog({
     if (selectedToken && tokenBalance && !isUpdatingFromInput.current) {
       isUpdatingFromSlider.current = true;
       const calculatedAmount = (parseFloat(tokenBalance) * sliderValue) / 100;
+
       setAmount(calculatedAmount.toFixed(6));
       // Reset flag after a short delay
       setTimeout(() => {
@@ -84,9 +93,15 @@ export default function DepositDialog({
 
   // Update slider when amount is manually changed
   useEffect(() => {
-    if (selectedToken && tokenBalance && amount && !isUpdatingFromSlider.current) {
+    if (
+      selectedToken &&
+      tokenBalance &&
+      amount &&
+      !isUpdatingFromSlider.current
+    ) {
       isUpdatingFromInput.current = true;
       const percentage = (parseFloat(amount) / parseFloat(tokenBalance)) * 100;
+
       if (percentage >= 0 && percentage <= 100) {
         setSliderValue(Math.round(percentage));
       }
@@ -121,16 +136,25 @@ export default function DepositDialog({
       // If approval is needed and not yet approved
       if (needsApproval && !isApproved && onApproveForVault) {
         setIsApproving(true);
-        await onApproveForVault(selectedToken.address as Address, depositAmount);
+        await onApproveForVault(
+          selectedToken.address as Address,
+          depositAmount,
+        );
         setIsApproving(false);
         setIsApproved(true);
+
         // Don't proceed with deposit - wait for user to click again
         return;
       }
 
       // Perform the deposit (either after approval or if no approval needed)
       const amountInWei = parseUnits(amount, selectedToken.decimals);
-      await onDeposit(selectedToken.address as Address, amountInWei, selectedToken);
+
+      await onDeposit(
+        selectedToken.address as Address,
+        amountInWei,
+        selectedToken,
+      );
       setAmount("");
       setSelectedToken(null);
       setIsApproved(false); // Reset for next use
@@ -143,37 +167,59 @@ export default function DepositDialog({
   };
 
   return (
-    <Modal backdrop="blur" isOpen={isOpen} onClose={onClose} size="md" className="p-4">
+    <Modal
+      backdrop="blur"
+      className="p-4"
+      isOpen={isOpen}
+      size="md"
+      onClose={onClose}
+    >
       <ModalContent>
         <ModalHeader>
           <h3 className="text-xl font-bold">Deposit U2U for Gas Credit</h3>
         </ModalHeader>
         <ModalBody className="space-y-4">
           <div>
-            <label id="deposit-token-label" className="block text-sm font-medium mb-2">Select Token</label>
+            <label
+              className="block text-sm font-medium mb-2"
+              htmlFor="deposit-token-select"
+            >
+              Select Token
+            </label>
             <Select
+              aria-labelledby="deposit-token-label"
+              id="deposit-token-select"
               placeholder="Choose token to deposit"
-              selectedKeys={selectedToken ? new Set([selectedToken.address]) : new Set()}
+              selectedKeys={
+                selectedToken ? new Set([selectedToken.address]) : new Set()
+              }
               onSelectionChange={(keys) => {
                 const selectedAddress = Array.from(keys)[0] as string;
-                const token = availableTokens.find(t => t.address === selectedAddress);
+                const token = availableTokens.find(
+                  (t) => t.address === selectedAddress,
+                );
+
                 setSelectedToken(token || null);
               }}
-              aria-labelledby="deposit-token-label"
             >
               {availableTokens.map((token) => (
-                <SelectItem key={token.address} textValue={`${token.name} (${token.symbol})`}>
+                <SelectItem
+                  key={token.address}
+                  textValue={`${token.name} (${token.symbol})`}
+                >
                   <div className="flex items-center gap-2">
                     <Image
-                      src={normalizeTokenLogoURI(token.logoURI)}
                       alt={token.symbol}
-                      width={20}
-                      height={20}
                       className="rounded-full"
+                      height={20}
+                      src={normalizeTokenLogoURI(token.logoURI)}
+                      width={20}
                     />
                     <div>
                       <div className="font-medium">{token.name}</div>
-                      <div className="text-xs text-gray-500">{token.symbol}</div>
+                      <div className="text-xs text-gray-500">
+                        {token.symbol}
+                      </div>
                     </div>
                   </div>
                 </SelectItem>
@@ -182,15 +228,14 @@ export default function DepositDialog({
           </div>
 
           <div>
-            <label id="deposit-amount-label" className="block text-sm font-medium mb-2">Amount</label>
+            <label
+              className="block text-sm font-medium mb-2"
+              htmlFor="deposit-amount-input"
+            >
+              Amount
+            </label>
             <Input
-              placeholder="Enter amount"
-              type="number"
-              value={amount}
-              onChange={(e) => {
-                isUpdatingFromSlider.current = false;
-                setAmount(e.target.value);
-              }}
+              aria-labelledby="deposit-amount-label"
               endContent={
                 <div className="pointer-events-none flex items-center">
                   <span className="text-default-400 text-small">
@@ -198,17 +243,19 @@ export default function DepositDialog({
                   </span>
                 </div>
               }
-              aria-labelledby="deposit-amount-label"
+              id="deposit-amount-input"
+              placeholder="Enter amount"
+              type="number"
+              value={amount}
+              onChange={(e) => {
+                isUpdatingFromSlider.current = false;
+                setAmount(e.target.value);
+              }}
             />
             <div className="space-y-3">
               <Slider
                 className="max-w-md mt-3"
                 color="foreground"
-                value={sliderValue}
-                onChange={(value) => {
-                  isUpdatingFromInput.current = false;
-                  setSliderValue(value as number);
-                }}
                 label={`${sliderValue}% of balance`}
                 marks={[
                   {
@@ -224,19 +271,33 @@ export default function DepositDialog({
                     label: "80%",
                   },
                 ]}
+                maxValue={100}
+                minValue={0}
                 size="sm"
                 step={0.1}
-                minValue={0}
-                maxValue={100}
+                value={sliderValue}
+                onChange={(value) => {
+                  isUpdatingFromInput.current = false;
+                  setSliderValue(value as number);
+                }}
               />
               <div className="space-y-2">
                 <div className="text-xs text-gray-400">
-                  Balance: {tokenBalance} {selectedToken ? selectedToken.symbol : ""}
+                  Balance: {tokenBalance}{" "}
+                  {selectedToken ? selectedToken.symbol : ""}
                 </div>
                 {isApproved && (
                   <div className="text-xs text-green-600 flex items-center gap-1">
-                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    <svg
+                      className="w-3 h-3"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        clipRule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        fillRule="evenodd"
+                      />
                     </svg>
                     Token approved! Click Deposit to continue.
                   </div>
@@ -246,7 +307,8 @@ export default function DepositDialog({
           </div>
 
           <div className="text-sm text-gray-400">
-            💡 Deposit tokens to build up your gas credit balance for gasless transactions.
+            💡 Deposit tokens to build up your gas credit balance for gasless
+            transactions.
           </div>
         </ModalBody>
         <ModalFooter>
@@ -255,9 +317,9 @@ export default function DepositDialog({
           </Button>
           <Button
             color="success"
-            onPress={handleDeposit}
-            isLoading={isLoading || isApproving}
             disabled={!selectedToken || !amount || parseFloat(amount) <= 0}
+            isLoading={isLoading || isApproving}
+            onPress={handleDeposit}
           >
             {isApproving
               ? "Approving..."
@@ -269,8 +331,7 @@ export default function DepositDialog({
                   ? "Approve & Deposit"
                   : isLoading
                     ? "Depositing..."
-                    : "Deposit"
-            }
+                    : "Deposit"}
           </Button>
         </ModalFooter>
       </ModalContent>

@@ -1,11 +1,11 @@
-import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 interface TokenAndChainState {
-  tokens: any[]
-  chains: any[]
-  initializedAt: number
-  setTokenAndChain: (data: Partial<TokenAndChainState>) => void
+  tokens: any[];
+  chains: any[];
+  initializedAt: number;
+  setTokenAndChain: (data: Partial<TokenAndChainState>) => void;
 }
 
 export const useTokenAndChainStore = create<TokenAndChainState>()(
@@ -14,10 +14,10 @@ export const useTokenAndChainStore = create<TokenAndChainState>()(
       tokens: [],
       chains: [],
       initializedAt: 0,
-      setTokenAndChain: (data) => set(() => data)
+      setTokenAndChain: (data) => set(() => data),
     }),
     {
-      name: 'token-chain-store'
-    }
-  )
-)
+      name: "token-chain-store",
+    },
+  ),
+);

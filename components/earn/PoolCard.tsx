@@ -1,6 +1,5 @@
-import { motion } from 'framer-motion';
-import { Card, CardBody } from '@heroui/card';
-import { useRouter } from 'next/router';
+import { motion } from "framer-motion";
+import { Card, CardBody } from "@heroui/card";
 
 interface Pool {
   chainId: number;
@@ -17,16 +16,13 @@ interface Pool {
 
 interface PoolCardProps {
   pool: Pool;
-  category: string;
 }
 
-export default function PoolCard({ pool, category }: PoolCardProps) {
-  const router = useRouter();
-
+export default function PoolCard({ pool }: PoolCardProps) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, y: 20 }}
       transition={{ duration: 0.3 }}
     >
       <Card className="bg-white/25 backdrop-blur-sm hover:bg-white/30 transition-colors cursor-pointer">
@@ -42,11 +38,11 @@ export default function PoolCard({ pool, category }: PoolCardProps) {
                     style={{ zIndex: pool.tokens.length - index }}
                   >
                     <img
-                      src={token.logoURI}
                       alt={token.symbol}
                       className="w-full h-full rounded-full"
+                      src={token.logoURI}
                       onError={(e) => {
-                        e.currentTarget.src = '/images/token-placeholder.png';
+                        e.currentTarget.src = "/images/token-placeholder.png";
                       }}
                     />
                   </div>
@@ -74,7 +70,9 @@ export default function PoolCard({ pool, category }: PoolCardProps) {
           {/* Fee Tier */}
           <div className="flex items-center justify-between text-sm">
             <span className="text-gray-400">Fee Tier</span>
-            <span className="text-white">{(pool.feeTier * 100).toFixed(2)}%</span>
+            <span className="text-white">
+              {(pool.feeTier * 100).toFixed(2)}%
+            </span>
           </div>
         </CardBody>
       </Card>

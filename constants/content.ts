@@ -76,23 +76,28 @@ export const APP_CONTENT = {
     sections: {
       whatAreGasless: {
         title: "What are Gasless Transactions?",
-        content: "Gasless transactions allow you to execute blockchain operations without paying gas fees in the native token of the chain. Instead, you pay in U2U tokens, which are converted to cover your gas costs across all supported chains.",
-        benefits: "Benefits: No need to hold native tokens, unified payment system, cross-chain compatibility",
+        content:
+          "Gasless transactions allow you to execute blockchain operations without paying gas fees in the native token of the chain. Instead, you pay in U2U tokens, which are converted to cover your gas costs across all supported chains.",
+        benefits:
+          "Benefits: No need to hold native tokens, unified payment system, cross-chain compatibility",
       },
       howItWorks: {
         title: "How It Works",
         steps: [
           {
             title: "Deposit U2U Tokens",
-            content: "Deposit U2U tokens into your gas credit vault to build up credits for gasless transactions.",
+            content:
+              "Deposit U2U tokens into your gas credit vault to build up credits for gasless transactions.",
           },
           {
             title: "Approve Tokens",
-            content: "Approve tokens you want to transfer gaslessly through the meta-transaction gateway.",
+            content:
+              "Approve tokens you want to transfer gaslessly through the meta-transaction gateway.",
           },
           {
             title: "Execute Gasless Transfers",
-            content: "Create batch transfers that execute without paying gas fees in native tokens.",
+            content:
+              "Create batch transfers that execute without paying gas fees in native tokens.",
           },
         ],
       },
@@ -101,19 +106,23 @@ export const APP_CONTENT = {
         components: [
           {
             title: "Gasless Batch Transfer",
-            content: "Main component for creating multiple token transfers. Add/remove transfer rows, select tokens, enter amounts and recipient addresses.",
+            content:
+              "Main component for creating multiple token transfers. Add/remove transfer rows, select tokens, enter amounts and recipient addresses.",
           },
           {
             title: "Gas Credit Card",
-            content: "Shows your current U2U credit balance. Use deposit/withdraw buttons to manage your gas credits.",
+            content:
+              "Shows your current U2U credit balance. Use deposit/withdraw buttons to manage your gas credits.",
           },
           {
             title: "Approved Tokens Card",
-            content: "Lists all tokens you've approved for gasless transfers. Add new approvals or remove existing ones.",
+            content:
+              "Lists all tokens you've approved for gasless transfers. Add new approvals or remove existing ones.",
           },
           {
             title: "Contracts Info",
-            content: "Displays important contract addresses and network information for transparency.",
+            content:
+              "Displays important contract addresses and network information for transparency.",
           },
         ],
       },
@@ -137,72 +146,77 @@ export const APP_CONTENT = {
     steps: [
       {
         title: "Welcome to Gasless Meta-Transactions! 🎉",
-        content: "This platform allows you to execute blockchain transactions without paying gas fees in native tokens. Instead, you pay in U2U tokens across all supported chains.",
+        content:
+          "This platform allows you to execute blockchain transactions without paying gas fees in native tokens. Instead, you pay in U2U tokens across all supported chains.",
         benefits: [
           "No need to hold native tokens for each chain",
           "Unified payment system across all chains",
           "Batch multiple transfers to save costs",
-          "Real-time gas cost estimation"
+          "Real-time gas cost estimation",
         ],
         instructions: [],
         costOptimization: [],
-        securityNotes: []
+        securityNotes: [],
       },
       {
         title: "Step 1: Build Your Gas Credit 💰",
-        content: "First, you need to deposit U2U tokens to build up your gas credit balance. This credit will be used to pay for gas fees across all supported chains.",
+        content:
+          "First, you need to deposit U2U tokens to build up your gas credit balance. This credit will be used to pay for gas fees across all supported chains.",
         benefits: [],
         instructions: [
-          "Click the \"Deposit\" button in the Gas Credit Card",
+          'Click the "Deposit" button in the Gas Credit Card',
           "Select a U2U token from the dropdown",
           "Enter the amount you want to deposit",
-          "Approve the transaction and confirm"
+          "Approve the transaction and confirm",
         ],
         costOptimization: [],
-        securityNotes: []
+        securityNotes: [],
       },
       {
         title: "Step 2: Approve Tokens for Transfer ✅",
-        content: "Before you can transfer tokens gaslessly, you need to approve them for the meta-transaction gateway. This allows the system to execute transfers on your behalf.",
+        content:
+          "Before you can transfer tokens gaslessly, you need to approve them for the meta-transaction gateway. This allows the system to execute transfers on your behalf.",
         benefits: [],
         instructions: [
-          "Click \"Approve Token\" in the Approved Tokens Card",
+          'Click "Approve Token" in the Approved Tokens Card',
           "Search and select the token you want to approve",
           "Confirm the approval transaction",
-          "Once approved, the token appears in your approved list"
+          "Once approved, the token appears in your approved list",
         ],
         costOptimization: [],
-        securityNotes: []
+        securityNotes: [],
       },
       {
         title: "Step 3: Create Gasless Transfers 🚀",
-        content: "Now you're ready to create gasless batch transfers! You can send multiple tokens to different addresses in a single transaction.",
+        content:
+          "Now you're ready to create gasless batch transfers! You can send multiple tokens to different addresses in a single transaction.",
         benefits: [],
         instructions: [
           "Select approved tokens from the dropdown",
           "Enter recipient addresses (must be valid)",
           "Specify transfer amounts",
           "Add multiple transfer rows as needed",
-          "Review costs and confirm the transaction"
+          "Review costs and confirm the transaction",
         ],
         costOptimization: [],
-        securityNotes: []
+        securityNotes: [],
       },
       {
         title: "Pro Tips & Best Practices 💡",
-        content: "Click the info icon next to the page title anytime to access the full guide and documentation.",
+        content:
+          "Click the info icon next to the page title anytime to access the full guide and documentation.",
         benefits: [],
         instructions: [],
         costOptimization: [
           "Batch multiple transfers together",
           "Check gas estimates before confirming",
-          "Monitor your credit balance"
+          "Monitor your credit balance",
         ],
         securityNotes: [
           "Double-check recipient addresses",
           "Verify token approvals",
-          "Keep sufficient U2U balance"
-        ]
+          "Keep sufficient U2U balance",
+        ],
       },
     ],
     navigation: {
@@ -239,10 +253,12 @@ export const APP_CONTENT = {
       address: "Address",
     },
     messages: {
-      insufficientCredits: "Insufficient credits. You need {amount} more U2U credits.",
+      insufficientCredits:
+        "Insufficient credits. You need {amount} more U2U credits.",
       invalidAddress: "Invalid address format",
       insufficientBalance: "Insufficient balance",
-      depositRequired: "Please deposit U2U first to enable gasless transactions",
+      depositRequired:
+        "Please deposit U2U first to enable gasless transactions",
       approvalRequired: "Token approval required",
       transactionPending: "Transaction pending...",
       transactionSuccess: "Transaction successful!",
@@ -258,50 +274,53 @@ export const APP_CONTENT = {
   // Bridge content
   bridge: {
     title: "IU2U Cross-Chain Bridge",
-    subtitle: "Seamlessly transfer IU2U tokens across multiple blockchain networks",
-    description: "Experience true interoperability with IU2U's decentralized bridge protocol. Transfer tokens, execute cross-chain contracts, and interact with dApps across supported chains.",
+    subtitle:
+      "Seamlessly transfer IU2U tokens across multiple blockchain networks",
+    description:
+      "Experience true interoperability with IU2U's decentralized bridge protocol. Transfer tokens, execute cross-chain contracts, and interact with dApps across supported chains.",
 
     tabs: {
       deposit: {
         title: "Deposit/Withdraw",
-        description: "Convert between native U2U and IU2U tokens"
+        description: "Convert between native U2U and IU2U tokens",
       },
       transfer: {
         title: "Cross-Chain Transfer",
-        description: "Send IU2U tokens to other blockchain networks"
+        description: "Send IU2U tokens to other blockchain networks",
       },
       contract: {
         title: "Contract Interaction",
-        description: "Execute smart contracts across different chains"
-      }
+        description: "Execute smart contracts across different chains",
+      },
     },
 
     operations: {
       deposit: {
         title: "Deposit U2U → IU2U",
-        description: "Convert your native U2U tokens to IU2U tokens for cross-chain use",
-        buttonText: "Deposit Tokens"
+        description:
+          "Convert your native U2U tokens to IU2U tokens for cross-chain use",
+        buttonText: "Deposit Tokens",
       },
       withdraw: {
         title: "Withdraw IU2U → U2U",
         description: "Convert IU2U tokens back to native U2U tokens",
-        buttonText: "Withdraw Tokens"
+        buttonText: "Withdraw Tokens",
       },
       transfer: {
         title: "Cross-Chain Transfer",
         description: "Send IU2U tokens to any supported blockchain network",
-        buttonText: "Transfer Tokens"
+        buttonText: "Transfer Tokens",
       },
       contractCall: {
         title: "Contract Call",
         description: "Execute smart contract functions across different chains",
-        buttonText: "Execute Contract"
+        buttonText: "Execute Contract",
       },
       contractCallWithToken: {
         title: "Contract Call with Tokens",
         description: "Execute contracts while sending IU2U tokens",
-        buttonText: "Execute with Tokens"
-      }
+        buttonText: "Execute with Tokens",
+      },
     },
 
     labels: {
@@ -313,14 +332,14 @@ export const APP_CONTENT = {
       functionData: "Function Call Data",
       balance: "Balance",
       max: "MAX",
-      sendWithCall: "Send IU2U with call"
+      sendWithCall: "Send IU2U with call",
     },
 
     placeholders: {
       enterAmount: "Enter amount",
       enterAddress: "0x...",
       enterContractAddress: "0x...",
-      enterFunctionData: "0x..."
+      enterFunctionData: "0x...",
     },
 
     messages: {
@@ -332,34 +351,37 @@ export const APP_CONTENT = {
       transactionFailed: "Transaction failed",
       preparingSignature: "Preparing signature...",
       estimatingCost: "Estimating transaction cost...",
-      switchNetwork: "Please switch to the correct network"
+      switchNetwork: "Please switch to the correct network",
     },
 
     supportedChains: {
       u2uTestnet: "U2U Nebulas Testnet",
       polygon: "Polygon",
       bsc: "BSC",
-      base: "Base"
+      base: "Base",
     },
 
     features: [
       {
         title: "Cross-Chain Transfers",
-        description: "Send IU2U tokens seamlessly between supported blockchain networks"
+        description:
+          "Send IU2U tokens seamlessly between supported blockchain networks",
       },
       {
         title: "Contract Interactions",
-        description: "Execute smart contract functions across different chains"
+        description: "Execute smart contract functions across different chains",
       },
       {
         title: "Decentralized Security",
-        description: "Powered by decentralized relayers ensuring secure cross-chain communication"
+        description:
+          "Powered by decentralized relayers ensuring secure cross-chain communication",
       },
       {
         title: "Real-time Tracking",
-        description: "Monitor your cross-chain transactions with real-time status updates"
-      }
-    ]
+        description:
+          "Monitor your cross-chain transactions with real-time status updates",
+      },
+    ],
   },
 
   // Tooltips and help text

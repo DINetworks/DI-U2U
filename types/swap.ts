@@ -120,7 +120,13 @@ export interface SwapQuote {
 
 export interface SwapTransaction {
   id: string;
-  status: 'pending' | 'executing_source_swap' | 'bridging' | 'executing_destination_swap' | 'completed' | 'failed';
+  status:
+    | "pending"
+    | "executing_source_swap"
+    | "bridging"
+    | "executing_destination_swap"
+    | "completed"
+    | "failed";
   sourceChain: SwapChain;
   destinationChain: SwapChain;
   sourceToken: SwapToken;

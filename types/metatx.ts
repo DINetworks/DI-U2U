@@ -1,6 +1,6 @@
 // Meta transaction related types and interfaces
 
-import { Token } from './token';
+import { Token } from "./token";
 
 export type { Token };
 
@@ -34,7 +34,7 @@ export interface BatchTransferHistory {
   creditConsumed: string;
   usdValueConsumed: string;
   transfers: Transfer[];
-  status: 'success' | 'failed';
+  status: "success" | "failed";
   blockNumber: string;
   gasCostNative: string;
 }
@@ -42,7 +42,7 @@ export interface BatchTransferHistory {
 export interface CreditTransactionHistory {
   id: string;
   timestamp: number;
-  type: 'deposit' | 'withdraw';
+  type: "deposit" | "withdraw";
   token?: Token;
   amount: string;
   creditBefore: string;

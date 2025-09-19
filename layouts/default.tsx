@@ -1,8 +1,9 @@
+import { useRouter } from "next/router";
+
 import { Head } from "./head";
 
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
-import { useRouter } from "next/router";
 
 export default function DefaultLayout({
   children,
@@ -22,7 +23,9 @@ export default function DefaultLayout({
           src="/images/domain-auction.jpg"
         />
         <div className="absolute inset-0 backdrop-blur-[2px]" />
-        <div className={`absolute inset-0 ${isHome? 'bg-black/40' : 'bg-black/40'}`} />
+        <div
+          className={`absolute inset-0 ${isHome ? "bg-black/40" : "bg-black/40"}`}
+        />
       </div>
       <div className="relative flex flex-col h-screen">
         <Head />

@@ -1,7 +1,15 @@
 import { createConfig } from "wagmi";
 import { http } from "viem";
 import { injected, metaMask, walletConnect } from "@wagmi/connectors";
-import {mainnet, bsc, optimism, base, polygon, arbitrum, avalanche} from "viem/chains"
+import {
+  mainnet,
+  bsc,
+  optimism,
+  base,
+  polygon,
+  arbitrum,
+  avalanche,
+} from "viem/chains";
 
 // U2U Nebulas Testnet
 export const u2uTestnet = {
@@ -26,10 +34,19 @@ export const u2uTestnet = {
   testnet: true,
 };
 
-const ALCHEMY_API_KEY = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY
+const ALCHEMY_API_KEY = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY;
 
 export const config = createConfig({
-  chains: [mainnet, bsc, optimism, base, polygon, arbitrum, avalanche, u2uTestnet],
+  chains: [
+    mainnet,
+    bsc,
+    optimism,
+    base,
+    polygon,
+    arbitrum,
+    avalanche,
+    u2uTestnet,
+  ],
   connectors: [
     injected(),
     metaMask(),
@@ -37,23 +54,23 @@ export const config = createConfig({
   ],
   transports: {
     [mainnet.id]: http(
-      `https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_API_KEY}`
+      `https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_API_KEY}`,
     ),
-    [bsc.id]: http('https://bsc-dataseed.binance.org'),
+    [bsc.id]: http("https://bsc-dataseed.binance.org"),
     [polygon.id]: http(
-      `https://polygon-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}`
+      `https://polygon-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
     ),
     [optimism.id]: http(
-      `https://opt-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}`
+      `https://opt-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
     ),
     [arbitrum.id]: http(
-      `https://arb-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}`
+      `https://arb-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
     ),
     [avalanche.id]: http(
-      `https://avalanche-mainnet.alchemyapi.io/v2/${ALCHEMY_API_KEY}`
+      `https://avalanche-mainnet.alchemyapi.io/v2/${ALCHEMY_API_KEY}`,
     ),
     [base.id]: http(`https://base-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}`),
-    [u2uTestnet.id]: http('https://rpc-nebulas-testnet.uniultra.xyz/')
+    [u2uTestnet.id]: http("https://rpc-nebulas-testnet.uniultra.xyz/"),
   },
 });
 
@@ -69,13 +86,13 @@ export const CONTRACT_ADDRESSES = {
     [polygon.id]: "0x9649a304bD0cd3c4dbe72116199990df06d87329",
     [bsc.id]: "0x365235b4ea2F5439f27b10f746C52B0B47c33761",
     [base.id]: "0xF69C5FB9359a4641469cd457412C7086fd32041D",
-    [u2uTestnet.id]: "0x2551f9E86a20bf4627332A053BEE14DA623d1007"
+    [u2uTestnet.id]: "0x2551f9E86a20bf4627332A053BEE14DA623d1007",
   },
   IU2U_GATEWAY: {
     [mainnet.id]: "0xe5DE1F17974B1758703C4bF9a8885F7e24983bb7",
     [polygon.id]: "0xe5DE1F17974B1758703C4bF9a8885F7e24983bb7",
     [bsc.id]: "0xe4A31447871c39eD854279acCEAeB023e79dDCC5",
     [base.id]: "0x9649a304bD0cd3c4dbe72116199990df06d87329",
-    [u2uTestnet.id]: "0x7Ccba78c7224577DDDEa5B3302b81db7915e5377"
-  }
+    [u2uTestnet.id]: "0x7Ccba78c7224577DDDEa5B3302b81db7915e5377",
+  },
 };

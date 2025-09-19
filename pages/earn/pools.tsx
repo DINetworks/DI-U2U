@@ -1,18 +1,18 @@
-import { useState, useEffect, useMemo } from 'react';
-import { NextPage } from 'next';
-import Head from 'next/head';
-import { useRouter } from 'next/router';
-import { motion } from 'framer-motion';
-import { Card } from '@heroui/card';
-import { Spinner } from '@heroui/spinner';
-import { title, subtitle } from '@/components/primitives';
-import DefaultLayout from '@/layouts/default';
-import axios from 'axios';
-import PoolFilters from '@/components/earn/PoolFilters';
-import PoolTable from '@/components/earn/PoolTable';
-import PoolPagination from '@/components/earn/PoolPagination';
-import { PoolsResponse, Pool } from '@/types/earn';
+import { useState, useEffect } from "react";
+import { NextPage } from "next";
+import Head from "next/head";
+import { useRouter } from "next/router";
+import { motion } from "framer-motion";
+import { Card } from "@heroui/card";
+import { Spinner } from "@heroui/spinner";
+import axios from "axios";
 
+import { title, subtitle } from "@/components/primitives";
+import DefaultLayout from "@/layouts/default";
+import PoolFilters from "@/components/earn/PoolFilters";
+import PoolTable from "@/components/earn/PoolTable";
+import PoolPagination from "@/components/earn/PoolPagination";
+import { PoolsResponse, Pool } from "@/types/earn";
 
 const PoolsPage: NextPage = () => {
   const router = useRouter();
@@ -28,37 +28,37 @@ const PoolsPage: NextPage = () => {
 
   // Filters
   const [selectedCategory, setSelectedCategory] = useState<string>(
-    (initialCategory as string) || 'highlighted_pool'
+    (initialCategory as string) || "highlighted_pool",
   );
-  const [selectedChain, setSelectedChain] = useState<string>('1'); // Default to Ethereum (chainId: 1)
-  const [selectedProtocol, setSelectedProtocol] = useState<string>('all');
-  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [selectedChain, setSelectedChain] = useState<string>("1"); // Default to Ethereum (chainId: 1)
+  const [selectedProtocol, setSelectedProtocol] = useState<string>("all");
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   // Available options
   const categories = [
-    { key: 'all', label: '📊 All Pools' },
-    { key: 'farming_pool', label: '🚜 Farming Pools' },
-    { key: 'highlighted_pool', label: '🔥 Highlighted Pools' },
-    { key: 'high_apr', label: '📈 High APR' },
-    { key: 'solid_earning', label: '💎 Solid Earning' },
-    { key: 'low_volatility', label: '🛡️ Low Volatility' }
+    { key: "all", label: "📊 All Pools" },
+    { key: "farming_pool", label: "🚜 Farming Pools" },
+    { key: "highlighted_pool", label: "🔥 Highlighted Pools" },
+    { key: "high_apr", label: "📈 High APR" },
+    { key: "solid_earning", label: "💎 Solid Earning" },
+    { key: "low_volatility", label: "🛡️ Low Volatility" },
   ];
 
   const chains = [
-    { key: '1', label: 'Ethereum' },
-    { key: '56', label: 'BSC' },
-    { key: '137', label: 'Polygon' },
-    { key: '8453', label: 'Base' },
-    { key: '42161', label: 'Arbitrum' },
-    { key: '10', label: 'Optimism' }
+    { key: "1", label: "Ethereum" },
+    { key: "56", label: "BSC" },
+    { key: "137", label: "Polygon" },
+    { key: "8453", label: "Base" },
+    { key: "42161", label: "Arbitrum" },
+    { key: "10", label: "Optimism" },
   ];
 
   const protocols = [
-    { key: 'all', label: 'All Protocols' },
-    { key: 'uniswapv3', label: 'Uniswap V3' },
-    { key: 'pancake-v3', label: 'PancakeSwap V3' },
-    { key: 'sushiswap', label: 'SushiSwap' },
-    { key: 'quickswap', label: 'QuickSwap' }
+    { key: "all", label: "All Protocols" },
+    { key: "uniswapv3", label: "Uniswap V3" },
+    { key: "pancake-v3", label: "PancakeSwap V3" },
+    { key: "sushiswap", label: "SushiSwap" },
+    { key: "quickswap", label: "QuickSwap" },
   ];
 
   // Fetch pools data
@@ -71,15 +71,15 @@ const PoolsPage: NextPage = () => {
         chainId: parseInt(selectedChain), // chainId is mandatory
         page: currentPage,
         limit: pageSize,
-        interval: '7d'
+        interval: "7d",
       };
 
       // Only add tag parameter if not 'all'
-      if (selectedCategory !== 'all') {
+      if (selectedCategory !== "all") {
         params.tag = selectedCategory;
       }
 
-      if (selectedProtocol !== 'all') {
+      if (selectedProtocol !== "all") {
         params.protocol = selectedProtocol;
       }
 
@@ -91,19 +91,19 @@ const PoolsPage: NextPage = () => {
         process.env.NEXT_PUBLIC_FILTER_EARL_POOLS!,
         {
           params,
-          timeout: 30000
-        }
+          timeout: 30000,
+        },
       );
 
       if (response.data.code === 0) {
         setPools(response.data.data.pools);
         setTotalItems(response.data.data.pagination?.totalItems || 0);
       } else {
-        setError('Failed to fetch pools data');
+        setError("Failed to fetch pools data");
       }
     } catch (err) {
-      console.error('Error fetching pools:', err);
-      setError('Failed to load pools data');
+      console.error("Error fetching pools:", err);
+      setError("Failed to load pools data");
     } finally {
       setIsLoading(false);
     }
@@ -137,15 +137,19 @@ const PoolsPage: NextPage = () => {
   // Handle category change
   const handleCategoryChange = (category: string) => {
     setSelectedCategory(category);
-    router.push(`/earn/pools?category=${category}`, undefined, { shallow: true });
+    router.push(`/earn/pools?category=${category}`, undefined, {
+      shallow: true,
+    });
   };
-
 
   return (
     <DefaultLayout>
       <Head>
         <title>Earn Pools - IU2U</title>
-        <meta name="description" content="Explore and add liquidity to high-yield pools" />
+        <meta
+          content="Explore and add liquidity to high-yield pools"
+          name="description"
+        />
       </Head>
 
       {/* Hero Section */}
@@ -162,7 +166,8 @@ const PoolsPage: NextPage = () => {
             </h1>
           </div>
           <p className={subtitle({ class: "text-gray-300" })}>
-            Discover high-yield liquidity pools and maximize your earnings with Zap Technology
+            Discover high-yield liquidity pools and maximize your earnings with
+            Zap Technology
           </p>
         </motion.div>
 
@@ -176,43 +181,47 @@ const PoolsPage: NextPage = () => {
             <Card className="bg-[#ffffff]/25 backdrop-blur-sm p-8 mb-6">
               <PoolFilters
                 categories={categories}
+                chains={chains}
+                protocols={protocols}
+                searchQuery={searchQuery}
                 selectedCategory={selectedCategory}
                 selectedChain={selectedChain}
                 selectedProtocol={selectedProtocol}
-                searchQuery={searchQuery}
-                chains={chains}
-                protocols={protocols}
                 onCategoryChange={handleCategoryChange}
                 onChainChange={setSelectedChain}
                 onProtocolChange={setSelectedProtocol}
                 onSearchChange={setSearchQuery}
               />
 
-            {/* Results */}
-            {isLoading ? (
-              <div className="flex items-center justify-center py-12">
-                <Spinner size="lg" />
-                <span className="ml-3 text-gray-300">Loading pools...</span>
-              </div>
-            ) : error ? (
-              <div className="text-center py-12">
-                <p className="text-red-400">{error}</p>
-              </div>
-            ) : (
+              {/* Results */}
+              {isLoading ? (
+                <div className="flex items-center justify-center py-12">
+                  <Spinner size="lg" />
+                  <span className="ml-3 text-gray-300">Loading pools...</span>
+                </div>
+              ) : error ? (
+                <div className="text-center py-12">
+                  <p className="text-red-400">{error}</p>
+                </div>
+              ) : (
                 <>
-                  <PoolTable pools={pools} chains={chains} totalItems={totalItems} />
+                  <PoolTable
+                    chains={chains}
+                    pools={pools}
+                    totalItems={totalItems}
+                  />
 
                   {/* Pagination */}
                   <PoolPagination
                     currentPage={currentPage}
-                    totalItems={totalItems}
                     pageSize={pageSize}
+                    totalItems={totalItems}
                     onPageChange={setCurrentPage}
                   />
-                  </>
-            )}
+                </>
+              )}
             </Card>
-            </motion.div>
+          </motion.div>
         </div>
       </section>
     </DefaultLayout>

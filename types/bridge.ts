@@ -1,9 +1,14 @@
 // IU2U Bridge related types and interfaces
-import { Chain } from 'viem';
+import { Chain } from "viem";
 
 export interface BridgeTransaction {
   id: string;
-  type: 'deposit' | 'withdraw' | 'sendToken' | 'callContract' | 'callContractWithToken';
+  type:
+    | "deposit"
+    | "withdraw"
+    | "sendToken"
+    | "callContract"
+    | "callContractWithToken";
   sourceChain: string;
   destinationChain?: string;
   amount: string;
@@ -11,7 +16,7 @@ export interface BridgeTransaction {
   recipient?: string;
   contractAddress?: string;
   payload?: string;
-  status: 'pending' | 'completed' | 'failed';
+  status: "pending" | "completed" | "failed";
   txHash?: string;
   timestamp: number;
   gasUsed?: string;

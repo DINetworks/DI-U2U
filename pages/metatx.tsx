@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { motion } from "framer-motion";
+import { Address, maxUint256 } from "viem";
 
 import { title, subtitle } from "@/components/primitives";
 import DefaultLayout from "@/layouts/default";
@@ -20,16 +21,15 @@ import FirstTimeGuide from "@/components/metatx/FirstTimeGuide";
 import { useTokensWithAllowances } from "@/hooks/useTokensWithAllowances";
 import { useCreditTransactionHistory } from "@/hooks/useCreditTransactionHistory";
 import { CONTRACT_ADDRESSES } from "@/config/web3";
-import { Address, maxUint256 } from "viem";
 
-const GATEWAY = CONTRACT_ADDRESSES.METATX_GATEWAY as Address
+const GATEWAY = CONTRACT_ADDRESSES.METATX_GATEWAY as Address;
 
 export default function MetaTxPage() {
   const router = useRouter();
-  const { vaultContract, contractInfo, isLoading, error } = useGaslessContracts();
+  const { vaultContract, contractInfo } = useGaslessContracts();
   const { formattedCredit, refetchCredit } = useCredit(vaultContract);
   const { approvedTokens, refetchAllowances, tokensInChain } =
-    useTokensWithAllowances(GATEWAY)
+    useTokensWithAllowances(GATEWAY);
   const { addTransaction } = useCreditTransactionHistory();
 
   // Dialog states
@@ -37,7 +37,8 @@ export default function MetaTxPage() {
   const [isWithdrawDialogOpen, setIsWithdrawDialogOpen] = useState(false);
   const [isApproveDialogOpen, setIsApproveDialogOpen] = useState(false);
   const [isDisapproveDialogOpen, setIsDisapproveDialogOpen] = useState(false);
-  const [isTransactionCompleteDialogOpen, setIsTransactionCompleteDialogOpen] = useState(false);
+  const [isTransactionCompleteDialogOpen, setIsTransactionCompleteDialogOpen] =
+    useState(false);
   const [depositLoading, setDepositLoading] = useState(false);
   const [withdrawLoading, setWithdrawLoading] = useState(false);
   const [approveLoading, setApproveLoading] = useState(false);
@@ -46,17 +47,15 @@ export default function MetaTxPage() {
   const [isInfoDrawerOpen, setIsInfoDrawerOpen] = useState(false);
   const [isFirstTimeGuideOpen, setIsFirstTimeGuideOpen] = useState(false);
 
-
   const navigateToPage = (link: string) => {
     router.push(link);
   };
-
 
   const handleStartTransaction = () => {
     navigateToPage("/swap");
   };
 
-  const handleDeposit = async (tokenAddress: Address, amount: bigint, selectedToken?: any) => {
+  const handleDeposit = async (tokenAddress: Address, amount: bigint) => {
     if (!vaultContract) return;
 
     try {
@@ -69,19 +68,27 @@ export default function MetaTxPage() {
 
       // Get updated credit balance directly from contract
       const creditAfterRaw = await vaultContract.getCredits();
-      const creditAfter = (Number(creditAfterRaw) / Math.pow(10, 18)).toFixed(6);
-      const creditAdded = (parseFloat(creditAfter) - parseFloat(creditBefore)).toFixed(3);
+      const creditAfter = (Number(creditAfterRaw) / Math.pow(10, 18)).toFixed(
+        6,
+      );
+      const creditAdded = (
+        parseFloat(creditAfter) - parseFloat(creditBefore)
+      ).toFixed(3);
 
       // Find the token info
-      const tokenInfo = tokensInChain?.find(t => t.address.toLowerCase() === tokenAddress.toLowerCase());
+      const tokenInfo = tokensInChain?.find(
+        (t) => t.address.toLowerCase() === tokenAddress.toLowerCase(),
+      );
 
       // Format amount for display
       const decimals = tokenInfo?.decimals || 18;
-      const displayAmount = (Number(amount) / Math.pow(10, decimals)).toFixed(6);
+      const displayAmount = (Number(amount) / Math.pow(10, decimals)).toFixed(
+        6,
+      );
 
       // Add to credit transaction history
       addTransaction({
-        type: 'deposit',
+        type: "deposit",
         token: tokenInfo,
         amount: displayAmount,
         creditBefore,
@@ -92,7 +99,7 @@ export default function MetaTxPage() {
 
       // Set transaction result
       setTransactionResult({
-        type: 'deposit',
+        type: "deposit",
         token: tokenInfo,
         amount: displayAmount,
         creditBefore,
@@ -122,15 +129,21 @@ export default function MetaTxPage() {
 
       // Get updated credit balance directly from contract
       const creditAfterRaw = await vaultContract.getCredits();
-      const creditAfter = (Number(creditAfterRaw) / Math.pow(10, 18)).toFixed(6);
-      const creditWithdrawn = (parseFloat(creditBefore) - parseFloat(creditAfter)).toFixed(3);
+      const creditAfter = (Number(creditAfterRaw) / Math.pow(10, 18)).toFixed(
+        6,
+      );
+      const creditWithdrawn = (
+        parseFloat(creditBefore) - parseFloat(creditAfter)
+      ).toFixed(3);
 
       // Format amount for display (convert from wei to U2U)
-      const displayAmount = (Number(creditAmount) / Math.pow(10, 18)).toFixed(6);
+      const displayAmount = (Number(creditAmount) / Math.pow(10, 18)).toFixed(
+        6,
+      );
 
       // Add to credit transaction history
       addTransaction({
-        type: 'withdraw',
+        type: "withdraw",
         amount: displayAmount,
         creditBefore,
         creditAfter,
@@ -140,7 +153,7 @@ export default function MetaTxPage() {
 
       // Set transaction result
       setTransactionResult({
-        type: 'withdraw',
+        type: "withdraw",
         amount: displayAmount,
         creditBefore,
         creditAfter,
@@ -174,7 +187,10 @@ export default function MetaTxPage() {
     }
   };
 
-  const handleApproveForVault = async (tokenAddress: `0x${string}`, amount: bigint) => {
+  const handleApproveForVault = async (
+    tokenAddress: `0x${string}`,
+    amount: bigint,
+  ) => {
     if (!vaultContract) return;
 
     try {
@@ -206,31 +222,33 @@ export default function MetaTxPage() {
 
   // Check if user has seen the first-time guide
   useEffect(() => {
-    const hasSeenGuide = localStorage.getItem('metatx-guide-seen');
-    console.log('Guide check - hasSeenGuide:', hasSeenGuide);
+    const hasSeenGuide = localStorage.getItem("metatx-guide-seen");
+
+    console.log("Guide check - hasSeenGuide:", hasSeenGuide);
 
     // Show guide if user hasn't explicitly chosen "don't show again"
-    if (hasSeenGuide !== 'true') {
-      console.log('Showing first-time guide');
+    if (hasSeenGuide !== "true") {
+      console.log("Showing first-time guide");
       // Show guide after a short delay to let the page load
       const timer = setTimeout(() => {
         setIsFirstTimeGuideOpen(true);
       }, 1500);
+
       return () => clearTimeout(timer);
     } else {
-      console.log('Skipping guide - user chose not to show again');
+      console.log("Skipping guide - user chose not to show again");
     }
   }, []);
 
   // Debug function to reset guide (can be called from browser console)
   const resetGuide = () => {
-    localStorage.removeItem('metatx-guide-seen');
-    console.log('Guide reset - will show on next page load');
+    localStorage.removeItem("metatx-guide-seen");
+    console.log("Guide reset - will show on next page load");
   };
 
   // Make resetGuide available globally for debugging
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       (window as any).resetGuide = resetGuide;
     }
   }, []);
@@ -250,20 +268,20 @@ export default function MetaTxPage() {
               Gasless Meta-Transactions
             </h1>
             <motion.button
-              onClick={() => setIsInfoDrawerOpen(true)}
-              className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors duration-200 group"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
               animate={{
                 rotate: [0, 5, -5, 0],
               }}
+              className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors duration-200 group"
               transition={{
                 rotate: {
                   duration: 2,
                   repeat: Infinity,
-                  ease: "easeInOut"
-                }
+                  ease: "easeInOut",
+                },
               }}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setIsInfoDrawerOpen(true)}
             >
               <svg
                 className="w-6 h-6 text-white group-hover:text-blue-300 transition-colors duration-200"
@@ -272,10 +290,10 @@ export default function MetaTxPage() {
                 viewBox="0 0 24 24"
               >
                 <path
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth={2}
-                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
             </motion.button>
@@ -285,98 +303,99 @@ export default function MetaTxPage() {
           </h2>
         </motion.div>
 
-          <div className="w-full grid lg:grid-cols-3 gap-8">
-            {/* Main Content */}
-            <div className="lg:col-span-2 space-y-6">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                whileInView={{ opacity: 1, y: 0 }}
-              >
-                <GaslessBatchTransfer
-                  credit={formattedCredit}
-                  approvedTokens={approvedTokens || []}
-                  onStartTransaction={handleStartTransaction}
-                />
-              </motion.div>
-
-            </div>
-            <div className="space-y-6">
-              <motion.div
-                animate={{ opacity: 1, y: 0 }}
-                initial={{ opacity: 0, y: 20 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-              >
-                <ContractsInfo />
-              </motion.div>
-
-              <motion.div
-                animate={{ opacity: 1, y: 0 }}
-                initial={{ opacity: 0, y: 20 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-              >
-                <GasCreditCard
-                  credit={formattedCredit}
-                  onDeposit={() => setIsDepositDialogOpen(true)}
-                  onWithdraw={() => setIsWithdrawDialogOpen(true)}
-                />
-              </motion.div>
-
-              <motion.div
-                animate={{ opacity: 1, y: 0 }}
-                initial={{ opacity: 0, y: 20 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-              >
-                <ApprovedTokensCard
-                  approvedTokens={approvedTokens}
-                  onApprove={() => setIsApproveDialogOpen(true)}
-                  onDisapprove={() => setIsDisapproveDialogOpen(true)}
-                />
-              </motion.div>
-            </div>
+        <div className="w-full grid lg:grid-cols-3 gap-8">
+          {/* Main Content */}
+          <div className="lg:col-span-2 space-y-6">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              whileInView={{ opacity: 1, y: 0 }}
+            >
+              <GaslessBatchTransfer
+                approvedTokens={approvedTokens || []}
+                credit={formattedCredit}
+                onStartTransaction={handleStartTransaction}
+              />
+            </motion.div>
           </div>
+          <div className="space-y-6">
+            <motion.div
+              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              <ContractsInfo />
+            </motion.div>
+
+            <motion.div
+              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              <GasCreditCard
+                credit={formattedCredit}
+                onDeposit={() => setIsDepositDialogOpen(true)}
+                onWithdraw={() => setIsWithdrawDialogOpen(true)}
+              />
+            </motion.div>
+
+            <motion.div
+              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              <ApprovedTokensCard
+                approvedTokens={approvedTokens}
+                onApprove={() => setIsApproveDialogOpen(true)}
+                onDisapprove={() => setIsDisapproveDialogOpen(true)}
+              />
+            </motion.div>
+          </div>
+        </div>
       </section>
 
       {/* Dialogs */}
       <DepositDialog
-        isOpen={isDepositDialogOpen}
-        onClose={() => setIsDepositDialogOpen(false)}
-        onDeposit={(tokenAddress, amount, selectedToken) => handleDeposit(tokenAddress, amount, selectedToken)}
-        onApproveForVault={handleApproveForVault}
         isLoading={depositLoading}
+        isOpen={isDepositDialogOpen}
         tokensInChain={tokensInChain || []}
         whitelistedTokens={[...(contractInfo?.whitelistedTokens || [])]}
+        onApproveForVault={handleApproveForVault}
+        onClose={() => setIsDepositDialogOpen(false)}
+        onDeposit={(tokenAddress, amount) =>
+          handleDeposit(tokenAddress, amount)
+        }
       />
 
       <WithdrawDialog
+        credit={formattedCredit}
+        isLoading={withdrawLoading}
         isOpen={isWithdrawDialogOpen}
         onClose={() => setIsWithdrawDialogOpen(false)}
         onWithdraw={handleWithdraw}
-        isLoading={withdrawLoading}
-        credit={formattedCredit}
       />
 
       <ApproveTokenDialog
-        isOpen={isApproveDialogOpen}
-        onClose={() => setIsApproveDialogOpen(false)}
-        onApprove={handleApproveToken}
-        isLoading={approveLoading}
-        tokensInChain={tokensInChain || []}
         approvedTokens={approvedTokens || []}
+        isLoading={approveLoading}
+        isOpen={isApproveDialogOpen}
+        tokensInChain={tokensInChain || []}
+        onApprove={handleApproveToken}
+        onClose={() => setIsApproveDialogOpen(false)}
       />
 
       <DisapproveTokenDialog
+        approvedTokens={approvedTokens || []}
+        isLoading={disapproveLoading}
         isOpen={isDisapproveDialogOpen}
         onClose={() => setIsDisapproveDialogOpen(false)}
         onDisapprove={handleDisapproveToken}
-        isLoading={disapproveLoading}
-        approvedTokens={approvedTokens || []}
       />
 
       <TransactionCompleteDialog
         isOpen={isTransactionCompleteDialogOpen}
-        onClose={() => setIsTransactionCompleteDialogOpen(false)}
         result={transactionResult}
+        onClose={() => setIsTransactionCompleteDialogOpen(false)}
       />
 
       <InfoDrawer
@@ -388,7 +407,6 @@ export default function MetaTxPage() {
         isOpen={isFirstTimeGuideOpen}
         onClose={() => setIsFirstTimeGuideOpen(false)}
       />
-
     </DefaultLayout>
   );
 }

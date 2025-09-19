@@ -1,11 +1,15 @@
 // General component props and interfaces
 
-import { Address } from 'viem';
+import { Address } from "viem";
 
 export interface DepositDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onDeposit: (tokenAddress: Address, amount: bigint, selectedToken?: Token) => Promise<void>;
+  onDeposit: (
+    tokenAddress: Address,
+    amount: bigint,
+    selectedToken?: Token,
+  ) => Promise<void>;
   onApproveForVault?: (tokenAddress: Address, amount: bigint) => Promise<void>;
   isLoading: boolean;
   tokensInChain: Token[];
@@ -25,7 +29,7 @@ export interface GasCreditCardProps {
 }
 
 export interface TransactionResult {
-  type: 'deposit' | 'withdraw';
+  type: "deposit" | "withdraw";
   token?: Token;
   amount: string;
   creditBefore: string;
@@ -63,7 +67,7 @@ export interface ApproveTokenDialogProps {
 export interface HistoryDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  initialTab?: 'transfers' | 'credits';
+  initialTab?: "transfers" | "credits";
 }
 
 export interface AddressProps {
@@ -73,4 +77,4 @@ export interface AddressProps {
 }
 
 // Import Token type for component interfaces that use it
-import { Token } from './token';
+import { Token } from "./token";

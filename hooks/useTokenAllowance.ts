@@ -20,16 +20,17 @@ export function useTokenAllowance({
     queryFn: async () => {
       if (!publicClient) throw new Error("No public client available");
 
-      const allowance = await publicClient.readContract({
+      const allowance = (await publicClient.readContract({
         address: tokenAddress,
         abi: erc20Abi,
         functionName: "allowance",
         args: [ownerAddress, spenderAddress],
-      }) as bigint;
+      })) as bigint;
 
       return allowance;
     },
-    enabled: !!publicClient && !!tokenAddress && !!ownerAddress && !!spenderAddress,
+    enabled:
+      !!publicClient && !!tokenAddress && !!ownerAddress && !!spenderAddress,
     staleTime: 30000, // 30 seconds
   });
 }

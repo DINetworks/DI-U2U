@@ -1,16 +1,19 @@
-import { Card, CardBody } from '@heroui/card';
-import { GasFeeDisplayProps } from '@/types/swap';
+import { Card, CardBody } from "@heroui/card";
+
+import { GasFeeDisplayProps } from "@/types/swap";
 
 export default function GasFeeDisplay({
   gasCost,
   bridgeFee,
   totalCost,
-  currency
+  currency,
 }: GasFeeDisplayProps) {
   return (
     <Card className="bg-gradient-to-r from-blue-900/20 to-purple-900/20 backdrop-blur-sm">
       <CardBody className="p-4">
-        <h4 className="text-sm font-semibold text-white mb-3">Estimated Fees</h4>
+        <h4 className="text-sm font-semibold text-white mb-3">
+          Estimated Fees
+        </h4>
 
         <div className="space-y-2">
           <div className="flex justify-between items-center">
@@ -29,7 +32,9 @@ export default function GasFeeDisplay({
 
           <div className="border-t border-white/10 pt-2 mt-3">
             <div className="flex justify-between items-center">
-              <span className="text-sm font-semibold text-white">Total Cost</span>
+              <span className="text-sm font-semibold text-white">
+                Total Cost
+              </span>
               <span className="text-sm font-bold text-green-400">
                 {parseFloat(totalCost).toFixed(6)} {currency}
               </span>

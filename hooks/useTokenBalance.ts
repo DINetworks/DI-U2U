@@ -11,7 +11,7 @@ interface UseTokenBalanceProps {
 export function useTokenBalance({
   tokenAddress,
   accountAddress,
-  decimals = 18
+  decimals = 18,
 }: UseTokenBalanceProps) {
   const publicClient = usePublicClient();
 
@@ -20,12 +20,12 @@ export function useTokenBalance({
     queryFn: async () => {
       if (!publicClient) throw new Error("No public client available");
 
-      const balance = await publicClient.readContract({
+      const balance = (await publicClient.readContract({
         address: tokenAddress,
         abi: erc20Abi,
         functionName: "balanceOf",
         args: [accountAddress],
-      }) as bigint;
+      })) as bigint;
 
       return {
         raw: balance,

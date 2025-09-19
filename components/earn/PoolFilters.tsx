@@ -1,6 +1,6 @@
-import { Button } from '@heroui/button';
-import { Input } from '@heroui/input';
-import { Select, SelectItem } from '@heroui/select';
+import { Button } from "@heroui/button";
+import { Input } from "@heroui/input";
+import { Select, SelectItem } from "@heroui/select";
 
 interface PoolFiltersProps {
   categories: { key: string; label: string }[];
@@ -36,10 +36,10 @@ export default function PoolFilters({
         {categories.map((category) => (
           <Button
             key={category.key}
-            variant={selectedCategory === category.key ? "solid" : "flat"}
-            color={selectedCategory === category.key ? "success" : "default"}
-            onPress={() => onCategoryChange(category.key)}
             className="text-sm"
+            color={selectedCategory === category.key ? "success" : "default"}
+            variant={selectedCategory === category.key ? "solid" : "flat"}
+            onPress={() => onCategoryChange(category.key)}
           >
             {category.label}
           </Button>
@@ -54,13 +54,12 @@ export default function PoolFilters({
           selectedKeys={new Set([selectedChain])}
           onSelectionChange={(keys) => {
             const selected = Array.from(keys)[0] as string;
+
             onChainChange(selected);
           }}
         >
           {chains.map((chain) => (
-            <SelectItem key={chain.key}>
-              {chain.label}
-            </SelectItem>
+            <SelectItem key={chain.key}>{chain.label}</SelectItem>
           ))}
         </Select>
 
@@ -70,26 +69,35 @@ export default function PoolFilters({
           selectedKeys={new Set([selectedProtocol])}
           onSelectionChange={(keys) => {
             const selected = Array.from(keys)[0] as string;
+
             onProtocolChange(selected);
           }}
         >
           {protocols.map((protocol) => (
-            <SelectItem key={protocol.key}>
-              {protocol.label}
-            </SelectItem>
+            <SelectItem key={protocol.key}>{protocol.label}</SelectItem>
           ))}
         </Select>
 
         {/* Search */}
         <Input
           placeholder="Search by token symbol or address"
-          value={searchQuery}
-          onChange={(e) => onSearchChange(e.target.value)}
           startContent={
-            <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            <svg
+              className="w-4 h-4 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+              />
             </svg>
           }
+          value={searchQuery}
+          onChange={(e) => onSearchChange(e.target.value)}
         />
       </div>
     </div>

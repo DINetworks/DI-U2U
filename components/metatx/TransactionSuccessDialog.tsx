@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   Modal,
   ModalContent,
@@ -20,7 +19,7 @@ interface TransactionSuccessData {
   usdValueConsumed: string;
   blockNumber: string;
   blockHash: string;
-  status: 'success' | 'failed';
+  status: "success" | "failed";
   timestamp: number;
 }
 
@@ -50,19 +49,33 @@ export default function TransactionSuccessDialog({
   return (
     <Modal
       backdrop="blur"
-      isOpen={isOpen}
-      onClose={onClose}
-      size="lg"
       className="p-4"
+      isOpen={isOpen}
+      size="lg"
+      onClose={onClose}
     >
       <ModalContent>
         <ModalHeader className="flex items-center gap-3">
-          <svg className="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <svg
+            className="w-8 h-8 text-green-500"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+            />
           </svg>
           <div>
-            <h3 className="text-xl font-bold text-green-600">Transaction Successful!</h3>
-            <p className="text-sm text-gray-500">Your gasless batch transfer has been completed</p>
+            <h3 className="text-xl font-bold text-green-600">
+              Transaction Successful!
+            </h3>
+            <p className="text-sm text-gray-500">
+              Your gasless batch transfer has been completed
+            </p>
           </div>
         </ModalHeader>
 
@@ -75,14 +88,24 @@ export default function TransactionSuccessDialog({
                   Transaction Hash
                 </span>
                 <Link
-                  href={getBlockExplorerUrl(transactionData.txHash)}
-                  target="_blank"
-                  rel="noopener noreferrer"
                   className="flex items-center gap-1 text-blue-600 hover:text-blue-800"
+                  href={getBlockExplorerUrl(transactionData.txHash)}
+                  rel="noopener noreferrer"
+                  target="_blank"
                 >
                   View on Explorer
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                    />
                   </svg>
                 </Link>
               </div>
@@ -101,8 +124,18 @@ export default function TransactionSuccessDialog({
                 <CardBody className="space-y-2">
                   <div className="text-sm text-gray-500">Status</div>
                   <div className="flex items-center gap-2">
-                    <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <svg
+                      className="w-5 h-5 text-green-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                      />
                     </svg>
                     <span className="font-semibold text-green-600 capitalize">
                       {transactionData.status}
@@ -114,7 +147,9 @@ export default function TransactionSuccessDialog({
               <Card className="bg-gray-50 dark:bg-gray-800">
                 <CardBody className="space-y-2">
                   <div className="text-sm text-gray-500">Block Number</div>
-                  <div className="font-semibold">{transactionData.blockNumber}</div>
+                  <div className="font-semibold">
+                    {transactionData.blockNumber}
+                  </div>
                 </CardBody>
               </Card>
 
@@ -122,7 +157,7 @@ export default function TransactionSuccessDialog({
                 <CardBody className="space-y-2">
                   <div className="text-sm text-gray-500">Batch ID</div>
                   <div className="font-semibold">
-                    {transactionData.batchId || 'N/A'}
+                    {transactionData.batchId || "N/A"}
                   </div>
                 </CardBody>
               </Card>
@@ -146,28 +181,40 @@ export default function TransactionSuccessDialog({
               <Card className="bg-blue-50 dark:bg-blue-900/20">
                 <CardBody className="space-y-2">
                   <div className="text-sm text-gray-500">Gas Cost (Native)</div>
-                  <div className="font-semibold">{transactionData.gasCostNative} U2U</div>
+                  <div className="font-semibold">
+                    {transactionData.gasCostNative} U2U
+                  </div>
                 </CardBody>
               </Card>
 
               <Card className="bg-blue-50 dark:bg-blue-900/20">
                 <CardBody className="space-y-2">
-                  <div className="text-sm text-gray-500">Total Cost (Native)</div>
-                  <div className="font-semibold">{transactionData.totalNativeCost} U2U</div>
+                  <div className="text-sm text-gray-500">
+                    Total Cost (Native)
+                  </div>
+                  <div className="font-semibold">
+                    {transactionData.totalNativeCost} U2U
+                  </div>
                 </CardBody>
               </Card>
 
               <Card className="bg-purple-50 dark:bg-purple-900/20">
                 <CardBody className="space-y-2">
                   <div className="text-sm text-gray-500">Required Credits</div>
-                  <div className="font-semibold">{transactionData.requiredValue} U2U</div>
+                  <div className="font-semibold">
+                    {transactionData.requiredValue} U2U
+                  </div>
                 </CardBody>
               </Card>
 
               <Card className="bg-purple-50 dark:bg-purple-900/20">
                 <CardBody className="space-y-2">
-                  <div className="text-sm text-gray-500">USD Value Consumed</div>
-                  <div className="font-semibold">${transactionData.usdValueConsumed}</div>
+                  <div className="text-sm text-gray-500">
+                    USD Value Consumed
+                  </div>
+                  <div className="font-semibold">
+                    ${transactionData.usdValueConsumed}
+                  </div>
                 </CardBody>
               </Card>
             </div>
@@ -179,7 +226,7 @@ export default function TransactionSuccessDialog({
         </ModalBody>
 
         <ModalFooter>
-          <Button color="primary" onPress={onClose} className="w-full">
+          <Button className="w-full" color="primary" onPress={onClose}>
             Continue
           </Button>
         </ModalFooter>

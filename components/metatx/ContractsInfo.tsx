@@ -1,4 +1,5 @@
 import { Card, CardBody } from "@heroui/card";
+
 import { CONTRACT_ADDRESSES } from "@/config/web3";
 import Address from "@/components/base/Address";
 

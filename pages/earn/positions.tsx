@@ -1,14 +1,15 @@
-import { useState, useEffect } from 'react';
-import { NextPage } from 'next';
-import Head from 'next/head';
-import { motion } from 'framer-motion';
-import { Card, CardBody, CardHeader } from '@heroui/card';
-import { Button } from '@heroui/button';
-import { Spinner } from '@heroui/spinner';
-import { title, subtitle } from '@/components/primitives';
-import DefaultLayout from '@/layouts/default';
-import { useRouter } from 'next/router';
-import { useWeb3 } from '@/hooks/useWeb3';
+import { useState, useEffect } from "react";
+import { NextPage } from "next";
+import Head from "next/head";
+import { motion } from "framer-motion";
+import { Card, CardBody, CardHeader } from "@heroui/card";
+import { Button } from "@heroui/button";
+import { Spinner } from "@heroui/spinner";
+import { useRouter } from "next/router";
+
+import { title, subtitle } from "@/components/primitives";
+import DefaultLayout from "@/layouts/default";
+import { useWeb3 } from "@/hooks/useWeb3";
 
 const PositionsPage: NextPage = () => {
   const router = useRouter();
@@ -28,7 +29,10 @@ const PositionsPage: NextPage = () => {
     <DefaultLayout>
       <Head>
         <title>My Positions - IU2U</title>
-        <meta name="description" content="Track and manage your liquidity positions" />
+        <meta
+          content="Track and manage your liquidity positions"
+          name="description"
+        />
       </Head>
 
       {/* Hero Section */}
@@ -45,7 +49,8 @@ const PositionsPage: NextPage = () => {
             </h1>
           </div>
           <p className={subtitle({ class: "text-gray-300" })}>
-            Track, adjust, and optimize your positions to stay in control of your DeFi journey
+            Track, adjust, and optimize your positions to stay in control of
+            your DeFi journey
           </p>
         </motion.div>
 
@@ -62,7 +67,8 @@ const PositionsPage: NextPage = () => {
                     Connect Your Wallet
                   </h3>
                   <p className="text-gray-300 mb-6">
-                    Connect your wallet to view and manage your liquidity positions
+                    Connect your wallet to view and manage your liquidity
+                    positions
                   </p>
                   <Button color="primary" size="lg">
                     Connect Wallet
@@ -72,7 +78,9 @@ const PositionsPage: NextPage = () => {
             ) : isLoading ? (
               <div className="flex items-center justify-center py-12">
                 <Spinner size="lg" />
-                <span className="ml-3 text-gray-300">Loading your positions...</span>
+                <span className="ml-3 text-gray-300">
+                  Loading your positions...
+                </span>
               </div>
             ) : (
               <div className="space-y-6">
@@ -80,22 +88,30 @@ const PositionsPage: NextPage = () => {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <Card className="bg-[#ffffff]/25 backdrop-blur-sm">
                     <CardBody className="text-center">
-                      <h4 className="text-lg font-semibold text-white mb-2">Total Value Locked</h4>
+                      <h4 className="text-lg font-semibold text-white mb-2">
+                        Total Value Locked
+                      </h4>
                       <p className="text-2xl font-bold text-green-400">$0.00</p>
                     </CardBody>
                   </Card>
 
                   <Card className="bg-[#ffffff]/25 backdrop-blur-sm">
                     <CardBody className="text-center">
-                      <h4 className="text-lg font-semibold text-white mb-2">Active Positions</h4>
+                      <h4 className="text-lg font-semibold text-white mb-2">
+                        Active Positions
+                      </h4>
                       <p className="text-2xl font-bold text-blue-400">0</p>
                     </CardBody>
                   </Card>
 
                   <Card className="bg-[#ffffff]/25 backdrop-blur-sm">
                     <CardBody className="text-center">
-                      <h4 className="text-lg font-semibold text-white mb-2">Total Earnings</h4>
-                      <p className="text-2xl font-bold text-purple-400">$0.00</p>
+                      <h4 className="text-lg font-semibold text-white mb-2">
+                        Total Earnings
+                      </h4>
+                      <p className="text-2xl font-bold text-purple-400">
+                        $0.00
+                      </p>
                     </CardBody>
                   </Card>
                 </div>
@@ -103,7 +119,9 @@ const PositionsPage: NextPage = () => {
                 {/* Positions List */}
                 <Card className="bg-[#ffffff]/25 backdrop-blur-sm">
                   <CardHeader>
-                    <h3 className="text-xl font-bold text-white">Your Positions</h3>
+                    <h3 className="text-xl font-bold text-white">
+                      Your Positions
+                    </h3>
                   </CardHeader>
                   <CardBody>
                     <div className="text-center py-12">
@@ -112,12 +130,13 @@ const PositionsPage: NextPage = () => {
                         No Positions Found
                       </h4>
                       <p className="text-gray-300 mb-6">
-                        You haven't added liquidity to any pools yet. Start earning by exploring available pools.
+                        You haven&apos;t added liquidity to any pools yet. Start
+                        earning by exploring available pools.
                       </p>
                       <Button
                         color="primary"
                         size="lg"
-                        onPress={() => router.push('/earn/pools')}
+                        onPress={() => router.push("/earn/pools")}
                       >
                         Explore Pools
                       </Button>

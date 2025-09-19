@@ -2,7 +2,8 @@ export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
   name: "Decentrailize Interoperability",
-  description: "Gasless transactions, Programmable Cross-chain Bridge, and DEX Aggregation",
+  description:
+    "Gasless transactions, Programmable Cross-chain Bridge, and DEX Aggregation",
   navItems: [
     {
       label: "Gasless",
@@ -19,6 +20,10 @@ export const siteConfig = {
     {
       label: "Earn",
       href: "/earn",
+    },
+    {
+      label: "FAQ",
+      href: "/faq",
     },
   ],
   navMenuItems: [
@@ -37,6 +42,10 @@ export const siteConfig = {
     {
       label: "Earn",
       href: "/earn",
+    },
+    {
+      label: "FAQ",
+      href: "/faq",
     },
   ],
   links: {

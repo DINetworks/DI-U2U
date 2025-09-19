@@ -2,43 +2,50 @@ import { useState } from "react";
 import { Button } from "@heroui/button";
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Alert } from "@heroui/alert";
-
-import { useWeb3 } from "@/hooks/useWeb3";
 import { isAddress } from "viem";
+
 import TransferPreviewDialog from "./TransferPreviewDialog";
 import TransactionSuccessDialog from "./TransactionSuccessDialog";
 import HistoryDialog from "./HistoryDialog";
+
+import { useWeb3 } from "@/hooks/useWeb3";
 import { GaslessBatchTransferProps } from "@/types/metatx";
 import TransferRow from "@/components/metatx/TransferRow";
 
 export default function GaslessBatchTransfer({
   credit,
   approvedTokens,
-  onStartTransaction,
 }: GaslessBatchTransferProps) {
   const { address: accountAddress } = useWeb3();
   const [isPreviewDialogOpen, setIsPreviewDialogOpen] = useState(false);
   const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false);
   const [transactionData, setTransactionData] = useState<any>(null);
-  const [transfers, setTransfers] = useState([{ id: 1, token: "", receiver: "", amount: "" }]);
+  const [transfers, setTransfers] = useState([
+    { id: 1, token: "", receiver: "", amount: "" },
+  ]);
   const [nextId, setNextId] = useState(2);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [showValidationAlert, setShowValidationAlert] = useState(false);
   const [isHistoryDialogOpen, setIsHistoryDialogOpen] = useState(false);
 
   const addTransfer = () => {
-    setTransfers([...transfers, { id: nextId, token: "", receiver: "", amount: "" }]);
+    setTransfers([
+      ...transfers,
+      { id: nextId, token: "", receiver: "", amount: "" },
+    ]);
     setNextId(nextId + 1);
   };
 
   const removeTransfer = (id: number) => {
     if (transfers.length > 1) {
-      setTransfers(transfers.filter(t => t.id !== id));
+      setTransfers(transfers.filter((t) => t.id !== id));
     }
   };
 
   const updateTransfer = (id: number, field: string, value: string) => {
-    setTransfers(transfers.map(t => t.id === id ? { ...t, [field]: value } : t));
+    setTransfers(
+      transfers.map((t) => (t.id === id ? { ...t, [field]: value } : t)),
+    );
   };
 
   // Validation function
@@ -62,29 +69,15 @@ export default function GaslessBatchTransfer({
     return errors;
   };
 
-  // Handle start transaction with validation
-  const handleStartTransaction = () => {
-    const errors = validateTransfers();
-    if (errors.length > 0) {
-      setValidationErrors(errors);
-      setShowValidationAlert(true);
-      return;
-    }
-
-    // Clear any previous validation errors
-    setValidationErrors([]);
-    setShowValidationAlert(false);
-
-    onStartTransaction();
-  };
-
   // Handle review transfer with validation
   const handleReviewTransfer = () => {
     // Validate all transfers before proceeding
     const errors = validateTransfers();
+
     if (errors.length > 0) {
       setValidationErrors(errors);
       setShowValidationAlert(true);
+
       return;
     }
 
@@ -102,12 +95,14 @@ export default function GaslessBatchTransfer({
         <div className="flex items-start justify-between w-full">
           <div className="flex-1">
             <h3 className="text-2xl font-bold">Gasless Batch Transfer</h3>
-            <p className="text-gray-300">Send multiple transfers at once without worrying about gas fees</p>
+            <p className="text-gray-300">
+              Send multiple transfers at once without worrying about gas fees
+            </p>
           </div>
           <button
-            onClick={() => setIsHistoryDialogOpen(true)}
             className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors duration-200 group ml-4"
             title="View transfer history"
+            onClick={() => setIsHistoryDialogOpen(true)}
           >
             <svg
               className="w-5 h-5 text-white group-hover:text-blue-300 transition-colors duration-200"
@@ -116,10 +111,10 @@ export default function GaslessBatchTransfer({
               viewBox="0 0 24 24"
             >
               <path
+                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth={2}
-                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
               />
             </svg>
           </button>
@@ -127,32 +122,34 @@ export default function GaslessBatchTransfer({
       </CardHeader>
       <CardBody>
         <div className="space-y-6">
-          {transfers.map((transfer, index) => (
+          {transfers.map((transfer) => (
             <TransferRow
               key={transfer.id}
-              transfer={transfer}
-              approvedTokens={approvedTokens}
               accountAddress={accountAddress || ""}
-              updateTransfer={updateTransfer}
+              approvedTokens={approvedTokens}
               removeTransfer={removeTransfer}
+              transfer={transfer}
               transfersLength={transfers.length}
+              updateTransfer={updateTransfer}
             />
           ))}
 
           {showValidationAlert && validationErrors.length > 0 && (
             <Alert
               color="warning"
-              variant="faded"
-              title="Please fix the following errors before proceeding:"
               description={
                 <div className="space-y-1">
                   <ul className="list-disc list-inside space-y-1">
                     {validationErrors.map((error, index) => (
-                      <li key={index} className="text-sm">{error}</li>
+                      <li key={index} className="text-sm">
+                        {error}
+                      </li>
                     ))}
                   </ul>
                 </div>
               }
+              title="Please fix the following errors before proceeding:"
+              variant="faded"
               onClose={() => setShowValidationAlert(false)}
             />
           )}
@@ -160,9 +157,9 @@ export default function GaslessBatchTransfer({
           <div className="flex justify-between items-center">
             <Button
               color="success"
+              startContent={<span>+</span>}
               variant="flat"
               onPress={addTransfer}
-              startContent={<span>+</span>}
             >
               Add More
             </Button>
@@ -170,8 +167,8 @@ export default function GaslessBatchTransfer({
             <Button
               className="font-semibold"
               color="success"
-              onPress={handleReviewTransfer}
               disabled={parseFloat(credit) <= 0}
+              onPress={handleReviewTransfer}
             >
               Review Transfer
             </Button>
@@ -187,13 +184,13 @@ export default function GaslessBatchTransfer({
 
       {/* Transfer Preview Dialog */}
       <TransferPreviewDialog
-        isOpen={isPreviewDialogOpen}
-        onClose={() => setIsPreviewDialogOpen(false)}
-        transfers={transfers}
         approvedTokens={approvedTokens}
+        isOpen={isPreviewDialogOpen}
+        transfers={transfers}
+        onClose={() => setIsPreviewDialogOpen(false)}
         onSubmit={(response) => {
           // Handle successful transaction submission
-          console.log('Transaction submitted:', response);
+          console.log("Transaction submitted:", response);
           setIsPreviewDialogOpen(false);
 
           // Show success dialog with transaction details
@@ -207,15 +204,15 @@ export default function GaslessBatchTransfer({
       {/* Transaction Success Dialog */}
       <TransactionSuccessDialog
         isOpen={isSuccessDialogOpen}
-        onClose={() => setIsSuccessDialogOpen(false)}
         transactionData={transactionData}
+        onClose={() => setIsSuccessDialogOpen(false)}
       />
 
       {/* History Dialog */}
       <HistoryDialog
+        initialTab="transfers"
         isOpen={isHistoryDialogOpen}
         onClose={() => setIsHistoryDialogOpen(false)}
-        initialTab="transfers"
       />
     </Card>
   );

@@ -13,10 +13,11 @@ import {
 } from "@heroui/react";
 import { formatEther, parseUnits, encodeFunctionData, isAddress } from "viem";
 import { erc20Abi } from "viem";
+import { Image } from "@heroui/image";
+
 import { useWeb3 } from "@/hooks/useWeb3";
 import { useGaslessContracts } from "@/hooks/useGaslessContracts";
 import { normalizeTokenLogoURI } from "@/utils/token";
-import { Image } from "@heroui/image";
 import { Transfer, TransferPreviewDialogProps } from "@/types/metatx";
 
 const METATX_DEADLINE = 600; // 10 minutes
@@ -37,34 +38,43 @@ export default function TransferPreviewDialog({
   const [isGeneratingSignature, setIsGeneratingSignature] = useState(false);
   const [isPending, setPending] = useState(false);
   const [txHash, setTxHash] = useState("");
-  const [validationState, setValidationState] = useState<Record<number, boolean>>({});
+  const [validationState, setValidationState] = useState<
+    Record<number, boolean>
+  >({});
 
   // Get token info helper
   const getTokenInfo = useCallback(
-    (address: string) => approvedTokens?.find(token => token.address === address),
-    [approvedTokens]
+    (address: string) =>
+      approvedTokens?.find((token) => token.address === address),
+    [approvedTokens],
   );
 
   // Encode transfer item
   const encodeTransferItem = useCallback(
     (transfer: Transfer) => {
       const tokenData = getTokenInfo(transfer.token);
+
       if (!tokenData?.decimals) return null;
 
       // Validate required fields
-      if (!transfer.token || !transfer.receiver || !transfer.amount) return null;
+      if (!transfer.token || !transfer.receiver || !transfer.amount)
+        return null;
       if (!isAddress(transfer.receiver)) return null;
 
       const amount = parseUnits(transfer.amount.toString(), tokenData.decimals);
       const data = encodeFunctionData({
         abi: erc20Abi,
-        functionName: 'transferFrom',
-        args: [address as `0x${string}`, transfer.receiver as `0x${string}`, amount]
+        functionName: "transferFrom",
+        args: [
+          address as `0x${string}`,
+          transfer.receiver as `0x${string}`,
+          amount,
+        ],
       });
 
       return { to: transfer.token, value: BigInt(0), data };
     },
-    [getTokenInfo, address]
+    [getTokenInfo, address],
   );
 
   // Create meta transactions
@@ -94,33 +104,33 @@ export default function TransferPreviewDialog({
   const {
     data: estimatedInformation,
     isLoading,
-    isError,
-    error,
-    isFetching
+    isFetching,
   } = useQuery({
-    queryKey: ['estimateCredit', signature, deadline],
+    queryKey: ["estimateCredit", signature, deadline],
     queryFn: async () => {
       try {
         const estimatedInfo = await gatewayContract!.estimateTransfer({
           metaTxs,
           signature,
-          deadline: deadline
+          deadline: deadline,
         });
 
         return estimatedInfo;
       } catch (error) {
-        console.error('Estimation error:', error);
+        console.error("Estimation error:", error);
         throw error;
       }
     },
     enabled: queryEnabled,
     refetchInterval: 15000,
-    staleTime: 10000
+    staleTime: 10000,
   });
 
   // Extract estimation data
   const estimationData = useMemo(() => {
-    if (!estimatedInformation?.success || !estimatedInformation?.data) return null;
+    if (!estimatedInformation?.success || !estimatedInformation?.data)
+      return null;
+
     return estimatedInformation.data;
   }, [estimatedInformation]);
 
@@ -144,7 +154,7 @@ export default function TransferPreviewDialog({
     estimationData,
     hasEnoughCredits,
     isPending,
-    txHash
+    txHash,
   ]);
 
   // Auto-sign when dialog opens and conditions are met
@@ -160,33 +170,28 @@ export default function TransferPreviewDialog({
     }
 
     handleSign();
-  }, [
-    gatewayContract,
-    isOpen,
-    metaTxs,
-    signature,
-    isGeneratingSignature
-  ]);
+  }, [gatewayContract, isOpen, metaTxs, signature, isGeneratingSignature]);
 
   // Handle signing
   const handleSign = useCallback(async () => {
     try {
       setIsGeneratingSignature(true);
-      setTxHash('');
-      setSignature('');
+      setTxHash("");
+      setSignature("");
 
       const _deadline = Math.floor(Date.now() / 1000) + METATX_DEADLINE;
+
       setDeadline(_deadline);
       setIsExpired(false);
 
       const _signature = await gatewayContract!.generateEIP712Signature({
         metaTxs,
-        deadline: _deadline
+        deadline: _deadline,
       });
 
       setSignature(_signature);
     } catch (error) {
-      console.log('handleSign error:', error);
+      console.log("handleSign error:", error);
     } finally {
       setIsGeneratingSignature(false);
     }
@@ -195,10 +200,14 @@ export default function TransferPreviewDialog({
   // Validate all transfers on submit
   const validateAllTransfers = () => {
     const newValidationState: Record<number, boolean> = {};
+
     transfers.forEach((transfer) => {
-      newValidationState[transfer.id] = !!(transfer.receiver && !isAddress(transfer.receiver));
+      newValidationState[transfer.id] = !!(
+        transfer.receiver && !isAddress(transfer.receiver)
+      );
     });
     setValidationState(newValidationState);
+
     return newValidationState;
   };
 
@@ -209,20 +218,23 @@ export default function TransferPreviewDialog({
 
       // Validate all transfers before submission
       const validationResults = validateAllTransfers();
-      const hasInvalidAddresses = Object.values(validationResults).some(invalid => invalid);
+      const hasInvalidAddresses = Object.values(validationResults).some(
+        (invalid) => invalid,
+      );
 
       if (hasInvalidAddresses) {
-        alert('Please fix the invalid addresses before submitting.');
+        alert("Please fix the invalid addresses before submitting.");
+
         return;
       }
 
       setPending(true);
-      setTxHash('');
+      setTxHash("");
 
       const response = await gatewayContract!.relayErc20BatchTransfers({
         metaTxs,
         signature,
-        deadline: deadline
+        deadline: deadline,
       });
 
       if (response.success && response.data) {
@@ -230,15 +242,24 @@ export default function TransferPreviewDialog({
         onSubmit(response);
         onClose();
       } else {
-        throw new Error('Transaction failed or invalid response');
+        throw new Error("Transaction failed or invalid response");
       }
     } catch (error: any) {
-      console.error('Submit error:', error);
+      console.error("Submit error:", error);
       alert(`Transaction failed: ${error?.message || error}`);
     } finally {
       setPending(false);
     }
-  }, [canSubmit, gatewayContract, metaTxs, deadline, signature, onSubmit, onClose, validateAllTransfers]);
+  }, [
+    canSubmit,
+    gatewayContract,
+    metaTxs,
+    deadline,
+    signature,
+    onSubmit,
+    onClose,
+    validateAllTransfers,
+  ]);
 
   // Reset state when dialog closes
   useEffect(() => {
@@ -255,10 +276,10 @@ export default function TransferPreviewDialog({
   return (
     <Modal
       backdrop="blur"
-      isOpen={isOpen}
-      onClose={onClose}
-      size="2xl"
       className="p-4"
+      isOpen={isOpen}
+      size="2xl"
+      onClose={onClose}
     >
       <ModalContent>
         <ModalHeader>
@@ -268,8 +289,9 @@ export default function TransferPreviewDialog({
           {/* Transfer Items (Read-only) */}
           <div className="space-y-4">
             <h4 className="text-lg font-semibold">Transfer Details</h4>
-            {transfers.map((transfer, index) => {
+            {transfers.map((transfer) => {
               const tokenInfo = getTokenInfo(transfer.token);
+
               return (
                 <Card key={transfer.id} className="bg-gray-50 dark:bg-gray-800">
                   <CardBody className="py-4">
@@ -277,16 +299,17 @@ export default function TransferPreviewDialog({
                       <div className="flex items-center gap-3">
                         {tokenInfo && (
                           <Image
-                            src={normalizeTokenLogoURI(tokenInfo.logoURI)}
                             alt={tokenInfo.symbol}
-                            width={32}
-                            height={32}
                             className="rounded-full"
+                            height={32}
+                            src={normalizeTokenLogoURI(tokenInfo.logoURI)}
+                            width={32}
                           />
                         )}
                         <div>
                           <div className="font-medium">
-                            {tokenInfo?.name || 'Unknown Token'} ({tokenInfo?.symbol || 'UNK'})
+                            {tokenInfo?.name || "Unknown Token"} (
+                            {tokenInfo?.symbol || "UNK"})
                           </div>
                           <div className="text-sm text-gray-500">
                             {transfer.amount} {tokenInfo?.symbol}
@@ -299,7 +322,8 @@ export default function TransferPreviewDialog({
                           {transfer.receiver ? (
                             validationState[transfer.id] ? (
                               <span className="text-red-400">
-                                {transfer.receiver.slice(0, 6)}...{transfer.receiver.slice(-4)} (Invalid)
+                                {transfer.receiver.slice(0, 6)}...
+                                {transfer.receiver.slice(-4)} (Invalid)
                               </span>
                             ) : (
                               `${transfer.receiver.slice(0, 6)}...${transfer.receiver.slice(-4)}`
@@ -334,9 +358,12 @@ export default function TransferPreviewDialog({
                 <CardBody className="space-y-3">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <div className="text-sm text-gray-500">Required Credits</div>
+                      <div className="text-sm text-gray-500">
+                        Required Credits
+                      </div>
                       <div className="font-semibold">
-                        {formatEther(BigInt(estimationData.requiredCredits))} U2U
+                        {formatEther(BigInt(estimationData.requiredCredits))}{" "}
+                        U2U
                       </div>
                     </div>
                     <div>
@@ -346,13 +373,17 @@ export default function TransferPreviewDialog({
                       </div>
                     </div>
                     <div>
-                      <div className="text-sm text-gray-500">Gas Cost (USD)</div>
+                      <div className="text-sm text-gray-500">
+                        Gas Cost (USD)
+                      </div>
                       <div className="font-semibold">
                         ${estimationData.breakdown.gasCostUsd}
                       </div>
                     </div>
                     <div>
-                      <div className="text-sm text-gray-500">Total Cost (USD)</div>
+                      <div className="text-sm text-gray-500">
+                        Total Cost (USD)
+                      </div>
                       <div className="font-semibold">
                         ${estimationData.totalUsdCost}
                       </div>
@@ -361,7 +392,9 @@ export default function TransferPreviewDialog({
 
                   {!hasEnoughCredits && (
                     <div className="text-sm text-red-600 bg-red-50 dark:bg-red-900/20 p-3 rounded-lg">
-                      ⚠️ Insufficient credits. You need {formatEther(BigInt(estimationData.creditDeficit))} more U2U credits.
+                      ⚠️ Insufficient credits. You need{" "}
+                      {formatEther(BigInt(estimationData.creditDeficit))} more
+                      U2U credits.
                     </div>
                   )}
                 </CardBody>
@@ -385,14 +418,14 @@ export default function TransferPreviewDialog({
           </div>
         </ModalBody>
         <ModalFooter>
-          <Button variant="flat" onPress={onClose} disabled={isPending}>
+          <Button disabled={isPending} variant="flat" onPress={onClose}>
             Cancel
           </Button>
           <Button
             color="success"
-            onPress={handleSubmit}
-            isLoading={isPending}
             disabled={!canSubmit}
+            isLoading={isPending}
+            onPress={handleSubmit}
           >
             {isPending ? "Submitting..." : "Confirm Transfer"}
           </Button>

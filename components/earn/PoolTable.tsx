@@ -1,6 +1,13 @@
-import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell } from '@heroui/table';
-import { Button } from '@heroui/button';
-import { useRouter } from 'next/router';
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableColumn,
+  TableRow,
+  TableCell,
+} from "@heroui/table";
+import { Button } from "@heroui/button";
+import { useRouter } from "next/router";
 
 interface Pool {
   chainId: number;
@@ -19,28 +26,24 @@ interface Pool {
 
 interface PoolTableProps {
   pools: Pool[];
-  chains: { key: string; label: string }[];
   totalItems: number;
 }
 
-export default function PoolTable({ pools, chains, totalItems }: PoolTableProps) {
+export default function PoolTable({ pools, totalItems }: PoolTableProps) {
   const router = useRouter();
 
   const formatNumber = (num: number) => {
-    if (num >= 1e9) return (num / 1e9).toFixed(2) + 'B';
-    if (num >= 1e6) return (num / 1e6).toFixed(2) + 'M';
-    if (num >= 1e3) return (num / 1e3).toFixed(2) + 'K';
+    if (num >= 1e9) return (num / 1e9).toFixed(2) + "B";
+    if (num >= 1e6) return (num / 1e6).toFixed(2) + "M";
+    if (num >= 1e3) return (num / 1e3).toFixed(2) + "K";
+
     return num.toFixed(2);
   };
 
   return (
-    <div className='mt-8'>
-			<div className='mb-4'>
-					{totalItems} pools found
-			</div>
-      <Table 
-        aria-label="Pools table" 
-        removeWrapper>
+    <div className="mt-8">
+      <div className="mb-4">{totalItems} pools found</div>
+      <Table removeWrapper aria-label="Pools table">
         <TableHeader>
           <TableColumn>Pool</TableColumn>
           <TableColumn>Protocol</TableColumn>
@@ -52,7 +55,10 @@ export default function PoolTable({ pools, chains, totalItems }: PoolTableProps)
         </TableHeader>
         <TableBody>
           {pools.map((pool) => (
-            <TableRow key={pool.address} className="hover:bg-white/10 transition-colors">
+            <TableRow
+              key={pool.address}
+              className="hover:bg-white/10 transition-colors"
+            >
               <TableCell>
                 <div className="flex items-center gap-3">
                   <div className="flex items-center">
@@ -63,11 +69,12 @@ export default function PoolTable({ pools, chains, totalItems }: PoolTableProps)
                         style={{ zIndex: pool.tokens.length - index }}
                       >
                         <img
-                          src={token.logoURI}
                           alt={token.symbol}
                           className="w-full h-full rounded-full"
+                          src={token.logoURI}
                           onError={(e) => {
-                            e.currentTarget.src = '/images/token-placeholder.png';
+                            e.currentTarget.src =
+                              "/images/token-placeholder.png";
                           }}
                         />
                       </div>
@@ -87,21 +94,29 @@ export default function PoolTable({ pools, chains, totalItems }: PoolTableProps)
                 <span className="text-white">{pool.exchange}</span>
               </TableCell>
               <TableCell>
-                <span className="text-white">{(pool.feeTier * 100).toFixed(2)}%</span>
+                <span className="text-white">
+                  {(pool.feeTier * 100).toFixed(2)}%
+                </span>
               </TableCell>
               <TableCell>
-                <span className="text-green-400 font-bold">{pool.apr.toFixed(2)}%</span>
+                <span className="text-green-400 font-bold">
+                  {pool.apr.toFixed(2)}%
+                </span>
               </TableCell>
               <TableCell>
-                <span className="text-white">{pool.tvl ? `$${formatNumber(pool.tvl)}` : 'N/A'}</span>
+                <span className="text-white">
+                  {pool.tvl ? `$${formatNumber(pool.tvl)}` : "N/A"}
+                </span>
               </TableCell>
               <TableCell>
-                <span className="text-white">{pool.volume24h ? `$${formatNumber(pool.volume24h)}` : 'N/A'}</span>
+                <span className="text-white">
+                  {pool.volume24h ? `$${formatNumber(pool.volume24h)}` : "N/A"}
+                </span>
               </TableCell>
               <TableCell>
                 <Button
-                  size="sm"
                   color="primary"
+                  size="sm"
                   variant="flat"
                   onPress={() => router.push(`/earn/pool/${pool.address}`)}
                 >

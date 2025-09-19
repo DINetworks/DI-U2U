@@ -10,6 +10,7 @@ import {
   Slider,
 } from "@heroui/react";
 import { parseUnits } from "viem";
+
 import { WithdrawDialogProps } from "@/types/component";
 
 export default function WithdrawDialog({
@@ -31,6 +32,7 @@ export default function WithdrawDialog({
     if (credit && !isUpdatingFromInput.current) {
       isUpdatingFromSlider.current = true;
       const calculatedAmount = (parseFloat(credit) * sliderValue) / 100;
+
       setAmount(calculatedAmount.toFixed(6));
       // Reset flag after a short delay
       setTimeout(() => {
@@ -44,6 +46,7 @@ export default function WithdrawDialog({
     if (credit && amount && !isUpdatingFromSlider.current) {
       isUpdatingFromInput.current = true;
       const percentage = (parseFloat(amount) / parseFloat(credit)) * 100;
+
       if (percentage >= 0 && percentage <= 100) {
         setSliderValue(Math.round(percentage));
       }
@@ -68,6 +71,7 @@ export default function WithdrawDialog({
     try {
       // Convert decimal string to BigInt with 18 decimals (same as credits)
       const amountInWei = parseUnits(amount, 18);
+
       await onWithdraw(amountInWei);
       setAmount("");
       onClose();
@@ -82,16 +86,35 @@ export default function WithdrawDialog({
   };
 
   return (
-    <Modal backdrop="blur" isOpen={isOpen} onClose={onClose} size="md" className="p-4">
+    <Modal
+      backdrop="blur"
+      className="p-4"
+      isOpen={isOpen}
+      size="md"
+      onClose={onClose}
+    >
       <ModalContent>
         <ModalHeader>
           <h3 className="text-xl font-bold">Withdraw Gas Credit</h3>
         </ModalHeader>
         <ModalBody className="space-y-4">
           <div>
-            <label id="withdraw-amount-label" className="block text-sm font-medium mb-2">Amount to Withdraw</label>
+            <label
+              className="block text-sm font-medium mb-2"
+              htmlFor="withdraw-amount-input"
+            >
+              Amount to Withdraw
+            </label>
             <div className="flex gap-2">
               <Input
+                aria-labelledby="withdraw-amount-label"
+                className="flex-1"
+                endContent={
+                  <div className="pointer-events-none flex items-center">
+                    <span className="text-default-400 text-small">U2U</span>
+                  </div>
+                }
+                id="withdraw-amount-input"
                 placeholder="Enter amount"
                 type="number"
                 value={amount}
@@ -99,19 +122,12 @@ export default function WithdrawDialog({
                   isUpdatingFromSlider.current = false;
                   setAmount(e.target.value);
                 }}
-                endContent={
-                  <div className="pointer-events-none flex items-center">
-                    <span className="text-default-400 text-small">U2U</span>
-                  </div>
-                }
-                className="flex-1"
-                aria-labelledby="withdraw-amount-label"
               />
               <Button
+                className="px-3"
                 size="sm"
                 variant="flat"
                 onPress={handleMaxWithdraw}
-                className="px-3"
               >
                 Max
               </Button>
@@ -119,11 +135,6 @@ export default function WithdrawDialog({
             <Slider
               className="max-w-md mt-3"
               color="foreground"
-              value={sliderValue}
-              onChange={(value) => {
-                isUpdatingFromInput.current = false;
-                setSliderValue(value as number);
-              }}
               label={`${sliderValue}% of credit`}
               marks={[
                 {
@@ -139,10 +150,15 @@ export default function WithdrawDialog({
                   label: "80%",
                 },
               ]}
+              maxValue={100}
+              minValue={0}
               size="sm"
               step={1}
-              minValue={0}
-              maxValue={100}
+              value={sliderValue}
+              onChange={(value) => {
+                isUpdatingFromInput.current = false;
+                setSliderValue(value as number);
+              }}
             />
             <div className="text-xs text-gray-400 mt-8">
               Available credit: {credit}
@@ -154,7 +170,8 @@ export default function WithdrawDialog({
           </div>
 
           <div className="text-sm text-yellow-400 bg-yellow-400/10 p-3 rounded-lg">
-            ⚠️ Withdrawing gas credits will reduce your available balance for gasless transactions.
+            ⚠️ Withdrawing gas credits will reduce your available balance for
+            gasless transactions.
           </div>
         </ModalBody>
         <ModalFooter>
@@ -163,9 +180,13 @@ export default function WithdrawDialog({
           </Button>
           <Button
             color="warning"
-            onPress={handleWithdraw}
+            disabled={
+              !amount ||
+              parseFloat(amount) <= 0 ||
+              parseFloat(amount) > parseFloat(credit)
+            }
             isLoading={isLoading}
-            disabled={!amount || parseFloat(amount) <= 0 || parseFloat(amount) > parseFloat(credit)}
+            onPress={handleWithdraw}
           >
             {isLoading ? "Withdrawing..." : "Withdraw"}
           </Button>

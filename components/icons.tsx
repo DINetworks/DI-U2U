@@ -4,16 +4,12 @@ import NextImage from "next/image";
 
 import { IconSvgProps } from "@/types";
 
-export const Logo: React.FC<IconSvgProps> = ({
-  size = 36,
-  height,
-  ...props
-}) => (
+export const Logo: React.FC<IconSvgProps> = () => (
   <Image
     alt="Wallet Image"
     as={NextImage}
     height={60}
-    src="/favicon.png"
+    src="/logo.png"
     width={60}
   />
 );

@@ -1,15 +1,16 @@
 // Chain Selector Component for IU2U Bridge
-import { Select, SelectItem } from '@heroui/select';
-import { ChainSelectorProps } from '@/types/bridge';
-import { getChainLogo } from '@/config/chains';
-import { Image } from '@heroui/image';
+import { Select, SelectItem } from "@heroui/select";
+import { Image } from "@heroui/image";
+
+import { ChainSelectorProps } from "@/types/bridge";
+import { getChainLogo } from "@/config/chains";
 
 export default function ChainSelector({
   chains,
   selectedChain,
   onChainSelect,
   label,
-  disabled = false
+  disabled = false,
 }: ChainSelectorProps) {
   return (
     <div>
@@ -17,17 +18,20 @@ export default function ChainSelector({
         {label}
       </label>
       <Select
+        className="w-full"
+        disabled={disabled}
         placeholder="Select a chain"
-        selectedKeys={selectedChain ? new Set([selectedChain.id.toString()]) : new Set()}
+        selectedKeys={
+          selectedChain ? new Set([selectedChain.id.toString()]) : new Set()
+        }
         onSelectionChange={(keys) => {
           const selectedId = Array.from(keys)[0] as string;
-          const chain = chains.find(c => c.id.toString() === selectedId);
+          const chain = chains.find((c) => c.id.toString() === selectedId);
+
           if (chain) {
             onChainSelect(chain);
           }
         }}
-        disabled={disabled}
-        className="w-full"
       >
         {chains.map((chain) => (
           <SelectItem
@@ -36,11 +40,11 @@ export default function ChainSelector({
           >
             <div className="flex items-center gap-3">
               <Image
-                src={getChainLogo(chain.id)}
                 alt={chain.name}
-                width={24}
-                height={24}
                 className="rounded-full"
+                height={24}
+                src={getChainLogo(chain.id)}
+                width={24}
               />
               <div>
                 <div className="font-medium">{chain.name}</div>

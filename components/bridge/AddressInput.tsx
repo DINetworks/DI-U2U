@@ -1,7 +1,8 @@
 // Address Input Component for IU2U Bridge
-import { Input } from '@heroui/input';
-import { isAddress } from 'viem';
-import { AddressInputProps } from '@/types/bridge';
+import { Input } from "@heroui/input";
+import { isAddress } from "viem";
+
+import { AddressInputProps } from "@/types/bridge";
 
 export default function AddressInput({
   address,
@@ -9,7 +10,7 @@ export default function AddressInput({
   label,
   placeholder,
   error,
-  disabled = false
+  disabled = false,
 }: AddressInputProps) {
   const isValidAddress = address ? isAddress(address as `0x${string}`) : true;
   const hasError = error || (address && !isValidAddress);
@@ -20,18 +21,18 @@ export default function AddressInput({
         {label}
       </label>
       <Input
-        type="text"
-        placeholder={placeholder}
-        value={address}
-        onChange={(e) => onAddressChange(e.target.value)}
+        className="w-full"
         disabled={disabled}
         isInvalid={!!hasError}
-        className="w-full"
+        placeholder={placeholder}
+        type="text"
+        value={address}
+        onChange={(e) => onAddressChange(e.target.value)}
       />
 
       {hasError && (
         <div className="text-xs text-red-400 mt-1">
-          {error || 'Invalid address format'}
+          {error || "Invalid address format"}
         </div>
       )}
 

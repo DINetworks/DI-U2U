@@ -1,6 +1,6 @@
-import { Button } from '@heroui/button';
-import { Spinner } from '@heroui/spinner';
-import { SwapButtonProps } from '@/types/swap';
+import { Button } from "@heroui/button";
+
+import { SwapButtonProps } from "@/types/swap";
 
 export default function SwapButton({
   onClick,
@@ -8,7 +8,7 @@ export default function SwapButton({
   loading,
   children,
   canGetQuote,
-  quote
+  quote,
 }: SwapButtonProps) {
   const getButtonText = () => {
     if (loading) {
@@ -20,7 +20,7 @@ export default function SwapButton({
     }
 
     if (!canGetQuote) {
-      return 'Select Token or Amount'
+      return "Select Token or Amount";
     }
 
     if (!quote) {
@@ -33,17 +33,18 @@ export default function SwapButton({
   const getButtonColor = () => {
     if (disabled) return "default";
     if (!quote) return "primary";
+
     return "success";
   };
 
   return (
     <Button
-      onPress={onClick}
-      disabled={disabled}
-      color={getButtonColor()}
-      size="lg"
       className="w-full h-14 text-lg font-semibold"
+      color={getButtonColor()}
+      disabled={disabled}
       isLoading={loading}
+      size="lg"
+      onPress={onClick}
     >
       {getButtonText()}
     </Button>

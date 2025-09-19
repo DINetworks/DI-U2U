@@ -6,10 +6,11 @@ import {
   ModalBody,
   ModalFooter,
   Button,
-  Image
+  Image,
 } from "@heroui/react";
-import { normalizeTokenLogoURI } from "@/utils/token";
 import { Address } from "viem";
+
+import { normalizeTokenLogoURI } from "@/utils/token";
 
 interface Token {
   address: string;
@@ -55,14 +56,21 @@ export default function DisapproveTokenDialog({
   };
 
   return (
-    <Modal backdrop="blur" isOpen={isOpen} onClose={onClose} size="lg" className="p-4">
+    <Modal
+      backdrop="blur"
+      className="p-4"
+      isOpen={isOpen}
+      size="lg"
+      onClose={onClose}
+    >
       <ModalContent>
         <ModalHeader>
           <h3 className="text-xl font-bold">Disapprove Token</h3>
         </ModalHeader>
         <ModalBody className="space-y-4">
           <div className="text-sm text-gray-400 mb-4">
-            💡 Remove token approval to revoke gateway access for gasless transactions.
+            💡 Remove token approval to revoke gateway access for gasless
+            transactions.
           </div>
 
           {/* Approved Tokens List */}
@@ -76,23 +84,33 @@ export default function DisapproveTokenDialog({
                     key={token.address}
                     className={`p-3 rounded-lg border cursor-pointer transition-all duration-200 ${
                       isSelected
-                        ? 'border-red-500 bg-red-50 dark:bg-red-900/20'
-                        : 'border-gray-200 dark:border-gray-700 hover:border-red-400 hover:bg-red-50 dark:hover:bg-red-900/10'
+                        ? "border-red-500 bg-red-50 dark:bg-red-900/20"
+                        : "border-gray-200 dark:border-gray-700 hover:border-red-400 hover:bg-red-50 dark:hover:bg-red-900/10"
                     }`}
+                    role="button"
+                    tabIndex={0}
                     onClick={() => handleTokenSelect(token)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        handleTokenSelect(token);
+                      }
+                    }}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 relative flex-shrink-0">
                           <Image
-                            src={normalizeTokenLogoURI(token.logoURI)}
                             alt={token.symbol}
                             className="rounded-full object-cover"
-                            fallbackSrc='/images/token-placeholder.png'
+                            fallbackSrc="/images/token-placeholder.png"
+                            src={normalizeTokenLogoURI(token.logoURI)}
                           />
                         </div>
                         <div>
-                          <div className="font-medium text-sm">{token.name}</div>
+                          <div className="font-medium text-sm">
+                            {token.name}
+                          </div>
                           <div className="text-xs text-gray-500 dark:text-gray-400">
                             {token.symbol}
                           </div>
@@ -104,8 +122,16 @@ export default function DisapproveTokenDialog({
                         </span>
                         {isSelected && (
                           <div className="w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
-                            <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                            <svg
+                              className="w-3 h-3 text-white"
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                            >
+                              <path
+                                clipRule="evenodd"
+                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                fillRule="evenodd"
+                              />
                             </svg>
                           </div>
                         )}
@@ -118,26 +144,33 @@ export default function DisapproveTokenDialog({
               <div className="text-center py-8 text-gray-500 dark:text-gray-400">
                 <div className="text-4xl mb-4">📋</div>
                 <div className="font-medium">No Approved Tokens</div>
-                <div className="text-sm">You don't have any approved tokens to disapprove.</div>
+                <div className="text-sm">
+                  You don&apos;t have any approved tokens to disapprove.
+                </div>
               </div>
             )}
           </div>
 
           {selectedToken && (
             <div className="mt-4 p-3 bg-red-50 dark:bg-red-900/20 rounded-lg">
-              <div className="text-sm font-medium">Selected Token to Disapprove:</div>
+              <div className="text-sm font-medium">
+                Selected Token to Disapprove:
+              </div>
               <div className="flex items-center gap-2 mt-1">
                 <Image
-                  src={selectedToken.logoURI}
                   alt={selectedToken.symbol}
-                  width={20}
-                  height={20}
                   className="rounded-full"
+                  height={20}
+                  src={selectedToken.logoURI}
+                  width={20}
                 />
-                <span className="text-sm">{selectedToken.name} ({selectedToken.symbol})</span>
+                <span className="text-sm">
+                  {selectedToken.name} ({selectedToken.symbol})
+                </span>
               </div>
               <div className="text-xs text-red-600 dark:text-red-400 mt-1">
-                ⚠️ This will revoke gateway access for gasless transactions with this token.
+                ⚠️ This will revoke gateway access for gasless transactions with
+                this token.
               </div>
             </div>
           )}
@@ -148,9 +181,9 @@ export default function DisapproveTokenDialog({
           </Button>
           <Button
             color="danger"
-            onPress={handleSubmit}
-            isLoading={isLoading}
             disabled={!selectedToken || approvedTokens.length === 0}
+            isLoading={isLoading}
+            onPress={handleSubmit}
           >
             {isLoading ? "Disapproving..." : "Disapprove"}
           </Button>

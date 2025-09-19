@@ -1,8 +1,9 @@
-import { useState, useEffect, useCallback } from 'react';
-import { useAccount } from 'wagmi';
-import { BatchTransferHistory } from '@/types/metatx';
+import { useState, useEffect, useCallback } from "react";
+import { useAccount } from "wagmi";
 
-const STORAGE_KEY = 'metatx-batch-history';
+import { BatchTransferHistory } from "@/types/metatx";
+
+const STORAGE_KEY = "metatx-batch-history";
 
 export const useBatchTransferHistory = () => {
   const { address: userAddress } = useAccount();
@@ -13,22 +14,27 @@ export const useBatchTransferHistory = () => {
   const loadHistory = useCallback(() => {
     if (!userAddress) {
       setHistory([]);
+
       return;
     }
 
     try {
       setIsLoading(true);
       const stored = localStorage.getItem(`${STORAGE_KEY}-${userAddress}`);
+
       if (stored) {
         const parsedHistory = JSON.parse(stored) as BatchTransferHistory[];
         // Sort by timestamp (most recent first)
-        const sortedHistory = parsedHistory.sort((a, b) => b.timestamp - a.timestamp);
+        const sortedHistory = parsedHistory.sort(
+          (a, b) => b.timestamp - a.timestamp,
+        );
+
         setHistory(sortedHistory);
       } else {
         setHistory([]);
       }
     } catch (error) {
-      console.error('Failed to load batch transfer history:', error);
+      console.error("Failed to load batch transfer history:", error);
       setHistory([]);
     } finally {
       setIsLoading(false);
@@ -36,50 +42,73 @@ export const useBatchTransferHistory = () => {
   }, [userAddress]);
 
   // Save history to localStorage
-  const saveHistory = useCallback((newHistory: BatchTransferHistory[]) => {
-    if (!userAddress) return;
+  const saveHistory = useCallback(
+    (newHistory: BatchTransferHistory[]) => {
+      if (!userAddress) return;
 
-    try {
-      localStorage.setItem(`${STORAGE_KEY}-${userAddress}`, JSON.stringify(newHistory));
-    } catch (error) {
-      console.error('Failed to save batch transfer history:', error);
-    }
-  }, [userAddress]);
+      try {
+        localStorage.setItem(
+          `${STORAGE_KEY}-${userAddress}`,
+          JSON.stringify(newHistory),
+        );
+      } catch (error) {
+        console.error("Failed to save batch transfer history:", error);
+      }
+    },
+    [userAddress],
+  );
 
   // Add a new batch transfer to history
-  const addBatchTransfer = useCallback((transferData: Omit<BatchTransferHistory, 'id' | 'timestamp'>) => {
-    const newTransfer: BatchTransferHistory = {
-      ...transferData,
-      id: `batch-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      timestamp: Math.floor(Date.now() / 1000)
-    };
+  const addBatchTransfer = useCallback(
+    (transferData: Omit<BatchTransferHistory, "id" | "timestamp">) => {
+      const newTransfer: BatchTransferHistory = {
+        ...transferData,
+        id: `batch-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        timestamp: Math.floor(Date.now() / 1000),
+      };
 
-    setHistory(prevHistory => {
-      const updatedHistory = [newTransfer, ...prevHistory];
-      saveHistory(updatedHistory);
-      return updatedHistory;
-    });
-  }, [saveHistory]);
+      setHistory((prevHistory) => {
+        const updatedHistory = [newTransfer, ...prevHistory];
+
+        saveHistory(updatedHistory);
+
+        return updatedHistory;
+      });
+    },
+    [saveHistory],
+  );
 
   // Update an existing batch transfer (e.g., when status changes)
-  const updateBatchTransfer = useCallback((id: string, updates: Partial<BatchTransferHistory>) => {
-    setHistory(prevHistory => {
-      const updatedHistory = prevHistory.map(transfer =>
-        transfer.id === id ? { ...transfer, ...updates } : transfer
-      );
-      saveHistory(updatedHistory);
-      return updatedHistory;
-    });
-  }, [saveHistory]);
+  const updateBatchTransfer = useCallback(
+    (id: string, updates: Partial<BatchTransferHistory>) => {
+      setHistory((prevHistory) => {
+        const updatedHistory = prevHistory.map((transfer) =>
+          transfer.id === id ? { ...transfer, ...updates } : transfer,
+        );
+
+        saveHistory(updatedHistory);
+
+        return updatedHistory;
+      });
+    },
+    [saveHistory],
+  );
 
   // Remove a batch transfer from history
-  const removeBatchTransfer = useCallback((id: string) => {
-    setHistory(prevHistory => {
-      const updatedHistory = prevHistory.filter(transfer => transfer.id !== id);
-      saveHistory(updatedHistory);
-      return updatedHistory;
-    });
-  }, [saveHistory]);
+  const removeBatchTransfer = useCallback(
+    (id: string) => {
+      setHistory((prevHistory) => {
+        const updatedHistory = prevHistory.filter(
+          (transfer) => transfer.id !== id,
+        );
+
+        saveHistory(updatedHistory);
+
+        return updatedHistory;
+      });
+    },
+    [saveHistory],
+  );
 
   // Clear all history
   const clearHistory = useCallback(() => {
@@ -101,6 +130,6 @@ export const useBatchTransferHistory = () => {
     updateBatchTransfer,
     removeBatchTransfer,
     clearHistory,
-    refetch: loadHistory
+    refetch: loadHistory,
   };
 };

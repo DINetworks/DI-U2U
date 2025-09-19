@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Modal,
@@ -10,6 +10,7 @@ import {
 import { Button } from "@heroui/button";
 import { Card, CardBody } from "@heroui/card";
 import { Checkbox } from "@heroui/checkbox";
+
 import { APP_CONTENT } from "@/constants/content";
 
 interface FirstTimeGuideProps {
@@ -17,7 +18,10 @@ interface FirstTimeGuideProps {
   onClose: () => void;
 }
 
-export default function FirstTimeGuide({ isOpen, onClose }: FirstTimeGuideProps) {
+export default function FirstTimeGuide({
+  isOpen,
+  onClose,
+}: FirstTimeGuideProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [dontShowAgain, setDontShowAgain] = useState(false);
 
@@ -32,7 +36,9 @@ export default function FirstTimeGuide({ isOpen, onClose }: FirstTimeGuideProps)
               {stepData.content}
             </p>
             <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
-              <h4 className="font-semibold text-blue-800 dark:text-blue-200 mb-2">Key Benefits:</h4>
+              <h4 className="font-semibold text-blue-800 dark:text-blue-200 mb-2">
+                Key Benefits:
+              </h4>
               <ul className="space-y-1 text-sm text-blue-700 dark:text-blue-300">
                 {stepData.benefits?.map((benefit, idx) => (
                   <li key={idx}>• {benefit}</li>
@@ -51,7 +57,9 @@ export default function FirstTimeGuide({ isOpen, onClose }: FirstTimeGuideProps)
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Card className="bg-yellow-50 dark:bg-yellow-900/20">
                 <CardBody className="space-y-2">
-                  <h5 className="font-semibold text-yellow-800 dark:text-yellow-200">Cost Optimization</h5>
+                  <h5 className="font-semibold text-yellow-800 dark:text-yellow-200">
+                    Cost Optimization
+                  </h5>
                   <ul className="text-sm text-yellow-700 dark:text-yellow-300 space-y-1">
                     {stepData.costOptimization?.map((tip, idx) => (
                       <li key={idx}>• {tip}</li>
@@ -62,7 +70,9 @@ export default function FirstTimeGuide({ isOpen, onClose }: FirstTimeGuideProps)
 
               <Card className="bg-red-50 dark:bg-red-900/20">
                 <CardBody className="space-y-2">
-                  <h5 className="font-semibold text-red-800 dark:text-red-200">Security Notes</h5>
+                  <h5 className="font-semibold text-red-800 dark:text-red-200">
+                    Security Notes
+                  </h5>
                   <ul className="text-sm text-red-700 dark:text-red-300 space-y-1">
                     {stepData.securityNotes?.map((note, idx) => (
                       <li key={idx}>• {note}</li>
@@ -89,18 +99,32 @@ export default function FirstTimeGuide({ isOpen, onClose }: FirstTimeGuideProps)
             <p className="text-gray-700 dark:text-gray-300">
               {stepData.content}
             </p>
-            <div className={`bg-${index === 1 ? 'green' : index === 2 ? 'purple' : 'orange'}-50 dark:bg-${index === 1 ? 'green' : index === 2 ? 'purple' : 'orange'}-900/20 p-4 rounded-lg`}>
-              <h4 className={`font-semibold text-${index === 1 ? 'green' : index === 2 ? 'purple' : 'orange'}-800 dark:text-${index === 1 ? 'green' : index === 2 ? 'purple' : 'orange'}-200 mb-2`}>
-                {index === 1 ? 'How to deposit:' : index === 2 ? 'Token Approval:' : 'Creating Transfers:'}
+            <div
+              className={`bg-${index === 1 ? "green" : index === 2 ? "purple" : "orange"}-50 dark:bg-${index === 1 ? "green" : index === 2 ? "purple" : "orange"}-900/20 p-4 rounded-lg`}
+            >
+              <h4
+                className={`font-semibold text-${index === 1 ? "green" : index === 2 ? "purple" : "orange"}-800 dark:text-${index === 1 ? "green" : index === 2 ? "purple" : "orange"}-200 mb-2`}
+              >
+                {index === 1
+                  ? "How to deposit:"
+                  : index === 2
+                    ? "Token Approval:"
+                    : "Creating Transfers:"}
               </h4>
               {index === 1 ? (
-                <ol className={`space-y-1 text-sm text-${index === 1 ? 'green' : index === 2 ? 'purple' : 'orange'}-700 dark:text-${index === 1 ? 'green' : index === 2 ? 'purple' : 'orange'}-300`}>
+                <ol
+                  className={`space-y-1 text-sm text-${index === 1 ? "green" : index === 2 ? "purple" : "orange"}-700 dark:text-${index === 1 ? "green" : index === 2 ? "purple" : "orange"}-300`}
+                >
                   {stepData.instructions?.map((instruction, idx) => (
-                    <li key={idx}>{idx + 1}. {instruction}</li>
+                    <li key={idx}>
+                      {idx + 1}. {instruction}
+                    </li>
                   ))}
                 </ol>
               ) : (
-                <ul className={`space-y-1 text-sm text-${index === 1 ? 'green' : index === 2 ? 'purple' : 'orange'}-700 dark:text-${index === 1 ? 'green' : index === 2 ? 'purple' : 'orange'}-300`}>
+                <ul
+                  className={`space-y-1 text-sm text-${index === 1 ? "green" : index === 2 ? "purple" : "orange"}-700 dark:text-${index === 1 ? "green" : index === 2 ? "purple" : "orange"}-300`}
+                >
                   {stepData.instructions?.map((instruction, idx) => (
                     <li key={idx}>• {instruction}</li>
                   ))}
@@ -127,7 +151,7 @@ export default function FirstTimeGuide({ isOpen, onClose }: FirstTimeGuideProps)
 
   const finishGuide = () => {
     if (dontShowAgain) {
-      localStorage.setItem('metatx-guide-seen', 'true');
+      localStorage.setItem("metatx-guide-seen", "true");
     }
     onClose();
   };
@@ -136,11 +160,11 @@ export default function FirstTimeGuide({ isOpen, onClose }: FirstTimeGuideProps)
     <AnimatePresence>
       {isOpen && (
         <Modal
-          isOpen={isOpen}
-          onClose={finishGuide}
-          size="2xl"
           backdrop="blur"
           className="p-4"
+          isOpen={isOpen}
+          size="2xl"
+          onClose={finishGuide}
         >
           <ModalContent>
             <ModalHeader className="flex items-center justify-between">
@@ -154,7 +178,9 @@ export default function FirstTimeGuide({ isOpen, onClose }: FirstTimeGuideProps)
                   </div>
                 </motion.div>
                 <div>
-                  <h3 className="text-lg font-bold">{steps[currentStep].title}</h3>
+                  <h3 className="text-lg font-bold">
+                    {steps[currentStep].title}
+                  </h3>
                   <p className="text-sm text-gray-500">
                     Step {currentStep + 1} of {steps.length}
                   </p>
@@ -165,9 +191,9 @@ export default function FirstTimeGuide({ isOpen, onClose }: FirstTimeGuideProps)
             <ModalBody>
               <motion.div
                 key={currentStep}
-                initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
+                initial={{ opacity: 0, x: 20 }}
                 transition={{ duration: 0.3 }}
               >
                 {steps[currentStep].content}
@@ -181,10 +207,10 @@ export default function FirstTimeGuide({ isOpen, onClose }: FirstTimeGuideProps)
                       key={index}
                       className={`w-2 h-2 rounded-full transition-colors duration-200 ${
                         index === currentStep
-                          ? 'bg-blue-500'
+                          ? "bg-blue-500"
                           : index < currentStep
-                          ? 'bg-green-500'
-                          : 'bg-gray-300 dark:bg-gray-600'
+                            ? "bg-green-500"
+                            : "bg-gray-300 dark:bg-gray-600"
                       }`}
                     />
                   ))}
@@ -197,8 +223,8 @@ export default function FirstTimeGuide({ isOpen, onClose }: FirstTimeGuideProps)
                 <div className="flex items-center justify-center w-full">
                   <Checkbox
                     isSelected={dontShowAgain}
-                    onValueChange={setDontShowAgain}
                     size="sm"
+                    onValueChange={setDontShowAgain}
                   >
                     {APP_CONTENT.firstTimeGuide.navigation.skip}
                   </Checkbox>
@@ -207,9 +233,9 @@ export default function FirstTimeGuide({ isOpen, onClose }: FirstTimeGuideProps)
 
               <div className="flex justify-between w-full">
                 <Button
+                  disabled={currentStep === 0}
                   variant="flat"
                   onPress={prevStep}
-                  disabled={currentStep === 0}
                 >
                   {APP_CONTENT.firstTimeGuide.navigation.previous}
                 </Button>
