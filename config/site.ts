@@ -16,6 +16,10 @@ export const siteConfig = {
       label: "Swap",
       href: "/swap",
     },
+    {
+      label: "Earn",
+      href: "/earn",
+    },
   ],
   navMenuItems: [
     {
@@ -29,6 +33,10 @@ export const siteConfig = {
     {
       label: "Swap",
       href: "/swap",
+    },
+    {
+      label: "Earn",
+      href: "/earn",
     },
   ],
   links: {
