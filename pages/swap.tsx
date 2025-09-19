@@ -21,6 +21,7 @@ import TokenChainSelector from '@/components/swap/TokenChainSelector';
 import ChainTokenSelectionModal from '@/components/swap/ChainTokenSelectionModal';
 import SwapRoutes from '@/components/swap/SwapRoutes';
 import Fees from '@/components/swap/Fees';
+import RouteDetails from '@/components/swap/RouteDetails';
 
 import { SwapToken, SwapChain, CrossChainRoute } from '@/types/swap';
 import { executeSwap } from '@/utils/mockSwapApi';
@@ -203,7 +204,7 @@ const SwapPage: NextPage = () => {
 
       {/* Hero Section */}
       <section className="relative z-10 flex flex-col items-center justify-center gap-4 py-6 md:py-12">
-        <motion.div
+        {/* <motion.div
           animate={{ opacity: 1, y: 0 }}
           className="inline-block max-w-2xl text-center justify-center"
           initial={{ opacity: 0, y: 20 }}
@@ -214,7 +215,7 @@ const SwapPage: NextPage = () => {
               Cross-Chain Swap
             </h1>
           </div>
-        </motion.div>
+        </motion.div> */}
 
         <div className="w-full max-w-2xl">
           <motion.div
@@ -252,52 +253,21 @@ const SwapPage: NextPage = () => {
                           <Button
                             size="sm"
                             variant="flat"
+                            color="warning"
                             onPress={() => setShowRoutesDetails(false)}
                           >
                             Back
                           </Button>
                         </div>
 
-                        {/* Route Steps - Inline instead of modal */}
+                        {/* Route Details Component with Collapsible Accordions */}
                         {quote && (
-                          <div className="space-y-4">
-                            <h4 className="text-md font-medium text-white">Route Steps</h4>
-                            <div className="space-y-3">
-                              {/* Mock route steps - in real app, this would come from route data */}
-                              <div className="flex items-center gap-3 p-3 bg-black/60 rounded-lg">
-                                <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center">
-                                  <span className="text-blue-400 font-medium">1</span>
-                                </div>
-                                <div className="flex-1">
-                                  <div className="text-white font-medium">Uniswap V3</div>
-                                  <div className="text-gray-400 text-sm">Swap on Ethereum</div>
-                                </div>
-                                <div className="text-gray-400 text-sm">2.5 ETH</div>
-                              </div>
-
-                              <div className="flex items-center gap-3 p-3 bg-black/60 rounded-lg">
-                                <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center">
-                                  <span className="text-purple-400 font-medium">2</span>
-                                </div>
-                                <div className="flex-1">
-                                  <div className="text-white font-medium">Stargate Bridge</div>
-                                  <div className="text-gray-400 text-sm">Bridge to Polygon</div>
-                                </div>
-                                <div className="text-gray-400 text-sm">~2 min</div>
-                              </div>
-
-                              <div className="flex items-center gap-3 p-3 bg-black/60 rounded-lg">
-                                <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">
-                                  <span className="text-green-400 font-medium">3</span>
-                                </div>
-                                <div className="flex-1">
-                                  <div className="text-white font-medium">QuickSwap</div>
-                                  <div className="text-gray-400 text-sm">Final swap on Polygon</div>
-                                </div>
-                                <div className="text-gray-400 text-sm">1000 USDC</div>
-                              </div>
-                            </div>
-                          </div>
+                          <RouteDetails
+                            route={quote.bestRoute}
+                            quote={quote}
+                            sourceToken={sourceToken}
+                            destinationToken={destinationToken}
+                          />
                         )}
                       </CardBody>
                     </motion.div>
@@ -408,58 +378,56 @@ const SwapPage: NextPage = () => {
                         />
                       </motion.div>
 
-                      {/* Switch Button */}
-                      <motion.div
-                        className="flex justify-center"
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: 0.2, duration: 0.3 }}
-                      >
-                        <Button
-                          isIconOnly
-                          variant="flat"
-                          onPress={switchTokens}
-                          className="bg-white/10 hover:bg-white/20"
-                          size="lg"
-                        >
-                          <svg
-                            className="w-6 h-6 text-white"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"
-                            />
-                          </svg>
-                        </Button>
-                      </motion.div>
-
-                      {/* Destination Token & Chain Selector */}
-                      <TokenChainSelector
-                        label="To"
-                        token={destinationToken}
-                        chain={destinationChain}
-                        onClick={() => enterSelectionMode('destination')}
-                        animationDelay={0.3}
-                      />
-
-                      {/* SwapRoutes and Fees Row */}
+                      {/* SwapRoutes, Switch Button, and Fees Row */}
                       {quote && (
                         <motion.div
-                          className="flex gap-4"
+                          className="flex items-center gap-8"
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: 0.4, duration: 0.3 }}
                         >
+                          {/* SwapRoutes on the left */}
                           <SwapRoutes
                             route={quote.bestRoute}
+                            quote={quote}
+                            sourceToken={sourceToken}
+                            destinationToken={destinationToken}
                             onClick={() => setShowRoutesDetails(!showRoutesDetails)}
+                            onViewDetails={() => openRouterModal(quote.bestRoute)}
                             animationDelay={0.4}
                           />
+
+                          {/* Switch Tokens Button in the middle */}
+                          <motion.div
+                            className="flex-shrink-0"
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ delay: 0.5, duration: 0.3 }}
+                          >
+                            <Button
+                              isIconOnly
+                              variant="flat"
+                              onPress={switchTokens}
+                              className="bg-white/10 hover:bg-white/20 border border-white/20"
+                              size="lg"
+                            >
+                              <svg
+                                className="w-4 h-4 text-white"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"
+                                />
+                              </svg>
+                            </Button>
+                          </motion.div>
+
+                          {/* Fees on the right */}
                           <Fees
                             totalCost={(parseFloat(quote.bestRoute.totalGasCost) + parseFloat(quote.bestRoute.bridgeFee)).toString()}
                             gasCost={quote.bestRoute.totalGasCost}
@@ -470,6 +438,15 @@ const SwapPage: NextPage = () => {
                           />
                         </motion.div>
                       )}
+
+                      {/* Destination Token & Chain Selector */}
+                      <TokenChainSelector
+                        label="To"
+                        token={destinationToken}
+                        chain={destinationChain}
+                        onClick={() => enterSelectionMode('destination')}
+                        animationDelay={0.3}
+                      />
 
                       {/* Slippage Settings */}
                       <motion.div
@@ -501,63 +478,6 @@ const SwapPage: NextPage = () => {
                         </div>
                       </motion.div>
 
-                      {/* Quote Display */}
-                      {quote && (
-                        <Card className="bg-green-900/20 border border-green-500/20">
-                          <CardBody className="p-4">
-                            <div className="flex items-center justify-between mb-3">
-                              <h4 className="text-lg font-semibold text-green-400">Best Route Found</h4>
-                              <Button
-                                size="sm"
-                                color="success"
-                                variant="flat"
-                                onPress={() => openRouterModal(quote.bestRoute)}
-                                className="text-xs"
-                              >
-                                View Details
-                              </Button>
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-4 text-sm">
-                              <div>
-                                <span className="text-gray-400">You Pay:</span>
-                                <div className="text-white font-medium">
-                                  {quote.sourceAmount} {sourceToken?.symbol}
-                                </div>
-                              </div>
-                              <div>
-                                <span className="text-gray-400">You Receive:</span>
-                                <div className="text-white font-medium">
-                                  {quote.destinationAmount} {destinationToken?.symbol}
-                                </div>
-                              </div>
-                              <div>
-                                <span className="text-gray-400">Exchange Rate:</span>
-                                <div className="text-white font-medium">
-                                  1 {sourceToken?.symbol} = {quote.exchangeRate} {destinationToken?.symbol}
-                                </div>
-                              </div>
-                              <div>
-                                <span className="text-gray-400">Estimated Time:</span>
-                                <div className="text-white font-medium">
-                                  {Math.floor(quote.bestRoute.estimatedTime / 60)}m {quote.bestRoute.estimatedTime % 60}s
-                                </div>
-                              </div>
-                            </div>
-                          </CardBody>
-                        </Card>
-                      )}
-
-                      {/* Gas Fee Display */}
-                      {quote && (
-                        <GasFeeDisplay
-                          gasCost={quote.bestRoute.totalGasCost}
-                          bridgeFee={quote.bestRoute.bridgeFee}
-                          totalCost={(parseFloat(quote.bestRoute.totalGasCost) + parseFloat(quote.bestRoute.bridgeFee)).toString()}
-                          currency="IU2U"
-                        />
-                      )}
-
                       {/* Error Display */}
                       {isError && error && (
                         <Card className="bg-red-900/20 border border-red-500/20">
@@ -585,7 +505,7 @@ const SwapPage: NextPage = () => {
                           onClick={handleSwap}
                           disabled={!canGetQuote || !quote}
                           loading={isLoadingQuote || isExecutingSwap}
-                          canGetQuote={canGetQuote}
+                          canGetQuote={!!canGetQuote}
                           quote={quote}
                         >
                           Execute Swap

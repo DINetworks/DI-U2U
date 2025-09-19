@@ -1,15 +1,27 @@
 import { motion } from 'framer-motion';
 import { Card, CardBody } from '@heroui/card';
 import { Button } from '@heroui/button';
-import { CrossChainRoute } from '@/types/swap';
+import { CrossChainRoute, SwapQuote, SwapToken } from '@/types/swap';
 
 interface SwapRoutesProps {
   route: CrossChainRoute;
+  quote?: SwapQuote;
+  sourceToken?: SwapToken | null;
+  destinationToken?: SwapToken | null;
   onClick: () => void;
+  onViewDetails?: () => void;
   animationDelay?: number;
 }
 
-export default function SwapRoutes({ route, onClick, animationDelay = 0 }: SwapRoutesProps) {
+export default function SwapRoutes({
+  route,
+  quote,
+  sourceToken,
+  destinationToken,
+  onClick,
+  onViewDetails,
+  animationDelay = 0
+}: SwapRoutesProps) {
   // Mock DEX and bridge icons - in real app, these would come from route data
   const dexIcons = [
     'https://assets.coingecko.com/coins/images/279/small/ethereum.png',
@@ -35,8 +47,9 @@ export default function SwapRoutes({ route, onClick, animationDelay = 0 }: SwapR
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: animationDelay, duration: 0.3 }}
     >
-      <Card className="bg-black/80 backdrop-blur-sm cursor-pointer hover:bg-black/90 transition-colors">
-        <CardBody className="p-4">
+      {/* Route Card - Normal View */}
+      <Card className="bg-white/10 cursor-pointer hover:bg-white/20 border border-white/20">
+        <CardBody className="p-3">
           <div
             className="flex items-center justify-between"
             onClick={onClick}
@@ -48,7 +61,7 @@ export default function SwapRoutes({ route, onClick, animationDelay = 0 }: SwapR
                 {dexIcons.slice(0, 2).map((icon, index) => (
                   <div
                     key={`dex-${index}`}
-                    className="w-6 h-6 rounded-full border-2 border-black/80 -ml-1 first:ml-0"
+                    className="w-6 h-6 rounded-full border-2 border-white/80 -ml-2 first:ml-0"
                     style={{ zIndex: dexIcons.length - index }}
                   >
                     <img
@@ -61,7 +74,7 @@ export default function SwapRoutes({ route, onClick, animationDelay = 0 }: SwapR
 
                 {/* Bridge Icon */}
                 {bridgeIcons.length > 0 && (
-                  <div className="w-6 h-6 rounded-full border-2 border-black/80 -ml-1">
+                  <div className="w-6 h-6 rounded-full border-2 border-white/80 -ml-2">
                     <img
                       src={bridgeIcons[0]}
                       alt="Bridge"
@@ -72,7 +85,7 @@ export default function SwapRoutes({ route, onClick, animationDelay = 0 }: SwapR
 
                 {/* More indicator */}
                 {(dexIcons.length > 2 || bridgeIcons.length > 1) && (
-                  <div className="w-6 h-6 rounded-full bg-gray-600 border-2 border-black/80 -ml-1 flex items-center justify-center">
+                  <div className="w-6 h-6 rounded-full bg-gray-600 border-2 border-white/80 -ml-2 flex items-center justify-center">
                     <span className="text-xs text-white font-medium">
                       +{(dexIcons.length - 2) + (bridgeIcons.length - 1)}
                     </span>
@@ -82,12 +95,12 @@ export default function SwapRoutes({ route, onClick, animationDelay = 0 }: SwapR
 
               {/* Route Info */}
               <div className="flex items-center gap-2">
-                <div className="text-white font-medium text-sm">
+                {/* <div className="text-white font-medium text-sm">
                   {dexIcons.length + bridgeIcons.length} Steps
-                </div>
+                </div> */}
 
                 {/* Clock Icon with Time */}
-                <div className="flex items-center gap-1 text-gray-400">
+                <div className="flex items-center gap-1 text-gray-300">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <circle cx="12" cy="12" r="10" strokeWidth={2} />
                     <path strokeWidth={2} d="M12 6v6l4 2" />
@@ -98,7 +111,7 @@ export default function SwapRoutes({ route, onClick, animationDelay = 0 }: SwapR
             </div>
 
             {/* Right Arrow Icon */}
-            <div className="text-gray-400">
+            <div className="text-gray-300">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
