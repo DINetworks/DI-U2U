@@ -1,4 +1,5 @@
 // Chain Selector Component for IU2U Bridge
+import { useId } from "react";
 import { Select, SelectItem } from "@heroui/select";
 import { Image } from "@heroui/image";
 
@@ -12,14 +13,23 @@ export default function ChainSelector({
   label,
   disabled = false,
 }: ChainSelectorProps) {
+  const labelId = useId();
+  const selectId = useId();
+
   return (
     <div>
-      <label className="block text-sm font-medium mb-2 text-white">
+      <label
+        className="block text-sm font-medium mb-2 text-white"
+        htmlFor={selectId}
+        id={labelId}
+      >
         {label}
       </label>
       <Select
+        aria-labelledby={labelId}
         className="w-full"
         disabled={disabled}
+        id={selectId}
         placeholder="Select a chain"
         selectedKeys={
           selectedChain ? new Set([selectedChain.id.toString()]) : new Set()

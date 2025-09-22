@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Tabs, Tab } from "@heroui/tabs";
 import { Select, SelectItem } from "@heroui/select";
+import { useWaitForTransactionReceipt } from "wagmi";
 
 import { title, subtitle } from "@/components/primitives";
 import DefaultLayout from "@/layouts/default";
@@ -27,9 +28,10 @@ import BridgeTransactionHistory from "@/components/bridge/BridgeTransactionHisto
 import { useWalletModal } from "@/contexts/WalletContext";
 import BridgeInfoDrawer from "@/components/bridge/BridgeInfoDrawer";
 import BridgeFirstTimeGuide from "@/components/bridge/BridgeFirstTimeGuide";
+import BridgeTransactionCompleteDialog from "@/components/bridge/BridgeTransactionCompleteDialog";
 
 const BridgePage: NextPage = () => {
-  const { isConnected, chain } = useWeb3();
+  const { isConnected, address, chain } = useWeb3();
 
   // Bridge state
   const [selectedSourceChain, setSelectedSourceChain] = useState<Chain | null>(
@@ -40,7 +42,7 @@ const BridgePage: NextPage = () => {
   const [amount, setAmount] = useState("");
   const [bridgeAmount, setBridgeAmount] = useState("");
   const [callAmount, setCallAmount] = useState("");
-  const [recipientAddress, setRecipientAddress] = useState("");
+  const [recipientAddress, setRecipientAddress] = useState(address);
   const [contractAddress, setContractAddress] = useState("");
   const [payload, setPayload] = useState("");
   const [isDepositMode, setIsDepositMode] = useState(true);
@@ -49,6 +51,10 @@ const BridgePage: NextPage = () => {
   const [transactions, setTransactions] = useState<BridgeTransaction[]>([]);
   const [isInfoDrawerOpen, setIsInfoDrawerOpen] = useState(false);
   const [isFirstTimeGuideOpen, setIsFirstTimeGuideOpen] = useState(false);
+  const [isTransactionCompleteDialogOpen, setIsTransactionCompleteDialogOpen] = useState(false);
+  const [completedTransaction, setCompletedTransaction] = useState<BridgeTransaction | null>(null);
+  const [pendingTransactionHashes, setPendingTransactionHashes] = useState<string[]>([]);
+  const [lastTransactionId, setLastTransactionId] = useState<string | null>(null);
   const { openConnectModal } = useWalletModal();
 
   // IU2U hooks
@@ -63,6 +69,15 @@ const BridgePage: NextPage = () => {
   } = useNativeU2UBalance();
   const tokenOps = useIU2UTokenOperations();
   const gatewayOps = useIU2UGatewayOperations();
+
+  // Get txHash from the hooks
+  const tokenTxHash = tokenOps.txHash;
+  const gatewayTxHash = gatewayOps.txHash;
+
+  // Watch for transaction confirmations
+  const { isSuccess: isTxConfirmed, data: txReceipt } = useWaitForTransactionReceipt({
+    hash: pendingTransactionHashes[0] as `0x${string}` | undefined,
+  });
 
   // Determine which balance to show based on active tab
   const displayBalance = isDepositMode ? nativeU2UBalance : iu2uBalance;
@@ -79,6 +94,73 @@ const BridgePage: NextPage = () => {
     }
   }, []);
 
+  // Load transactions from localStorage on mount
+  useEffect(() => {
+    const savedTransactions = localStorage.getItem('bridge-transactions');
+    if (savedTransactions) {
+      try {
+        const parsed = JSON.parse(savedTransactions);
+        setTransactions(parsed);
+      } catch (error) {
+        console.error('Failed to parse saved transactions:', error);
+      }
+    }
+  }, []);
+
+  // Save transactions to localStorage whenever transactions change
+  useEffect(() => {
+    if (transactions.length > 0) {
+      localStorage.setItem('bridge-transactions', JSON.stringify(transactions));
+    }
+  }, [transactions]);
+
+  // Watch for transaction hash and update pending transaction
+  useEffect(() => {
+    const currentTxHash = tokenTxHash || gatewayTxHash;
+    if (currentTxHash && lastTransactionId) {
+      // Update transaction with hash
+      setTransactions((prev) =>
+        prev.map((tx) =>
+          tx.id === lastTransactionId
+            ? { ...tx, txHash: currentTxHash, status: "pending" as const }
+            : tx
+        )
+      );
+
+      // Add to pending transactions to watch for confirmation
+      setPendingTransactionHashes((prev) => [...prev, currentTxHash]);
+
+      // Reset last transaction ID
+      setLastTransactionId(null);
+    }
+  }, [tokenTxHash, gatewayTxHash, lastTransactionId]);
+
+  // Watch for transaction confirmations and update status
+  useEffect(() => {
+    if (isTxConfirmed && txReceipt && pendingTransactionHashes.length > 0) {
+      const confirmedHash = pendingTransactionHashes[0];
+
+      // Update transaction status to completed
+      setTransactions((prev) =>
+        prev.map((tx) =>
+          tx.txHash === confirmedHash
+            ? { ...tx, status: "completed" as const }
+            : tx
+        )
+      );
+
+      // Find the completed transaction and show dialog
+      const completedTx = transactions.find((tx) => tx.txHash === confirmedHash);
+      if (completedTx) {
+        setCompletedTransaction({ ...completedTx, status: "completed" });
+        setIsTransactionCompleteDialogOpen(true);
+      }
+
+      // Remove from pending hashes
+      setPendingTransactionHashes((prev) => prev.slice(1));
+    }
+  }, [isTxConfirmed, txReceipt, pendingTransactionHashes, transactions]);
+
   // Fix source chain to U2U testnet for deposit/withdraw operations
   useEffect(() => {
     if (activeTab === "deposit" && SUPPORTED_BRIDGE_CHAINS.length > 0) {
@@ -90,29 +172,46 @@ const BridgePage: NextPage = () => {
   const handleDeposit = async () => {
     if (!amount || parseFloat(amount) <= 0) return;
 
+    // Add transaction to history with pending status
+    const transactionId = Date.now().toString();
+    const transaction: BridgeTransaction = {
+      id: transactionId,
+      type: "deposit",
+      sourceChain: selectedSourceChain?.name || "",
+      amount,
+      symbol: "IU2U",
+      status: "pending",
+      timestamp: Date.now(),
+    };
+
+    setTransactions((prev) => [transaction, ...prev]);
+    setLastTransactionId(transactionId);
+
     try {
-      const receipt = await tokenOps.deposit(amount);
+      await tokenOps.deposit(amount);
 
-      console.log("Deposit successful:", receipt);
-
-      // Add transaction to history
-      const transaction: BridgeTransaction = {
-        id: Date.now().toString(),
-        type: "deposit",
-        sourceChain: selectedSourceChain?.name || "",
-        amount,
-        symbol: "IU2U",
-        status: "pending",
-        timestamp: Date.now(),
-      };
-
-      setTransactions((prev) => [transaction, ...prev]);
+      console.log("Deposit initiated");
 
       // Reset form
       setAmount("");
       refetchBalance();
     } catch (error) {
       console.error("Deposit failed:", error);
+
+      // Update transaction status to failed
+      setTransactions((prev) =>
+        prev.map((tx) =>
+          tx.id === transactionId
+            ? { ...tx, status: "failed" as const }
+            : tx
+        )
+      );
+
+      // Show failed transaction dialog
+      const failedTx = { ...transaction, status: "failed" as const };
+      setCompletedTransaction(failedTx);
+      setIsTransactionCompleteDialogOpen(true);
+      setLastTransactionId(null);
     }
   };
 
@@ -120,29 +219,43 @@ const BridgePage: NextPage = () => {
   const handleWithdraw = async () => {
     if (!amount || parseFloat(amount) <= 0) return;
 
+    // Add transaction to history with pending status
+    const transactionId = Date.now().toString();
+    const transaction: BridgeTransaction = {
+      id: transactionId,
+      type: "withdraw",
+      sourceChain: selectedSourceChain?.name || "",
+      amount,
+      symbol: "IU2U",
+      status: "pending",
+      timestamp: Date.now(),
+    };
+
+    setTransactions((prev) => [transaction, ...prev]);
+    setLastTransactionId(transactionId);
+
     try {
-      const receipt = await tokenOps.withdraw(amount);
-
-      console.log("Withdrawal successful:", receipt);
-
-      // Add transaction to history
-      const transaction: BridgeTransaction = {
-        id: Date.now().toString(),
-        type: "withdraw",
-        sourceChain: selectedSourceChain?.name || "",
-        amount,
-        symbol: "IU2U",
-        status: "pending",
-        timestamp: Date.now(),
-      };
-
-      setTransactions((prev) => [transaction, ...prev]);
-
-      // Reset form
+      await tokenOps.withdraw(amount);
+      
       setAmount("");
       refetchBalance();
     } catch (error) {
       console.error("Withdrawal failed:", error);
+
+      // Update transaction status to failed
+      setTransactions((prev) =>
+        prev.map((tx) =>
+          tx.id === transactionId
+            ? { ...tx, status: "failed" as const }
+            : tx
+        )
+      );
+
+      // Show failed transaction dialog
+      const failedTx = { ...transaction, status: "failed" as const };
+      setCompletedTransaction(failedTx);
+      setIsTransactionCompleteDialogOpen(true);
+      setLastTransactionId(null);
     }
   };
 
@@ -150,30 +263,32 @@ const BridgePage: NextPage = () => {
   const handleSendToken = async () => {
     if (!selectedDestinationChain || !recipientAddress || !bridgeAmount) return;
 
+    // Add transaction to history with pending status
+    const transactionId = Date.now().toString();
+    const transaction: BridgeTransaction = {
+      id: transactionId,
+      type: "sendToken",
+      sourceChain: selectedSourceChain?.name || "",
+      destinationChain: selectedDestinationChain.name,
+      recipient: recipientAddress,
+      amount: bridgeAmount,
+      symbol: "IU2U",
+      status: "pending",
+      timestamp: Date.now(),
+    };
+
+    setTransactions((prev) => [transaction, ...prev]);
+    setLastTransactionId(transactionId);
+
     try {
-      const receipt = await gatewayOps.sendToken(
+      await gatewayOps.sendToken(
         selectedDestinationChain.name,
         recipientAddress,
         "IU2U",
         bridgeAmount,
       );
 
-      console.log("Cross-chain transfer successful:", receipt);
-
-      // Add transaction to history
-      const transaction: BridgeTransaction = {
-        id: Date.now().toString(),
-        type: "sendToken",
-        sourceChain: selectedSourceChain?.name || "",
-        destinationChain: selectedDestinationChain.name,
-        recipient: recipientAddress,
-        amount: bridgeAmount,
-        symbol: "IU2U",
-        status: "pending",
-        timestamp: Date.now(),
-      };
-
-      setTransactions((prev) => [transaction, ...prev]);
+      console.log("Cross-chain transfer initiated");
 
       // Reset form
       setBridgeAmount("");
@@ -181,6 +296,21 @@ const BridgePage: NextPage = () => {
       refetchBalance();
     } catch (error) {
       console.error("Cross-chain transfer failed:", error);
+
+      // Update transaction status to failed
+      setTransactions((prev) =>
+        prev.map((tx) =>
+          tx.id === transactionId
+            ? { ...tx, status: "failed" as const }
+            : tx
+        )
+      );
+
+      // Show failed transaction dialog
+      const failedTx = { ...transaction, status: "failed" as const };
+      setCompletedTransaction(failedTx);
+      setIsTransactionCompleteDialogOpen(true);
+      setLastTransactionId(null);
     }
   };
 
@@ -188,41 +318,44 @@ const BridgePage: NextPage = () => {
   const handleContractCall = async () => {
     if (!selectedDestinationChain || !contractAddress || !payload) return;
 
-    try {
-      const receipt =
+    // Add transaction to history with pending status
+    const transactionId = Date.now().toString();
+    const transaction: BridgeTransaction = {
+      id: transactionId,
+      type:
         isContractCall && callAmount
-          ? await gatewayOps.callContractWithToken(
-              selectedDestinationChain.name,
-              contractAddress,
-              payload,
-              "IU2U",
-              callAmount,
-            )
-          : await gatewayOps.callContract(
-              selectedDestinationChain.name,
-              contractAddress,
-              payload,
-            );
+          ? "callContractWithToken"
+          : "callContract",
+      sourceChain: selectedSourceChain?.name || "",
+      destinationChain: selectedDestinationChain.name,
+      contractAddress,
+      amount: isContractCall && callAmount ? callAmount : "",
+      symbol: "IU2U",
+      status: "pending",
+      timestamp: Date.now(),
+    };
 
-      console.log("Contract call successful:", receipt);
+    setTransactions((prev) => [transaction, ...prev]);
+    setLastTransactionId(transactionId);
 
-      // Add transaction to history
-      const transaction: BridgeTransaction = {
-        id: Date.now().toString(),
-        type:
-          isContractCall && callAmount
-            ? "callContractWithToken"
-            : "callContract",
-        sourceChain: selectedSourceChain?.name || "",
-        destinationChain: selectedDestinationChain.name,
-        contractAddress,
-        amount: isContractCall && callAmount ? callAmount : "",
-        symbol: "IU2U",
-        status: "pending",
-        timestamp: Date.now(),
-      };
+    try {
+      if (isContractCall && callAmount) {
+        await gatewayOps.callContractWithToken(
+          selectedDestinationChain.name,
+          contractAddress,
+          payload,
+          "IU2U",
+          callAmount,
+        );
+      } else {
+        await gatewayOps.callContract(
+          selectedDestinationChain.name,
+          contractAddress,
+          payload,
+        );
+      }
 
-      setTransactions((prev) => [transaction, ...prev]);
+      console.log("Contract call initiated");
 
       // Reset form
       setCallAmount("");
@@ -231,6 +364,21 @@ const BridgePage: NextPage = () => {
       refetchBalance();
     } catch (error) {
       console.error("Contract call failed:", error);
+
+      // Update transaction status to failed
+      setTransactions((prev) =>
+        prev.map((tx) =>
+          tx.id === transactionId
+            ? { ...tx, status: "failed" as const }
+            : tx
+        )
+      );
+
+      // Show failed transaction dialog
+      const failedTx = { ...transaction, status: "failed" as const };
+      setCompletedTransaction(failedTx);
+      setIsTransactionCompleteDialogOpen(true);
+      setLastTransactionId(null);
     }
   };
 
@@ -337,6 +485,7 @@ const BridgePage: NextPage = () => {
                     className="w-full"
                     selectedKey={activeTab}
                     onSelectionChange={(key) => setActiveTab(key as string)}
+                    destroyInactiveTabPanel={false}
                   >
                     <Tab key="operations" title="Deposit/Withdraw">
                       <div className="space-y-4 mt-4">
@@ -345,10 +494,12 @@ const BridgePage: NextPage = () => {
                           <label
                             className="block text-sm font-medium mb-2 text-white"
                             htmlFor="operation-type-select"
+                            id="operation-type-label"
                           >
                             Operation Type
                           </label>
                           <Select
+                            aria-labelledby="operation-type-label"
                             className="w-full"
                             id="operation-type-select"
                             placeholder="Select operation"
@@ -688,6 +839,16 @@ const BridgePage: NextPage = () => {
       <BridgeFirstTimeGuide
         isOpen={isFirstTimeGuideOpen}
         onClose={() => setIsFirstTimeGuideOpen(false)}
+      />
+
+      {/* Bridge Transaction Complete Dialog */}
+      <BridgeTransactionCompleteDialog
+        isOpen={isTransactionCompleteDialogOpen}
+        onClose={() => {
+          setIsTransactionCompleteDialogOpen(false);
+          setCompletedTransaction(null);
+        }}
+        transaction={completedTransaction}
       />
     </DefaultLayout>
   );

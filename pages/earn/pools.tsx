@@ -205,11 +205,7 @@ const PoolsPage: NextPage = () => {
                 </div>
               ) : (
                 <>
-                  <PoolTable
-                    chains={chains}
-                    pools={pools}
-                    totalItems={totalItems}
-                  />
+                  <PoolTable pools={pools} totalItems={totalItems} />
 
                   {/* Pagination */}
                   <PoolPagination

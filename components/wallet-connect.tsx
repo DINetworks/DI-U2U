@@ -105,10 +105,10 @@ export function WalletConnect() {
             }}
           >
             <Image
-              className="rounded-full"
-              src={getChainLogo(chainId)}
               alt={`${currentChain?.name || "Chain"} logo`}
+              className="rounded-full"
               height={24}
+              src={getChainLogo(chainId)}
               width={24}
             />
           </div>
@@ -341,9 +341,9 @@ export function WalletConnect() {
                       <Image
                         alt={`metamask`}
                         className="rounded-full"
-                        src={'/images/icons/wallet/metamask.png'}
-                        width={32}
                         height={32}
+                        src={"/images/icons/wallet/metamask.png"}
+                        width={32}
                       />
                     );
                   }
@@ -352,9 +352,9 @@ export function WalletConnect() {
                       <Image
                         alt={`metamask`}
                         className="rounded-full"
-                        src={'/images/icons/wallet/walletconnect.png'}
-                        width={32}
                         height={32}
+                        src={"/images/icons/wallet/walletconnect.png"}
+                        width={32}
                       />
                     );
                   }
@@ -401,7 +401,7 @@ export function WalletConnect() {
                     onPress={() => handleConnect(connector)}
                   >
                     <div className="flex items-center gap-3">
-                      <div className="flex-shrink-0">
+                      <div className="flex-shrink-0 py-2">
                         {getWalletIcon(connector.name)}
                       </div>
                       <span className="font-medium">{connector.name}</span>

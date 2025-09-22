@@ -1,5 +1,5 @@
 // IU2U GMP Protocol Hooks
-import { Chain } from "viem";
+import { Address, Chain, parseEther } from "viem";
 import { useState, useEffect, useCallback } from "react";
 import {
   useAccount,
@@ -20,6 +20,7 @@ import { SUPPORTED_BRIDGE_CHAINS } from "@/config/bridge";
 export function useIU2UContract(): UseIU2UContractReturn {
   const { address } = useAccount();
   const chainId = useChainId();
+
   const [isLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -104,7 +105,7 @@ export function useNativeU2UBalance() {
 // Hook for IU2U token operations
 export function useIU2UTokenOperations() {
   const { iu2uToken: tokenAddress } = useIU2UContract();
-  const { writeContract, isPending, error } = useWriteContract();
+  const { writeContract, data: txHash, isPending, error } = useWriteContract();
 
   // Deposit U2U for IU2U
   const deposit = useCallback(
@@ -112,10 +113,10 @@ export function useIU2UTokenOperations() {
       if (!tokenAddress) throw new Error("IU2U token contract not available");
 
       return writeContract({
-        address: tokenAddress as `0x${string}`,
+        address: tokenAddress as Address,
         abi: IU2U_ABI,
         functionName: "deposit",
-        value: BigInt(amount) * BigInt(10 ** 18), // Convert to wei
+        value: parseEther(amount),
       });
     },
     [tokenAddress, writeContract],
@@ -130,7 +131,7 @@ export function useIU2UTokenOperations() {
         address: tokenAddress as `0x${string}`,
         abi: IU2U_ABI,
         functionName: "withdraw",
-        args: [BigInt(amount) * BigInt(10 ** 18)], // Convert to wei
+        args: [parseEther(amount)],
       });
     },
     [tokenAddress, writeContract],
@@ -171,6 +172,7 @@ export function useIU2UTokenOperations() {
     withdraw,
     transfer,
     approve,
+    txHash,
     isLoading: isPending,
     error: error?.message || null,
   };
@@ -179,7 +181,7 @@ export function useIU2UTokenOperations() {
 // Hook for IU2U Gateway operations
 export function useIU2UGatewayOperations() {
   const { iu2uGateway: gatewayAddress } = useIU2UContract();
-  const { writeContract, isPending, error } = useWriteContract();
+  const { writeContract, data: txHash, isPending, error } = useWriteContract();
 
   // Send IU2U tokens cross-chain
   const sendToken = useCallback(
@@ -263,6 +265,7 @@ export function useIU2UGatewayOperations() {
     sendToken,
     callContract,
     callContractWithToken,
+    txHash,
     isLoading: isPending,
     error: error?.message || null,
   };

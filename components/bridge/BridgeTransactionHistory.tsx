@@ -1,50 +1,40 @@
 // Bridge Transaction History Component for IU2U Bridge
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Badge } from "@heroui/badge";
+import { Accordion, AccordionItem } from "@heroui/accordion";
+import { Chip } from "@heroui/chip";
 
 import {
   BridgeTransaction,
   BridgeTransactionHistoryProps,
 } from "@/types/bridge";
+import { getStatusColor, getTransactionTypeLabel, getExplorerUrl } from "@/utils/bridge";
 
 export default function BridgeTransactionHistory({
   transactions,
   onTransactionClick,
 }: BridgeTransactionHistoryProps) {
-  const getStatusColor = (status: BridgeTransaction["status"]) => {
-    switch (status) {
-      case "completed":
-        return "success";
-      case "pending":
-        return "warning";
-      case "failed":
-        return "danger";
-      default:
-        return "default";
-    }
-  };
-
-  const getTransactionTypeLabel = (type: BridgeTransaction["type"]) => {
-    switch (type) {
-      case "deposit":
-        return "Deposit U2U → IU2U";
-      case "withdraw":
-        return "Withdraw IU2U → U2U";
-      case "sendToken":
-        return "Cross-Chain Transfer";
-      case "callContract":
-        return "Contract Call";
-      case "callContractWithToken":
-        return "Contract Call + IU2U";
-      default:
-        return type;
-    }
-  };
-
   const formatTimestamp = (timestamp: number) => {
     const date = new Date(timestamp);
 
     return date.toLocaleString();
+  };
+
+  const getTransactionTypeChip = (type: BridgeTransaction["type"]) => {
+    const chipConfig = {
+      deposit: { label: "Deposit", color: "success" as const },
+      withdraw: { label: "Withdraw", color: "warning" as const },
+      sendToken: { label: "Transfer", color: "primary" as const },
+      callContract: { label: "Contract", color: "secondary" as const },
+      callContractWithToken: { label: "Contract+Token", color: "default" as const },
+    };
+
+    const config = chipConfig[type] || { label: type, color: "default" as const };
+    return (
+      <Chip color={config.color} size="sm" variant="flat">
+        {config.label}
+      </Chip>
+    );
   };
 
   if (transactions.length === 0) {
@@ -69,111 +59,100 @@ export default function BridgeTransactionHistory({
       <CardHeader>
         <h3 className="text-lg font-bold text-white">Transaction History</h3>
       </CardHeader>
-      <CardBody className="space-y-3">
-        {transactions.map((transaction) => (
-          <div
-            key={transaction.id}
-            className="bg-white/5 rounded-lg p-3 border border-white/10 hover:bg-white/10 transition-colors cursor-pointer"
-            role="button"
-            tabIndex={0}
-            onClick={() => onTransactionClick?.(transaction)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
-                onTransactionClick?.(transaction);
-              }
-            }}
-          >
-            <div className="flex items-start justify-between mb-2">
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-sm font-medium text-white">
-                    {getTransactionTypeLabel(transaction.type)}
-                  </span>
-                  <Badge
-                    color={getStatusColor(transaction.status)}
-                    size="sm"
-                    variant="flat"
-                  >
-                    {transaction.status}
-                  </Badge>
-                </div>
-
-                <div className="text-xs text-gray-400 space-y-1">
-                  <div>
-                    <span className="font-medium">Amount:</span>{" "}
-                    {transaction.amount} {transaction.symbol}
+      <CardBody>
+        <div className="max-h-80 overflow-y-auto">
+          <Accordion variant="splitted" className="space-y-2">
+            {transactions.map((transaction) => (
+              <AccordionItem
+                key={transaction.id}
+                aria-label={`${getTransactionTypeLabel(transaction.type)} - ${transaction.amount} ${transaction.symbol}`}
+                className="bg-white/5 border border-white/10"
+                title={
+                  <div className="flex items-center justify-between w-full">
+                    <div className="flex items-center gap-3">
+                      {getTransactionTypeChip(transaction.type)}
+                      <div className="flex items-center gap-2">
+                        <span className="text-white font-medium">
+                          {transaction.amount} {transaction.symbol}
+                        </span>
+                        <Chip
+                          color={getStatusColor(transaction.status)}
+                          size="sm"
+                          variant="flat"
+                        >
+                          {transaction.status}
+                        </Chip>
+                      </div>
+                    </div>
+                  </div>
+                }
+              >
+                <div className="space-y-3">
+                  <div className="grid grid-cols-1 gap-4 text-sm">
+                    <div className="flex justify-between">
+                      <span className="font-medium text-gray-300">Type:</span>
+                      <div className="text-white">{getTransactionTypeLabel(transaction.type)}</div>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-medium text-gray-300">Status:</span>
+                      <div className="text-white capitalize">{transaction.status}</div>
+                    </div>
                   </div>
 
-                  {transaction.sourceChain && (
-                    <div>
-                      <span className="font-medium">From:</span>{" "}
-                      {transaction.sourceChain}
-                    </div>
-                  )}
+                  <div className="space-y-2 text-sm">
+                    {transaction.sourceChain && (
+                      <div className="flex justify-between">
+                        <span className="font-medium text-gray-300">From:</span>
+                        <span className="text-white">{transaction.sourceChain}</span>
+                      </div>
+                    )}
 
-                  {transaction.destinationChain && (
-                    <div>
-                      <span className="font-medium">To:</span>{" "}
-                      {transaction.destinationChain}
-                    </div>
-                  )}
+                    {transaction.destinationChain && (
+                      <div className="flex justify-between">
+                        <span className="font-medium text-gray-300">To:</span>
+                        <span className="text-white">{transaction.destinationChain}</span>
+                      </div>
+                    )}
 
-                  {transaction.recipient && (
-                    <div>
-                      <span className="font-medium">Recipient:</span>{" "}
-                      <span className="font-mono">
-                        {transaction.recipient.slice(0, 6)}...
-                        {transaction.recipient.slice(-4)}
-                      </span>
-                    </div>
-                  )}
+                    {transaction.recipient && (
+                      <div className="flex justify-between">
+                        <span className="font-medium text-gray-300">Recipient:</span>
+                        <span className="text-white font-mono">
+                          {transaction.recipient.slice(0, 6)}...{transaction.recipient.slice(-4)}
+                        </span>
+                      </div>
+                    )}
 
-                  {transaction.contractAddress && (
-                    <div>
-                      <span className="font-medium">Contract:</span>{" "}
-                      <span className="font-mono">
-                        {transaction.contractAddress.slice(0, 6)}...
-                        {transaction.contractAddress.slice(-4)}
-                      </span>
-                    </div>
-                  )}
+                    {transaction.contractAddress && (
+                      <div className="flex justify-between">
+                        <span className="font-medium text-gray-300">Contract:</span>
+                        <span className="text-white font-mono">
+                          {transaction.contractAddress.slice(0, 6)}...{transaction.contractAddress.slice(-4)}
+                        </span>
+                      </div>
+                    )}
 
-                  <div>
-                    <span className="font-medium">Time:</span>{" "}
-                    {formatTimestamp(transaction.timestamp)}
+                    {transaction.txHash && transaction.sourceChain && (
+                      <div className="flex justify-between items-center">
+                        <span className="font-medium text-gray-300">Transaction:</span>
+                        <button
+                          className="text-blue-400 hover:text-blue-300 underline text-sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            const explorerUrl = getExplorerUrl(transaction.sourceChain!, transaction.txHash!);
+                            window.open(explorerUrl, "_blank");
+                          }}
+                        >
+                          View on Explorer
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
-              </div>
-
-              {transaction.txHash && (
-                <button
-                  className="text-gray-400 hover:text-white p-1"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    window.open(
-                      `https://polygonscan.com/tx/${transaction.txHash}`,
-                      "_blank",
-                    );
-                  }}
-                >
-                  <svg
-                    fill="none"
-                    height="14"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    viewBox="0 0 24 24"
-                    width="14"
-                  >
-                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                    <polyline points="15,3 21,3 21,9" />
-                    <line x1="10" x2="21" y1="14" y2="3" />
-                  </svg>
-                </button>
-              )}
-            </div>
-          </div>
-        ))}
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </div>
       </CardBody>
     </Card>
   );
