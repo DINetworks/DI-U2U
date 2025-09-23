@@ -18,13 +18,13 @@ export default function DefaultLayout({
       {/* Background Image */}
       <div className="fixed inset-0 z-0 h-screen">
         <img
-          alt="Domain Auction Background"
+          alt="U2U Cross Chain"
           className="w-full h-full object-cover"
-          src="/images/domain-auction.jpg"
+          src="/images/background.jpg"
         />
-        <div className="absolute inset-0 backdrop-blur-[2px]" />
+        <div className="absolute inset-0 backdrop-blur-[3px]" />
         <div
-          className={`absolute inset-0 ${isHome ? "bg-black/40" : "bg-black/40"}`}
+          className={`absolute inset-0 ${isHome ? "bg-black/30" : "bg-black/40"}`}
         />
       </div>
       <div className="relative flex flex-col h-screen">

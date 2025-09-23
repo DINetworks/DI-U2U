@@ -74,7 +74,6 @@ export const checkCommandStatus = async (commandId: string, chain: string) => {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const data = await response.json();
-    console.log('res', data)
     return data;
   } catch (error) {
     console.error('Failed to check command status:', error);

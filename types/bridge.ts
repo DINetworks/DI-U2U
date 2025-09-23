@@ -21,6 +21,7 @@ export interface BridgeTransaction {
   commandId?: string; // For cross-chain transactions
   destinationTxHash?: string; // For executed cross-chain transactions
   timestamp: number;
+  dialogShown?: boolean; // Flag to prevent dialog reopening
   gasUsed?: string;
   gasPrice?: string;
 }

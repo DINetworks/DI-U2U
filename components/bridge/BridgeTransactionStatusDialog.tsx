@@ -85,8 +85,6 @@ export default function BridgeTransactionStatusDialog({
 
   const steps = getSteps(transaction);
 
-  console.log('steps', steps)
-
   const getChainIcon = (chainName: string) => {
     const chainIconMap: Record<string, string> = {
       "U2U Nebulas Testnet": "/images/icons/chains/u2u.png",
@@ -166,10 +164,10 @@ export default function BridgeTransactionStatusDialog({
   return (
     <Modal
       backdrop="blur"
-      className="p-4"
       isOpen={isOpen}
       size="lg"
       onClose={onClose}
+      className="p-4"
     >
       <ModalContent>
         <ModalHeader>
