@@ -19,7 +19,9 @@ export const getChainLogo = (chainId: number): string => {
 };
 
 // Helper function to get chain name from ID
-export const getChainName = (chainId: number): string => {
+export const getChainName = (chainId: number | undefined): string => {
+  if (!chainId) return "Unknown";
+  
   const chainNames: Record<number, string> = {
     1: "Ethereum",
     56: "BSC",
@@ -29,6 +31,22 @@ export const getChainName = (chainId: number): string => {
     10: "Optimism",
     43114: "Avalanche",
     2484: "U2U Nebulas Testnet",
+  };
+
+  return chainNames[chainId] || "Unknown";
+};
+
+
+export const getChainNameForGateway = (chainId: number) => {
+  const chainNames: Record<number, string> = {
+    1: "ethereum",
+    56: "bsc",
+    137: "polygon",
+    8453: "base",
+    42161: "arbitrum",
+    10: "optimism",
+    43114: "avalanche",
+    2484: "u2u-nebulas-testnet",
   };
 
   return chainNames[chainId] || "Unknown";

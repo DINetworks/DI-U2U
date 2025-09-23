@@ -20,7 +20,7 @@ export default function TokenAmountInput({
   };
 
   return (
-    <div>
+    <div suppressHydrationWarning>
       <label className="block text-sm font-medium mb-2 text-white">
         {label || `Amount (${symbol})`}
       </label>
@@ -46,6 +46,7 @@ export default function TokenAmountInput({
           type="number"
           value={amount}
           onChange={(e) => onAmountChange(e.target.value)}
+          suppressHydrationWarning
         />
       </div>
 

@@ -58,10 +58,10 @@ export function useIU2UBalance(): UseIU2UBalanceReturn {
     isLoading,
     refetch,
   } = useReadContract({
-    address: tokenAddress as `0x${string}`,
+    address: tokenAddress as Address,
     abi: IU2U_ABI,
     functionName: "balanceOf",
-    args: [address as `0x${string}`],
+    args: [address as Address],
     query: {
       enabled: !!address && !!tokenAddress,
     },
@@ -87,7 +87,7 @@ export function useNativeU2UBalance() {
     isLoading,
     refetch,
   } = useBalance({
-    address: address as `0x${string}`,
+    address: address as Address,
     chainId: 2484, // U2U Nebulas Testnet
     query: {
       enabled: !!address && chainId === 2484,
@@ -105,21 +105,21 @@ export function useNativeU2UBalance() {
 // Hook for IU2U token operations
 export function useIU2UTokenOperations() {
   const { iu2uToken: tokenAddress } = useIU2UContract();
-  const { writeContract, data: txHash, isPending, error } = useWriteContract();
+  const { writeContractAsync, data: txHash, isPending, error } = useWriteContract();
 
   // Deposit U2U for IU2U
   const deposit = useCallback(
     async (amount: string) => {
       if (!tokenAddress) throw new Error("IU2U token contract not available");
 
-      return writeContract({
+      return await writeContractAsync({
         address: tokenAddress as Address,
         abi: IU2U_ABI,
         functionName: "deposit",
         value: parseEther(amount),
       });
     },
-    [tokenAddress, writeContract],
+    [tokenAddress, writeContractAsync],
   );
 
   // Withdraw IU2U for U2U
@@ -127,14 +127,14 @@ export function useIU2UTokenOperations() {
     async (amount: string) => {
       if (!tokenAddress) throw new Error("IU2U token contract not available");
 
-      return writeContract({
-        address: tokenAddress as `0x${string}`,
+      return await writeContractAsync({
+        address: tokenAddress as Address,
         abi: IU2U_ABI,
         functionName: "withdraw",
         args: [parseEther(amount)],
       });
     },
-    [tokenAddress, writeContract],
+    [tokenAddress, writeContractAsync],
   );
 
   // Transfer IU2U
@@ -142,14 +142,14 @@ export function useIU2UTokenOperations() {
     async (to: string, amount: string) => {
       if (!tokenAddress) throw new Error("IU2U token contract not available");
 
-      return writeContract({
-        address: tokenAddress as `0x${string}`,
+      return await writeContractAsync({
+        address: tokenAddress as Address,
         abi: IU2U_ABI,
         functionName: "transfer",
-        args: [to as `0x${string}`, BigInt(amount) * BigInt(10 ** 18)],
+        args: [to as Address, parseEther(amount)],
       });
     },
-    [tokenAddress, writeContract],
+    [tokenAddress, writeContractAsync],
   );
 
   // Approve IU2U spending
@@ -157,14 +157,14 @@ export function useIU2UTokenOperations() {
     async (spender: string, amount: string) => {
       if (!tokenAddress) throw new Error("IU2U token contract not available");
 
-      return writeContract({
-        address: tokenAddress as `0x${string}`,
+      return await writeContractAsync({
+        address: tokenAddress as Address,
         abi: IU2U_ABI,
         functionName: "approve",
-        args: [spender as `0x${string}`, BigInt(amount) * BigInt(10 ** 18)],
+        args: [spender as Address, parseEther(amount)],
       });
     },
-    [tokenAddress, writeContract],
+    [tokenAddress, writeContractAsync],
   );
 
   return {
@@ -181,7 +181,7 @@ export function useIU2UTokenOperations() {
 // Hook for IU2U Gateway operations
 export function useIU2UGatewayOperations() {
   const { iu2uGateway: gatewayAddress } = useIU2UContract();
-  const { writeContract, data: txHash, isPending, error } = useWriteContract();
+  const { writeContractAsync, data: txHash, isPending, error } = useWriteContract();
 
   // Send IU2U tokens cross-chain
   const sendToken = useCallback(
@@ -194,19 +194,19 @@ export function useIU2UGatewayOperations() {
       if (!gatewayAddress)
         throw new Error("IU2U Gateway contract not available");
 
-      return writeContract({
-        address: gatewayAddress as `0x${string}`,
+      return writeContractAsync({
+        address: gatewayAddress as Address,
         abi: IU2U_GATEWAY_ABI,
         functionName: "sendToken",
         args: [
           destinationChain,
-          recipient as `0x${string}`,
+          recipient as Address,
           symbol,
-          BigInt(amount) * BigInt(10 ** 18),
+          parseEther(amount)
         ],
       });
     },
-    [gatewayAddress, writeContract],
+    [gatewayAddress, writeContractAsync]
   );
 
   // Call contract cross-chain
@@ -219,18 +219,18 @@ export function useIU2UGatewayOperations() {
       if (!gatewayAddress)
         throw new Error("IU2U Gateway contract not available");
 
-      return writeContract({
-        address: gatewayAddress as `0x${string}`,
+      return await writeContractAsync({
+        address: gatewayAddress as Address,
         abi: IU2U_GATEWAY_ABI,
         functionName: "callContract",
         args: [
           destinationChain,
-          contractAddress as `0x${string}`,
-          payload as `0x${string}`,
+          contractAddress as Address,
+          payload as Address
         ],
       });
     },
-    [gatewayAddress, writeContract],
+    [gatewayAddress, writeContractAsync]
   );
 
   // Call contract with token transfer
@@ -245,20 +245,20 @@ export function useIU2UGatewayOperations() {
       if (!gatewayAddress)
         throw new Error("IU2U Gateway contract not available");
 
-      return writeContract({
-        address: gatewayAddress as `0x${string}`,
+      return writeContractAsync({
+        address: gatewayAddress as Address,
         abi: IU2U_GATEWAY_ABI,
         functionName: "callContractWithToken",
         args: [
           destinationChain,
-          contractAddress as `0x${string}`,
-          payload as `0x${string}`,
+          contractAddress as Address,
+          payload as Address,
           symbol,
-          BigInt(amount) * BigInt(10 ** 18),
-        ],
+          parseEther(amount)
+        ]
       });
     },
-    [gatewayAddress, writeContract],
+    [gatewayAddress, writeContractAsync],
   );
 
   return {

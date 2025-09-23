@@ -18,6 +18,8 @@ export interface BridgeTransaction {
   payload?: string;
   status: "pending" | "completed" | "failed";
   txHash?: string;
+  commandId?: string; // For cross-chain transactions
+  destinationTxHash?: string; // For executed cross-chain transactions
   timestamp: number;
   gasUsed?: string;
   gasPrice?: string;
