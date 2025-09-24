@@ -18,9 +18,10 @@ import { useWeb3 } from "@/hooks/useWeb3";
 import { useTokenBalance } from "@/hooks/useTokenBalance";
 import { useTokenAllowance } from "@/hooks/useTokenAllowance";
 import { normalizeTokenLogoURI } from "@/utils/token";
-import { CONTRACT_ADDRESSES } from "@/config/web3";
+import { ACTIVE_CHAINID, CONTRACT_ADDRESSES, CREDIT_TOKENS, u2uTestnet } from "@/config/web3";
 import { Token } from "@/types/token";
 import { DepositDialogProps } from "@/types/component";
+import { useBridgeChainSwitching } from "@/hooks/useBridgeChainSwitching";
 
 export default function DepositDialog({
   isOpen,
@@ -28,27 +29,30 @@ export default function DepositDialog({
   onDeposit,
   onApproveForVault,
   isLoading,
-  tokensInChain,
   whitelistedTokens,
 }: DepositDialogProps) {
-  const { address: accountAddress } = useWeb3();
+  const { address: accountAddress, chain } = useWeb3();
+  const { isSwitchingChain, switchToChain } = useBridgeChainSwitching();
   const [selectedToken, setSelectedToken] = useState<Token | null>(null);
   const [amount, setAmount] = useState("");
   const [sliderValue, setSliderValue] = useState<number>(20);
   const [isApproving, setIsApproving] = useState(false);
   const [isApproved, setIsApproved] = useState(false);
 
+  // Check if current chain is U2U Nebulas Testnet
+  const isOnU2UNetwork = chain?.id === ACTIVE_CHAINID;
+
   // Filter tokens by whitelisted addresses
   const availableTokens = useMemo(() => {
-    if (!tokensInChain || !whitelistedTokens) return [];
+    if (!whitelistedTokens) return [];
     const whitelistedSet = new Set(
       whitelistedTokens.map((addr) => addr.toLowerCase()),
     );
 
-    return tokensInChain.filter((token) =>
+    return CREDIT_TOKENS.filter((token) =>
       whitelistedSet.has(token.address.toLowerCase()),
     );
-  }, [tokensInChain, whitelistedTokens]);
+  }, [whitelistedTokens]);
 
   // Get balance for selected token
   const { data: balanceData } = useTokenBalance({
@@ -129,6 +133,10 @@ export default function DepositDialog({
     }
   }, [selectedToken, amount]);
 
+  const handleSwitchToU2U = async () => {
+    await switchToChain(u2uTestnet);
+  };
+
   const handleDeposit = async () => {
     if (!selectedToken || !amount || parseFloat(amount) <= 0) return;
 
@@ -143,7 +151,6 @@ export default function DepositDialog({
         setIsApproving(false);
         setIsApproved(true);
 
-        // Don't proceed with deposit - wait for user to click again
         return;
       }
 
@@ -179,13 +186,24 @@ export default function DepositDialog({
           <h3 className="text-xl font-bold">Deposit U2U for Gas Credit</h3>
         </ModalHeader>
         <ModalBody className="space-y-4">
-          <div>
-            <label
-              className="block text-sm font-medium mb-2"
-              htmlFor="deposit-token-select"
-            >
-              Select Token
-            </label>
+          {!isOnU2UNetwork ? (
+            <div className="text-center py-8">
+              <div className="text-4xl mb-4">🌐</div>
+              <h4 className="text-lg font-semibold mb-2">Switch to U2U Network</h4>
+              <p className="text-gray-600 dark:text-gray-400">
+                You need to be on the U2U Nebulas Testnet to deposit tokens for gas credit.
+                Click the button below to switch networks.
+              </p>
+            </div>
+          ) : (
+            <>
+              <div>
+                <label
+                  className="block text-sm font-medium mb-2"
+                  htmlFor="deposit-token-select"
+                >
+                  Select Token
+                </label>
             <Select
               aria-labelledby="deposit-token-label"
               id="deposit-token-select"
@@ -282,7 +300,7 @@ export default function DepositDialog({
                 }}
               />
               <div className="space-y-2">
-                <div className="text-xs text-gray-400">
+                <div className="text-xs text-gray-400 pt-3">
                   Balance: {tokenBalance}{" "}
                   {selectedToken ? selectedToken.symbol : ""}
                 </div>
@@ -306,33 +324,45 @@ export default function DepositDialog({
             </div>
           </div>
 
-          <div className="text-sm text-gray-400">
-            💡 Deposit tokens to build up your gas credit balance for gasless
-            transactions.
-          </div>
+              <div className="text-sm text-gray-400">
+                💡 Deposit tokens to build up your gas credit balance for gasless
+                transactions.
+              </div>
+            </>
+          )}
         </ModalBody>
         <ModalFooter>
           <Button variant="flat" onPress={onClose}>
             Cancel
           </Button>
-          <Button
-            color="success"
-            disabled={!selectedToken || !amount || parseFloat(amount) <= 0}
-            isLoading={isLoading || isApproving}
-            onPress={handleDeposit}
-          >
-            {isApproving
-              ? "Approving..."
-              : isApproved
-                ? isLoading
-                  ? "Depositing..."
-                  : "Deposit"
-                : needsApproval
-                  ? "Approve & Deposit"
-                  : isLoading
+          {!isOnU2UNetwork ? (
+            <Button
+              color="primary"
+              isLoading={isSwitchingChain}
+              onPress={handleSwitchToU2U}
+            >
+              {isSwitchingChain ? "Switching..." : "Switch to U2U Network"}
+            </Button>
+          ) : (
+            <Button
+              color="success"
+              disabled={!selectedToken || !amount || parseFloat(amount) <= 0}
+              isLoading={isLoading || isApproving}
+              onPress={handleDeposit}
+            >
+              {isApproving
+                ? "Approving..."
+                : isApproved
+                  ? isLoading
                     ? "Depositing..."
-                    : "Deposit"}
-          </Button>
+                    : "Deposit"
+                  : needsApproval
+                    ? "Approve & Deposit"
+                    : isLoading
+                      ? "Depositing..."
+                      : "Deposit"}
+            </Button>
+          )}
         </ModalFooter>
       </ModalContent>
     </Modal>

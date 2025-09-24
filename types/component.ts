@@ -33,8 +33,6 @@ export interface TransactionResult {
   token?: Token;
   amount: string;
   creditBefore: string;
-  creditAfter: string;
-  creditAdded: string;
   txHash?: string;
 }
 

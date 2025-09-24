@@ -3,13 +3,11 @@ import { Address, erc20Abi } from "viem";
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useAccount, usePublicClient, useWalletClient } from "wagmi";
 
-import { CONTRACT_ADDRESSES } from "@/config/web3";
+import { ACTIVE_CHAINID, CONTRACT_ADDRESSES } from "@/config/web3";
 import {
   GAS_CREDIT_VAULT_ABI as VAULT_ABI,
   METATX_GATEWAY_ABI as GATEWAY_ABI,
 } from "@/contracts/abi";
-
-const TOKEN_CHAIN_ID = 56;
 
 export const gatewayAddress = CONTRACT_ADDRESSES.METATX_GATEWAY as Address;
 export const vaultAddress = CONTRACT_ADDRESSES.CREDIT_VAULT as Address;
@@ -33,7 +31,7 @@ export const useGaslessContracts = () => {
   });
 
   const publicClient = usePublicClient({ chainId });
-  const vaultPublicClient = usePublicClient({ chainId: TOKEN_CHAIN_ID });
+  const vaultPublicClient = usePublicClient({ chainId: ACTIVE_CHAINID });
 
   const { data: walletClient } = useWalletClient();
 

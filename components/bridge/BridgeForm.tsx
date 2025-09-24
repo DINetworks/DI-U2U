@@ -4,25 +4,36 @@ import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Tabs, Tab } from "@heroui/tabs";
 
 import { useWeb3 } from "@/hooks/useWeb3";
-import { useIU2UBalance, useIU2UTokenOperations, useNativeU2UBalance } from "@/hooks/useIU2U";
+import {
+  useIU2UBalance,
+  useIU2UTokenOperations,
+  useNativeU2UBalance,
+} from "@/hooks/useIU2U";
 import { SUPPORTED_BRIDGE_CHAINS } from "@/config/bridge";
 import { useBridgeChainSwitching } from "@/hooks/useBridgeChainSwitching";
 
 import DepositWithdrawTab from "./DepositWithdrawTab";
 import CrossChainTransferTab from "./CrossChainTransferTab";
 import ContractCallTab from "./ContractCallTab";
+import { UseBridgeTransactionsReturn } from "@/hooks/useBridgeTransactions";
 
 interface BridgeFormProps {
   onConnectWallet?: () => void;
-  bridgeTransactions: any; // Use the same type as returned by useBridgeTransactions
+  bridgeTransactions: UseBridgeTransactionsReturn; // Use the same type as returned by useBridgeTransactions
 }
 
-export default function BridgeForm({ onConnectWallet, bridgeTransactions }: BridgeFormProps) {
+export default function BridgeForm({
+  onConnectWallet,
+  bridgeTransactions,
+}: BridgeFormProps) {
   const { isConnected, chain, address } = useWeb3();
 
   // Bridge state
-  const [selectedSourceChain, setSelectedSourceChain] = useState<Chain | null>(null);
-  const [selectedDestinationChain, setSelectedDestinationChain] = useState<Chain | null>(null);
+  const [selectedSourceChain, setSelectedSourceChain] = useState<Chain | null>(
+    null,
+  );
+  const [selectedDestinationChain, setSelectedDestinationChain] =
+    useState<Chain | null>(null);
   const [amount, setAmount] = useState("");
   const [bridgeAmount, setBridgeAmount] = useState("");
   const [callAmount, setCallAmount] = useState("");
@@ -47,14 +58,16 @@ export default function BridgeForm({ onConnectWallet, bridgeTransactions }: Brid
   // Custom hooks
   const { isSwitchingChain, switchToChain } = useBridgeChainSwitching();
 
-
   // Determine which balance to show based on active tab
   const displayBalance = isDepositMode ? nativeU2UBalance : iu2uBalance;
-  const displayBalanceLoading = isDepositMode ? nativeBalanceLoading : balanceLoading;
+  const displayBalanceLoading = isDepositMode
+    ? nativeBalanceLoading
+    : balanceLoading;
   const displayTokenSymbol = isDepositMode ? "U2U" : "IU2U";
 
   // Check if source chain matches current chain
-  const isSourceChainCurrent = !!selectedSourceChain && !!chain && selectedSourceChain.id === chain.id;
+  const isSourceChainCurrent =
+    !!selectedSourceChain && !!chain && selectedSourceChain.id === chain.id;
 
   // Initialize default chains
   useEffect(() => {
@@ -106,7 +119,7 @@ export default function BridgeForm({ onConnectWallet, bridgeTransactions }: Brid
     await bridgeTransactions.executeSendToken(
       selectedDestinationChain,
       recipientAddress,
-      bridgeAmount
+      bridgeAmount,
     );
     setBridgeAmount("");
     setRecipientAddress("");
@@ -120,7 +133,7 @@ export default function BridgeForm({ onConnectWallet, bridgeTransactions }: Brid
       selectedDestinationChain,
       contractAddress,
       payload,
-      isContractCall ? callAmount : undefined
+      isContractCall ? callAmount : undefined,
     );
     setCallAmount("");
     setContractAddress("");
@@ -151,7 +164,9 @@ export default function BridgeForm({ onConnectWallet, bridgeTransactions }: Brid
               displayTokenSymbol={displayTokenSymbol}
               onDeposit={handleDeposit}
               onWithdraw={handleWithdraw}
-              isLoading={bridgeTransactions.transactions.some(tx => tx.status === "pending")}
+              isLoading={bridgeTransactions.transactions.some(
+                (tx) => tx.status === "pending",
+              )}
               isConnected={isConnected}
               onConnectWallet={onConnectWallet}
             />
@@ -169,7 +184,9 @@ export default function BridgeForm({ onConnectWallet, bridgeTransactions }: Brid
               onBridgeAmountChange={setBridgeAmount}
               iu2uBalance={iu2uBalance}
               onSendToken={handleSendToken}
-              isLoading={bridgeTransactions.transactions.some(tx => tx.status === "pending")}
+              isLoading={bridgeTransactions.transactions.some(
+                (tx) => tx.status === "pending",
+              )}
               isConnected={isConnected}
               isSourceChainCurrent={isSourceChainCurrent}
               isSwitchingChain={isSwitchingChain}
@@ -194,7 +211,9 @@ export default function BridgeForm({ onConnectWallet, bridgeTransactions }: Brid
               onCallAmountChange={setCallAmount}
               iu2uBalance={iu2uBalance}
               onContractCall={handleContractCall}
-              isLoading={bridgeTransactions.transactions.some(tx => tx.status === "pending")}
+              isLoading={bridgeTransactions.transactions.some(
+                (tx) => tx.status === "pending",
+              )}
               isConnected={isConnected}
               isSourceChainCurrent={isSourceChainCurrent}
               isSwitchingChain={isSwitchingChain}

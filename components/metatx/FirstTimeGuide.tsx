@@ -223,7 +223,6 @@ export default function FirstTimeGuide({
                 <div className="flex items-center justify-center w-full">
                   <Checkbox
                     isSelected={dontShowAgain}
-                    size="sm"
                     onValueChange={setDontShowAgain}
                   >
                     {APP_CONTENT.firstTimeGuide.navigation.skip}

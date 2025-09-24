@@ -6,7 +6,7 @@ export default class HttpAdapter {
   constructor() {
     this.axios = axios.create({
       baseURL: "https://v2.api.squidrouter.com",
-      timeout: 30000,
+      timeout: 60000,
       headers: {
         "x-integrator-id": process.env.NEXT_PUBLIC_INTEGRATOR,
       },

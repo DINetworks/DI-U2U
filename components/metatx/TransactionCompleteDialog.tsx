@@ -21,7 +21,7 @@ export default function TransactionCompleteDialog({
 
   if (!result) return null;
 
-  const { type, token, amount, creditBefore, creditAdded } = result;
+  const { type, token, amount, creditBefore } = result;
 
   return (
     <Modal
@@ -131,7 +131,7 @@ export default function TransactionCompleteDialog({
                   className={`text-sm font-bold ${type === "deposit" ? "text-green-600" : "text-red-600"}`}
                 >
                   {type === "deposit" ? "+" : "-"}
-                  {creditAdded}
+                  {amount}
                 </span>
               </div>
             </div>

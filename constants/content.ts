@@ -222,7 +222,7 @@ export const APP_CONTENT = {
     navigation: {
       previous: "Previous",
       next: "Next",
-      skip: "Skip Guide",
+      skip: "Don't show me again",
       finish: "Get Started",
     },
   },

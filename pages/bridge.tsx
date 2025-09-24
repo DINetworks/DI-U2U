@@ -77,6 +77,9 @@ const BridgePage: NextPage = () => {
         setCompletedTransaction(completedTx);
         setIsTransactionCompleteDialogOpen(true);
       }
+
+      refetchIU2UBalance();
+      refetchNativeU2UBalance();
     }
 
     // Update the statusTransaction if it's currently open and the transaction data has changed
@@ -94,10 +97,12 @@ const BridgePage: NextPage = () => {
   const {
     formattedBalance: iu2uBalance,
     isLoading: balanceLoading,
+    refetch: refetchIU2UBalance,
   } = useIU2UBalance();
   const {
     formattedBalance: nativeU2UBalance,
     isLoading: nativeBalanceLoading,
+    refetch: refetchNativeU2UBalance,
   } = useNativeU2UBalance();
 
   return (
