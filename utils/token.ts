@@ -32,10 +32,6 @@ export const normalizeTokenLogoURI = (uri: string): string => {
   return uri;
 };
 
-export const linkToBlockExplorer = (address: string) => {
-  return `${process.env.NEXT_PUBLIC_DOMA_BLOCK_EXPLORER}/address/${address}`;
-};
-
 export const getBlockExplorerUrl = (
   address: string,
   chain: Chain = u2uTestnet,

@@ -60,7 +60,7 @@ export default function IndexPage() {
                 as={Link}
                 className="font-semibold"
                 color="success"
-                href="/swap"
+                href="/metatx"
                 variant="flat"
               >
                 Start Gasless transaction

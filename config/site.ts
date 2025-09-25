@@ -49,10 +49,10 @@ export const siteConfig = {
     },
   ],
   links: {
-    github: "https://github.com/doma-auction",
-    twitter: "https://twitter.com/domaauction",
-    docs: "https://docs.domaauction.com",
-    discord: "https://discord.gg/domaauction",
+    github: "https://github.com/dinetworks",
+    twitter: "https://twitter.com/dinetworks",
+    docs: "https://docs.dinetwork.xyz",
+    discord: "https://discord.gg/dinetwork",
     sponsor: "https://github.com/sponsors/domaauction",
   },
 };
