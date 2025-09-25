@@ -89,7 +89,7 @@ export const Footer = () => {
               <li>
                 <Link
                   className="text-gray-400 hover:text-gray-200"
-                  href="/docs"
+                  href="https://docs.dinetwork.xyz"
                 >
                   Documentation
                 </Link>

@@ -25,6 +25,10 @@ export const siteConfig = {
       label: "FAQ",
       href: "/faq",
     },
+    {
+      label: 'Documentation',
+      href: 'https://docs.dinetwork.xyz',
+    }
   ],
   navMenuItems: [
     {
@@ -47,6 +51,10 @@ export const siteConfig = {
       label: "FAQ",
       href: "/faq",
     },
+    {
+      label: 'Documentation',
+      href: 'https://docs.dinetwork.xyz',
+    }
   ],
   links: {
     github: "https://github.com/dinetworks",
