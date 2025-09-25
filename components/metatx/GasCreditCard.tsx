@@ -1,21 +1,19 @@
 import { Button } from "@heroui/button";
 import { Card, CardBody, CardFooter, CardHeader } from "@heroui/card";
-import { useState } from "react";
-
-import HistoryDialog from "./HistoryDialog";
 
 interface GasCreditCardProps {
   credit: string;
   onDeposit?: () => void;
   onWithdraw?: () => void;
+  onShowHistory: () => void;
 }
 
 export default function GasCreditCard({
   credit,
   onDeposit,
   onWithdraw,
+  onShowHistory
 }: GasCreditCardProps) {
-  const [isHistoryDialogOpen, setIsHistoryDialogOpen] = useState(false);
 
   return (
     <>
@@ -26,7 +24,7 @@ export default function GasCreditCard({
             <button
               className="p-1 rounded-full bg-white/10 hover:bg-white/20 transition-colors duration-200 group"
               title="View credit history"
-              onClick={() => setIsHistoryDialogOpen(true)}
+              onClick={onShowHistory}
             >
               <svg
                 className="w-4 h-4 text-white group-hover:text-blue-300 transition-colors duration-200"
@@ -68,13 +66,6 @@ export default function GasCreditCard({
           </Button>
         </CardFooter>
       </Card>
-
-      {/* History Dialog */}
-      <HistoryDialog
-        initialTab="credits"
-        isOpen={isHistoryDialogOpen}
-        onClose={() => setIsHistoryDialogOpen(false)}
-      />
     </>
   );
 }

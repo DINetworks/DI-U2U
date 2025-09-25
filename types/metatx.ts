@@ -24,6 +24,7 @@ export interface GaslessBatchTransferProps {
   credit: string;
   approvedTokens: Token[];
   onStartTransaction: () => void;
+  onShowHistory: () => void;
 }
 
 // History related types

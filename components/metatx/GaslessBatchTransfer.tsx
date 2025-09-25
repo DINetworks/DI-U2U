@@ -6,17 +6,16 @@ import { isAddress } from "viem";
 
 import TransferPreviewDialog from "./TransferPreviewDialog";
 import TransactionSuccessDialog from "./TransactionSuccessDialog";
-import HistoryDialog from "./HistoryDialog";
 
 import { useWeb3 } from "@/hooks/useWeb3";
 import { GaslessBatchTransferProps } from "@/types/metatx";
 import TransferRow from "@/components/metatx/TransferRow";
-import { useCreditTransactionHistory } from "@/hooks/useCreditTransactionHistory";
 import { useBatchTransferHistory } from "@/hooks/useBatchTransferHistory";
 
 export default function GaslessBatchTransfer({
   credit,
   approvedTokens,
+  onShowHistory
 }: GaslessBatchTransferProps) {
   const { address: accountAddress } = useWeb3();
   const [isPreviewDialogOpen, setIsPreviewDialogOpen] = useState(false);
@@ -28,7 +27,6 @@ export default function GaslessBatchTransfer({
   const [nextId, setNextId] = useState(2);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [showValidationAlert, setShowValidationAlert] = useState(false);
-  const [isHistoryDialogOpen, setIsHistoryDialogOpen] = useState(false);
 
   const { addBatchTransfer } = useBatchTransferHistory()
 
@@ -106,7 +104,7 @@ export default function GaslessBatchTransfer({
           <button
             className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors duration-200 group ml-4"
             title="View transfer history"
-            onClick={() => setIsHistoryDialogOpen(true)}
+            onClick={onShowHistory}
           >
             <svg
               className="w-5 h-5 text-white group-hover:text-blue-300 transition-colors duration-200"
@@ -215,12 +213,6 @@ export default function GaslessBatchTransfer({
         onClose={() => setIsSuccessDialogOpen(false)}
       />
 
-      {/* History Dialog */}
-      <HistoryDialog
-        initialTab="transfers"
-        isOpen={isHistoryDialogOpen}
-        onClose={() => setIsHistoryDialogOpen(false)}
-      />
     </Card>
   );
 }

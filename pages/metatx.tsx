@@ -23,6 +23,7 @@ import { useTokensWithAllowances } from "@/hooks/useTokensWithAllowances";
 import { useCreditTransactionHistory } from "@/hooks/useCreditTransactionHistory";
 import { CONTRACT_ADDRESSES, CREDIT_TOKENS } from "@/config/web3";
 import { TransactionResult } from "@/types/component";
+import HistoryDialog from "@/components/metatx/HistoryDialog";
 
 const GATEWAY = CONTRACT_ADDRESSES.METATX_GATEWAY as Address;
 
@@ -33,6 +34,7 @@ export default function MetaTxPage() {
   const { approvedTokens, refetchAllowances, tokensInChain } =
     useTokensWithAllowances(GATEWAY);
   const { addTransaction } = useCreditTransactionHistory();
+  const [historyDialogTab, setHistoryDialogTab] = useState<"credits" | "transfers" | undefined>();
 
   // Dialog states
   const [isDepositDialogOpen, setIsDepositDialogOpen] = useState(false);
@@ -73,7 +75,7 @@ export default function MetaTxPage() {
       addTransaction({
         ...pendingCreditTx,
         creditAfter,
-        creditChanged: `${pendingCreditTx.type == "deposit" ? "+" : "-"} ${pendingCreditTx.amount}`,
+        creditChanged: pendingCreditTx.amount,
       });
 
       setTransactionResult(pendingCreditTx);
@@ -86,10 +88,9 @@ export default function MetaTxPage() {
 
   useEffect(() => {
     if (isCreditTxConfirmed && txReceipt && pendingCreditTx) {
-      // Add to credit transaction history
       updateTransactionInfo();
     }
-  }, [isCreditTxConfirmed, txReceipt, updateTransactionInfo]);
+  }, [isCreditTxConfirmed, txReceipt, pendingCreditTx, updateTransactionInfo]);
 
   const handleDeposit = async (tokenAddress: Address, amount: bigint) => {
     if (!vaultContract) return;
@@ -139,7 +140,6 @@ export default function MetaTxPage() {
       });
     } catch (error) {
       console.error("Withdraw failed:", error);
-      throw error; // Re-throw to let dialog handle error display
     } finally {
       setWithdrawLoading(false);
     }
@@ -150,14 +150,11 @@ export default function MetaTxPage() {
 
     try {
       setApproveLoading(true);
-      // Approve token for the gateway contract (max uint256 value)
       await vaultContract.approveForGateway(tokenAddress, maxUint256);
-      // Refresh allowances and credit
       refetchAllowances();
       refetchCredit();
     } catch (error) {
       console.error("Token approval failed:", error);
-      throw error;
     } finally {
       setApproveLoading(false);
     }
@@ -174,7 +171,6 @@ export default function MetaTxPage() {
       await vaultContract.approve(tokenAddress, amount);
     } catch (error) {
       console.error("Vault approval failed:", error);
-      throw error;
     }
   };
 
@@ -190,7 +186,6 @@ export default function MetaTxPage() {
       refetchCredit();
     } catch (error) {
       console.error("Token disapproval failed:", error);
-      throw error;
     } finally {
       setDisapproveLoading(false);
     }
@@ -284,6 +279,7 @@ export default function MetaTxPage() {
                 approvedTokens={approvedTokens || []}
                 credit={formattedCredit}
                 onStartTransaction={handleStartTransaction}
+                onShowHistory={() => setHistoryDialogTab('transfers')}
               />
             </motion.div>
           </div>
@@ -305,6 +301,7 @@ export default function MetaTxPage() {
                 credit={formattedCredit}
                 onDeposit={() => setIsDepositDialogOpen(true)}
                 onWithdraw={() => setIsWithdrawDialogOpen(true)}
+                onShowHistory={() => setHistoryDialogTab('credits')}
               />
             </motion.div>
 
@@ -359,6 +356,13 @@ export default function MetaTxPage() {
         isOpen={isDisapproveDialogOpen}
         onClose={() => setIsDisapproveDialogOpen(false)}
         onDisapprove={handleDisapproveToken}
+      />
+
+      {/* History Dialog */}
+      <HistoryDialog
+        initialTab={historyDialogTab}
+        isOpen={!!historyDialogTab}
+        onClose={() => setHistoryDialogTab(undefined)}
       />
 
       <TransactionCompleteDialog

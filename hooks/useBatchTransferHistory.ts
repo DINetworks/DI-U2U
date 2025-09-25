@@ -130,6 +130,6 @@ export const useBatchTransferHistory = () => {
     updateBatchTransfer,
     removeBatchTransfer,
     clearHistory,
-    refetch: loadHistory,
+    loadHistory,
   };
 };

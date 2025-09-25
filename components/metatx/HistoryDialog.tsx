@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Modal,
   ModalContent,
@@ -22,11 +22,19 @@ import { getBlockExplorerTxUrl } from "@/utils/token";
 export default function HistoryDialog({
   isOpen,
   onClose,
-  initialTab = "transfers",
+  initialTab,
 }: HistoryDialogProps) {
-  const { history: creditTransactionHistory } = useCreditTransactionHistory();
-  const { history: batchTransferHistory } = useBatchTransferHistory();
+  const { history: creditTransactionHistory, loadHistory: realodCreditHistory } = useCreditTransactionHistory();
+  const { history: batchTransferHistory, loadHistory: realodBatchHistory } = useBatchTransferHistory();
   const [selectedTab, setSelectedTab] = useState(initialTab);
+
+  useEffect(() => {
+    if (initialTab) {
+      setSelectedTab(initialTab);
+      realodCreditHistory();
+      realodBatchHistory();
+    }
+  }, [initialTab])
 
   const formatTimestamp = (timestamp: number) => {
     return new Date(timestamp * 1000).toLocaleString();
