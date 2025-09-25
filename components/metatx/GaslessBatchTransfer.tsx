@@ -15,7 +15,7 @@ import { useBatchTransferHistory } from "@/hooks/useBatchTransferHistory";
 export default function GaslessBatchTransfer({
   credit,
   approvedTokens,
-  onShowHistory
+  onShowHistory,
 }: GaslessBatchTransferProps) {
   const { address: accountAddress } = useWeb3();
   const [isPreviewDialogOpen, setIsPreviewDialogOpen] = useState(false);
@@ -28,7 +28,7 @@ export default function GaslessBatchTransfer({
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [showValidationAlert, setShowValidationAlert] = useState(false);
 
-  const { addBatchTransfer } = useBatchTransferHistory()
+  const { addBatchTransfer } = useBatchTransferHistory();
 
   const addTransfer = () => {
     setTransfers([
@@ -196,11 +196,11 @@ export default function GaslessBatchTransfer({
           if (response.success && response.data) {
             setTransactionData(response.data);
             addBatchTransfer({
-              id: 'random',
+              id: "random",
               ...response.data,
               transfers,
               creditConsumed: response.data.usdValueConsumed,
-            })
+            });
             setIsSuccessDialogOpen(true);
           }
         }}
@@ -212,7 +212,6 @@ export default function GaslessBatchTransfer({
         transactionData={transactionData}
         onClose={() => setIsSuccessDialogOpen(false)}
       />
-
     </Card>
   );
 }

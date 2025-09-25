@@ -1,5 +1,6 @@
-import { CONTRACT_ADDRESSES, u2uTestnet } from "@/config/web3";
 import { Chain } from "viem";
+
+import { u2uTestnet } from "@/config/web3";
 
 export const nativeEvmTokenAddress =
   "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
@@ -35,13 +36,19 @@ export const linkToBlockExplorer = (address: string) => {
   return `${process.env.NEXT_PUBLIC_DOMA_BLOCK_EXPLORER}/address/${address}`;
 };
 
-export const getBlockExplorerUrl = (address: string, chain: Chain = u2uTestnet) => {
+export const getBlockExplorerUrl = (
+  address: string,
+  chain: Chain = u2uTestnet,
+) => {
   if (!chain?.blockExplorers?.default) return "#";
 
   return `${chain.blockExplorers.default.url}/address/${address}`;
 };
 
-export const getBlockExplorerTxUrl = (txHash: string, chain: Chain = u2uTestnet) => {
+export const getBlockExplorerTxUrl = (
+  txHash: string,
+  chain: Chain = u2uTestnet,
+) => {
   if (!chain?.blockExplorers?.default) return "#";
 
   return `${chain.blockExplorers.default.url}/tx/${txHash}`;

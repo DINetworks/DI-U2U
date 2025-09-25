@@ -24,8 +24,12 @@ export default function HistoryDialog({
   onClose,
   initialTab,
 }: HistoryDialogProps) {
-  const { history: creditTransactionHistory, loadHistory: realodCreditHistory } = useCreditTransactionHistory();
-  const { history: batchTransferHistory, loadHistory: realodBatchHistory } = useBatchTransferHistory();
+  const {
+    history: creditTransactionHistory,
+    loadHistory: realodCreditHistory,
+  } = useCreditTransactionHistory();
+  const { history: batchTransferHistory, loadHistory: realodBatchHistory } =
+    useBatchTransferHistory();
   const [selectedTab, setSelectedTab] = useState(initialTab);
 
   useEffect(() => {
@@ -34,7 +38,7 @@ export default function HistoryDialog({
       realodCreditHistory();
       realodBatchHistory();
     }
-  }, [initialTab])
+  }, [initialTab]);
 
   const formatTimestamp = (timestamp: number) => {
     return new Date(timestamp * 1000).toLocaleString();

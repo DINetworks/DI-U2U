@@ -1,5 +1,3 @@
-import { useWeb3 } from "@/hooks/useWeb3";
-import { getBlockExplorerTxUrl } from "@/utils/token";
 import {
   Modal,
   ModalContent,
@@ -11,6 +9,9 @@ import {
   CardBody,
   Link,
 } from "@heroui/react";
+
+import { useWeb3 } from "@/hooks/useWeb3";
+import { getBlockExplorerTxUrl } from "@/utils/token";
 
 interface TransactionSuccessData {
   txHash: string;
@@ -36,9 +37,9 @@ export default function TransactionSuccessDialog({
   onClose,
   transactionData,
 }: TransactionSuccessDialogProps) {
+  const { chain } = useWeb3();
+  
   if (!transactionData) return null;
-
-  const { chain } = useWeb3()
 
   const formatTimestamp = (timestamp: number) => {
     return new Date(timestamp * 1000).toLocaleString();

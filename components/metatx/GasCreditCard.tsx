@@ -12,9 +12,8 @@ export default function GasCreditCard({
   credit,
   onDeposit,
   onWithdraw,
-  onShowHistory
+  onShowHistory,
 }: GasCreditCardProps) {
-
   return (
     <>
       <Card className="bg-[#ffffff]/20 backdrop-blur-sm p-6">

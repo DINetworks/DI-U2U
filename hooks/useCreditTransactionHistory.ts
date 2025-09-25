@@ -64,15 +64,18 @@ export const useCreditTransactionHistory = () => {
       };
 
       setHistory((prevHistory) => {
-        const exists = prevHistory.findIndex((tx) => tx.txHash === newTransaction.txHash) !== -1;
-        if (exists) 
-          return prevHistory;
+        const exists =
+          prevHistory.findIndex((tx) => tx.txHash === newTransaction.txHash) !==
+          -1;
+
+        if (exists) return prevHistory;
 
         const updatedHistory = [newTransaction, ...prevHistory];
+
         saveHistory(updatedHistory);
 
         return updatedHistory;
-      });      
+      });
     },
     [saveHistory],
   );
@@ -94,6 +97,6 @@ export const useCreditTransactionHistory = () => {
     history,
     addTransaction,
     clearHistory,
-    loadHistory
+    loadHistory,
   };
 };

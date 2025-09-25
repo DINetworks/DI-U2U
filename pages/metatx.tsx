@@ -34,7 +34,9 @@ export default function MetaTxPage() {
   const { approvedTokens, refetchAllowances, tokensInChain } =
     useTokensWithAllowances(GATEWAY);
   const { addTransaction } = useCreditTransactionHistory();
-  const [historyDialogTab, setHistoryDialogTab] = useState<"credits" | "transfers" | undefined>();
+  const [historyDialogTab, setHistoryDialogTab] = useState<
+    "credits" | "transfers" | undefined
+  >();
 
   // Dialog states
   const [isDepositDialogOpen, setIsDepositDialogOpen] = useState(false);
@@ -278,8 +280,8 @@ export default function MetaTxPage() {
               <GaslessBatchTransfer
                 approvedTokens={approvedTokens || []}
                 credit={formattedCredit}
+                onShowHistory={() => setHistoryDialogTab("transfers")}
                 onStartTransaction={handleStartTransaction}
-                onShowHistory={() => setHistoryDialogTab('transfers')}
               />
             </motion.div>
           </div>
@@ -300,8 +302,8 @@ export default function MetaTxPage() {
               <GasCreditCard
                 credit={formattedCredit}
                 onDeposit={() => setIsDepositDialogOpen(true)}
+                onShowHistory={() => setHistoryDialogTab("credits")}
                 onWithdraw={() => setIsWithdrawDialogOpen(true)}
-                onShowHistory={() => setHistoryDialogTab('credits')}
               />
             </motion.div>
 
