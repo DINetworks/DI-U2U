@@ -21,7 +21,7 @@ export const getChainLogo = (chainId: number): string => {
 // Helper function to get chain name from ID
 export const getChainName = (chainId: number | undefined): string => {
   if (!chainId) return "Unknown";
-  
+
   const chainNames: Record<number, string> = {
     1: "Ethereum",
     56: "BSC",
@@ -35,7 +35,6 @@ export const getChainName = (chainId: number | undefined): string => {
 
   return chainNames[chainId] || "Unknown";
 };
-
 
 export const getChainNameForGateway = (chainId: number) => {
   const chainNames: Record<number, string> = {

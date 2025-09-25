@@ -191,7 +191,6 @@ export default function TransferPreviewDialog({
 
       setSignature(_signature);
     } catch (error) {
-      console.log("handleSign error:", error);
     } finally {
       setIsGeneratingSignature(false);
     }

@@ -3,18 +3,14 @@ import { Chain } from "viem";
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Tabs, Tab } from "@heroui/tabs";
 
-import { useWeb3 } from "@/hooks/useWeb3";
-import {
-  useIU2UBalance,
-  useIU2UTokenOperations,
-  useNativeU2UBalance,
-} from "@/hooks/useIU2U";
-import { SUPPORTED_BRIDGE_CHAINS } from "@/config/bridge";
-import { useBridgeChainSwitching } from "@/hooks/useBridgeChainSwitching";
-
 import DepositWithdrawTab from "./DepositWithdrawTab";
 import CrossChainTransferTab from "./CrossChainTransferTab";
 import ContractCallTab from "./ContractCallTab";
+
+import { useWeb3 } from "@/hooks/useWeb3";
+import { useIU2UBalance, useNativeU2UBalance } from "@/hooks/useIU2U";
+import { SUPPORTED_BRIDGE_CHAINS } from "@/config/bridge";
+import { useBridgeChainSwitching } from "@/hooks/useBridgeChainSwitching";
 import { UseBridgeTransactionsReturn } from "@/hooks/useBridgeTransactions";
 
 interface BridgeFormProps {
@@ -100,9 +96,7 @@ export default function BridgeForm({
 
   // Transaction handlers
   const handleDeposit = async () => {
-    console.log("BridgeForm - handleDeposit called with amount:", amount);
     await bridgeTransactions.executeDeposit(amount);
-    console.log("BridgeForm - handleDeposit completed");
     setAmount("");
     refetchBalance();
   };
@@ -149,74 +143,74 @@ export default function BridgeForm({
       <CardBody className="space-y-6">
         <Tabs
           className="w-full"
+          destroyInactiveTabPanel={false}
           selectedKey={activeTab}
           onSelectionChange={(key) => setActiveTab(key as string)}
-          destroyInactiveTabPanel={false}
         >
           <Tab key="operations" title="Deposit/Withdraw">
             <DepositWithdrawTab
               amount={amount}
-              onAmountChange={setAmount}
-              isDepositMode={isDepositMode}
-              onDepositModeChange={setIsDepositMode}
               displayBalance={displayBalance}
               displayBalanceLoading={displayBalanceLoading}
               displayTokenSymbol={displayTokenSymbol}
-              onDeposit={handleDeposit}
-              onWithdraw={handleWithdraw}
+              isConnected={isConnected}
+              isDepositMode={isDepositMode}
               isLoading={bridgeTransactions.transactions.some(
                 (tx) => tx.status === "pending",
               )}
-              isConnected={isConnected}
+              onAmountChange={setAmount}
               onConnectWallet={onConnectWallet}
+              onDeposit={handleDeposit}
+              onDepositModeChange={setIsDepositMode}
+              onWithdraw={handleWithdraw}
             />
           </Tab>
 
           <Tab key="transfer" title="Cross-Chain Transfer">
             <CrossChainTransferTab
-              selectedSourceChain={selectedSourceChain}
-              onSourceChainSelect={setSelectedSourceChain}
-              selectedDestinationChain={selectedDestinationChain}
-              onDestinationChainSelect={setSelectedDestinationChain}
-              recipientAddress={recipientAddress}
-              onRecipientAddressChange={setRecipientAddress}
               bridgeAmount={bridgeAmount}
-              onBridgeAmountChange={setBridgeAmount}
-              iu2uBalance={iu2uBalance}
-              onSendToken={handleSendToken}
+              isConnected={isConnected}
               isLoading={bridgeTransactions.transactions.some(
                 (tx) => tx.status === "pending",
               )}
-              isConnected={isConnected}
               isSourceChainCurrent={isSourceChainCurrent}
               isSwitchingChain={isSwitchingChain}
-              onSwitchToSourceChain={handleSwitchToSourceChain}
+              iu2uBalance={iu2uBalance}
+              recipientAddress={recipientAddress}
+              selectedDestinationChain={selectedDestinationChain}
+              selectedSourceChain={selectedSourceChain}
+              onBridgeAmountChange={setBridgeAmount}
               onConnectWallet={onConnectWallet}
+              onDestinationChainSelect={setSelectedDestinationChain}
+              onRecipientAddressChange={setRecipientAddress}
+              onSendToken={handleSendToken}
+              onSourceChainSelect={setSelectedSourceChain}
+              onSwitchToSourceChain={handleSwitchToSourceChain}
             />
           </Tab>
 
           <Tab key="contract" title="Contract Call">
             <ContractCallTab
-              selectedSourceChain={selectedSourceChain}
-              onSourceChainSelect={setSelectedSourceChain}
-              selectedDestinationChain={selectedDestinationChain}
-              onDestinationChainSelect={setSelectedDestinationChain}
-              contractAddress={contractAddress}
-              onContractAddressChange={setContractAddress}
-              payload={payload}
-              onPayloadChange={setPayload}
-              isContractCall={isContractCall}
-              onContractCallChange={setIsContractCall}
               callAmount={callAmount}
-              onCallAmountChange={setCallAmount}
-              iu2uBalance={iu2uBalance}
-              onContractCall={handleContractCall}
+              contractAddress={contractAddress}
+              isConnected={isConnected}
+              isContractCall={isContractCall}
               isLoading={bridgeTransactions.transactions.some(
                 (tx) => tx.status === "pending",
               )}
-              isConnected={isConnected}
               isSourceChainCurrent={isSourceChainCurrent}
               isSwitchingChain={isSwitchingChain}
+              iu2uBalance={iu2uBalance}
+              payload={payload}
+              selectedDestinationChain={selectedDestinationChain}
+              selectedSourceChain={selectedSourceChain}
+              onCallAmountChange={setCallAmount}
+              onContractAddressChange={setContractAddress}
+              onContractCall={handleContractCall}
+              onContractCallChange={setIsContractCall}
+              onDestinationChainSelect={setSelectedDestinationChain}
+              onPayloadChange={setPayload}
+              onSourceChainSelect={setSelectedSourceChain}
               onSwitchToSourceChain={handleSwitchToSourceChain}
             />
           </Tab>

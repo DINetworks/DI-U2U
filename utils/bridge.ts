@@ -1,5 +1,6 @@
+import { encodePacked, keccak256 } from "viem";
+
 import { BridgeTransaction } from "@/types/bridge";
-import { encodePacked, keccak256, toEventSignature } from "viem";
 
 /**
  * Get the color string for a transaction status
@@ -42,18 +43,19 @@ export const getTransactionTypeLabel = (type: BridgeTransaction["type"]) => {
  */
 export const getExplorerUrl = (chainName: string, txHash: string) => {
   const explorerUrls: Record<string, string> = {
-    "Ethereum": "https://etherscan.io/tx/",
-    "BSC": "https://bscscan.com/tx/",
+    Ethereum: "https://etherscan.io/tx/",
+    BSC: "https://bscscan.com/tx/",
     "BNB Smart Chain": "https://bscscan.com/tx/",
-    "Polygon": "https://polygonscan.com/tx/",
-    "Base": "https://basescan.org/tx/",
-    "Arbitrum": "https://arbiscan.io/tx/",
-    "Optimism": "https://optimistic.etherscan.io/tx/",
-    "Avalanche": "https://snowtrace.io/tx/",
+    Polygon: "https://polygonscan.com/tx/",
+    Base: "https://basescan.org/tx/",
+    Arbitrum: "https://arbiscan.io/tx/",
+    Optimism: "https://optimistic.etherscan.io/tx/",
+    Avalanche: "https://snowtrace.io/tx/",
     "U2U Nebulas Testnet": "https://testnet.u2uscan.xyz/tx/",
   };
 
   const baseUrl = explorerUrls[chainName] || "https://etherscan.io/tx/";
+
   return `${baseUrl}${txHash}`;
 };
 
@@ -63,20 +65,26 @@ export const getExplorerUrl = (chainName: string, txHash: string) => {
 export const checkCommandStatus = async (commandId: string, chain: string) => {
   try {
     const bridgeRelayerHost = process.env.NEXT_PUBLIC_BRIDGE_RELAYER_HOST;
+
     if (!bridgeRelayerHost) {
-      console.warn('NEXT_PUBLIC_BRIDGE_RELAYER_HOST not configured');
+      console.warn("NEXT_PUBLIC_BRIDGE_RELAYER_HOST not configured");
+
       return null;
     }
 
-    const response = await fetch(`${bridgeRelayerHost}/command/${commandId}/${chain}`);
-    
+    const response = await fetch(
+      `${bridgeRelayerHost}/command/${commandId}/${chain}`,
+    );
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const data = await response.json();
+
     return data;
   } catch (error) {
-    console.error('Failed to check command status:', error);
+    console.error("Failed to check command status:", error);
+
     return null;
   }
 };
@@ -103,10 +111,14 @@ export const getChainNameForGateway = (chainId: number) => {
  * Calculate commandId from transaction hash and log index
  * commandId = keccak256(encodePacked(['string'], [`${transactionHash}-${logIndex}`]))
  */
-export const calculateCommandId = (transactionHash: string, logIndex: number): string => {
-  return keccak256(encodePacked(['string'], [`${transactionHash}-${logIndex}`]));
+export const calculateCommandId = (
+  transactionHash: string,
+  logIndex: number,
+): string => {
+  return keccak256(
+    encodePacked(["string"], [`${transactionHash}-${logIndex}`]),
+  );
 };
-
 
 /* IU2U Gateway event signatures - exact signatures from the contract
 
@@ -118,21 +130,30 @@ export const calculateCommandId = (transactionHash: string, logIndex: number): s
   evtSigHash = keccak256(encodePacked(['string'], [eventSignature])
 */
 const IU2U_EVENT_SIG_HASHS = {
-  'callContract': '0x30ae6cc78c27e651745bf2ad08a11de83910ac1e347a52f7ac898c0fbef94dae', 
-  'callContractWithToken': '0x7e50569d26be643bda7757722291ec66b1be66d8283474ae3fab5a98f878a7a2',
-  'sendToken': '0x651d93f66c4329630e8d0f62488eff599e3be484da587335e8dc0fcf46062726'
+  callContract:
+    "0x30ae6cc78c27e651745bf2ad08a11de83910ac1e347a52f7ac898c0fbef94dae",
+  callContractWithToken:
+    "0x7e50569d26be643bda7757722291ec66b1be66d8283474ae3fab5a98f878a7a2",
+  sendToken:
+    "0x651d93f66c4329630e8d0f62488eff599e3be484da587335e8dc0fcf46062726",
 };
 
 /**
  * Extract commandId from transaction receipt
  * Looks for IU2U gateway events (ContractCall, ContractCallWithToken, TokenSent)
  */
-export const extractCommandIdFromReceipt = (receipt: any, txType: string): string | null => {
+export const extractCommandIdFromReceipt = (
+  receipt: any,
+  txType: string,
+): string | null => {
   if (!receipt || !receipt.logs) return null;
 
-  const eventSignatureHash = IU2U_EVENT_SIG_HASHS[txType as keyof typeof IU2U_EVENT_SIG_HASHS];
+  const eventSignatureHash =
+    IU2U_EVENT_SIG_HASHS[txType as keyof typeof IU2U_EVENT_SIG_HASHS];
+
   if (!eventSignatureHash) {
     console.warn(`No event signature found for transaction type: ${txType}`);
+
     return null;
   }
 

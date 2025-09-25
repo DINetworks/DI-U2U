@@ -1,6 +1,5 @@
 // Bridge Transaction History Component for IU2U Bridge
 import { Card, CardBody, CardHeader } from "@heroui/card";
-import { Badge } from "@heroui/badge";
 import { Accordion, AccordionItem } from "@heroui/accordion";
 import { Chip } from "@heroui/chip";
 
@@ -8,7 +7,11 @@ import {
   BridgeTransaction,
   BridgeTransactionHistoryProps,
 } from "@/types/bridge";
-import { getStatusColor, getTransactionTypeLabel, getExplorerUrl } from "@/utils/bridge";
+import {
+  getStatusColor,
+  getTransactionTypeLabel,
+  getExplorerUrl,
+} from "@/utils/bridge";
 
 export default function BridgeTransactionHistory({
   transactions,
@@ -26,10 +29,17 @@ export default function BridgeTransactionHistory({
       withdraw: { label: "Withdraw", color: "warning" as const },
       sendToken: { label: "Transfer", color: "primary" as const },
       callContract: { label: "Contract", color: "secondary" as const },
-      callContractWithToken: { label: "Contract+Token", color: "default" as const },
+      callContractWithToken: {
+        label: "Contract+Token",
+        color: "default" as const,
+      },
     };
 
-    const config = chipConfig[type] || { label: type, color: "default" as const };
+    const config = chipConfig[type] || {
+      label: type,
+      color: "default" as const,
+    };
+
     return (
       <Chip color={config.color} size="sm" variant="flat">
         {config.label}
@@ -61,7 +71,7 @@ export default function BridgeTransactionHistory({
       </CardHeader>
       <CardBody>
         <div className="max-h-80 overflow-y-auto">
-          <Accordion variant="splitted" className="space-y-2">
+          <Accordion className="space-y-2" variant="splitted">
             {transactions.map((transaction) => (
               <AccordionItem
                 key={transaction.id}
@@ -91,11 +101,15 @@ export default function BridgeTransactionHistory({
                   <div className="grid grid-cols-1 gap-4 text-sm">
                     <div className="flex justify-between">
                       <span className="font-medium text-gray-300">Type:</span>
-                      <div className="text-white">{getTransactionTypeLabel(transaction.type)}</div>
+                      <div className="text-white">
+                        {getTransactionTypeLabel(transaction.type)}
+                      </div>
                     </div>
                     <div className="flex justify-between">
                       <span className="font-medium text-gray-300">Status:</span>
-                      <div className="text-white capitalize">{transaction.status}</div>
+                      <div className="text-white capitalize">
+                        {transaction.status}
+                      </div>
                     </div>
                   </div>
 
@@ -103,43 +117,59 @@ export default function BridgeTransactionHistory({
                     {transaction.sourceChain && (
                       <div className="flex justify-between">
                         <span className="font-medium text-gray-300">From:</span>
-                        <span className="text-white">{transaction.sourceChain}</span>
+                        <span className="text-white">
+                          {transaction.sourceChain}
+                        </span>
                       </div>
                     )}
 
                     {transaction.destinationChain && (
                       <div className="flex justify-between">
                         <span className="font-medium text-gray-300">To:</span>
-                        <span className="text-white">{transaction.destinationChain}</span>
+                        <span className="text-white">
+                          {transaction.destinationChain}
+                        </span>
                       </div>
                     )}
 
                     {transaction.recipient && (
                       <div className="flex justify-between">
-                        <span className="font-medium text-gray-300">Recipient:</span>
+                        <span className="font-medium text-gray-300">
+                          Recipient:
+                        </span>
                         <span className="text-white font-mono">
-                          {transaction.recipient.slice(0, 6)}...{transaction.recipient.slice(-4)}
+                          {transaction.recipient.slice(0, 6)}...
+                          {transaction.recipient.slice(-4)}
                         </span>
                       </div>
                     )}
 
                     {transaction.contractAddress && (
                       <div className="flex justify-between">
-                        <span className="font-medium text-gray-300">Contract:</span>
+                        <span className="font-medium text-gray-300">
+                          Contract:
+                        </span>
                         <span className="text-white font-mono">
-                          {transaction.contractAddress.slice(0, 6)}...{transaction.contractAddress.slice(-4)}
+                          {transaction.contractAddress.slice(0, 6)}...
+                          {transaction.contractAddress.slice(-4)}
                         </span>
                       </div>
                     )}
 
                     {transaction.txHash && transaction.sourceChain && (
                       <div className="flex justify-between items-center">
-                        <span className="font-medium text-gray-300">Transaction:</span>
+                        <span className="font-medium text-gray-300">
+                          Transaction:
+                        </span>
                         <button
                           className="text-blue-400 hover:text-blue-300 underline text-sm"
                           onClick={(e) => {
                             e.stopPropagation();
-                            const explorerUrl = getExplorerUrl(transaction.sourceChain!, transaction.txHash!);
+                            const explorerUrl = getExplorerUrl(
+                              transaction.sourceChain!,
+                              transaction.txHash!,
+                            );
+
                             window.open(explorerUrl, "_blank");
                           }}
                         >

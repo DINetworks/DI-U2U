@@ -41,7 +41,9 @@ export default function SwapRoutes({
       transition={{ delay: animationDelay, duration: 0.3 }}
     >
       {/* Route Card - Normal View */}
-      <Card className={`bg-white/10 border border-white/20 ${route ? 'cursor-pointer hover:bg-white/20' : 'opacity-50'}`}>
+      <Card
+        className={`bg-white/10 border border-white/20 ${route ? "cursor-pointer hover:bg-white/20" : "opacity-50"}`}
+      >
         <CardBody className="p-3">
           <div
             className="flex items-center justify-between"

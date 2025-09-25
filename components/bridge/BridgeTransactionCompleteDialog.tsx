@@ -106,8 +106,15 @@ export default function BridgeTransactionCompleteDialog({
           <div className="flex items-center gap-3">
             {getStatusIcon(transaction.status)}
             <div>
-              <h3 className={`text-xl font-bold ${getStatusColor(transaction.status)}`}>
-                Transaction {transaction.status === "completed" ? "Complete!" : transaction.status === "failed" ? "Failed" : "Pending"}
+              <h3
+                className={`text-xl font-bold ${getStatusColor(transaction.status)}`}
+              >
+                Transaction{" "}
+                {transaction.status === "completed"
+                  ? "Complete!"
+                  : transaction.status === "failed"
+                    ? "Failed"
+                    : "Pending"}
               </h3>
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 {getTransactionTypeLabel(transaction.type)}
@@ -164,7 +171,8 @@ export default function BridgeTransactionCompleteDialog({
                   Recipient
                 </span>
                 <span className="text-sm font-mono font-semibold">
-                  {transaction.recipient.slice(0, 6)}...{transaction.recipient.slice(-4)}
+                  {transaction.recipient.slice(0, 6)}...
+                  {transaction.recipient.slice(-4)}
                 </span>
               </div>
             )}
@@ -175,7 +183,8 @@ export default function BridgeTransactionCompleteDialog({
                   Contract
                 </span>
                 <span className="text-sm font-mono font-semibold">
-                  {transaction.contractAddress.slice(0, 6)}...{transaction.contractAddress.slice(-4)}
+                  {transaction.contractAddress.slice(0, 6)}...
+                  {transaction.contractAddress.slice(-4)}
                 </span>
               </div>
             )}
@@ -197,11 +206,16 @@ export default function BridgeTransactionCompleteDialog({
                 <button
                   className="text-sm font-mono text-blue-600 hover:text-blue-800 underline"
                   onClick={() => {
-                    const explorerUrl = getExplorerUrl(transaction.sourceChain!, transaction.txHash!);
+                    const explorerUrl = getExplorerUrl(
+                      transaction.sourceChain!,
+                      transaction.txHash!,
+                    );
+
                     window.open(explorerUrl, "_blank");
                   }}
                 >
-                  {transaction.txHash.slice(0, 10)}...{transaction.txHash.slice(-8)}
+                  {transaction.txHash.slice(0, 10)}...
+                  {transaction.txHash.slice(-8)}
                 </button>
               </div>
             )}
@@ -211,7 +225,9 @@ export default function BridgeTransactionCompleteDialog({
             {transaction.status === "completed" ? (
               <>🎉 Your bridge transaction has been completed successfully!</>
             ) : transaction.status === "failed" ? (
-              <>❌ Your transaction failed. Please try again or contact support.</>
+              <>
+                ❌ Your transaction failed. Please try again or contact support.
+              </>
             ) : (
               <>⏳ Your transaction is being processed...</>
             )}

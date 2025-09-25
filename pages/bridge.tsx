@@ -11,7 +11,6 @@ import { useWeb3 } from "@/hooks/useWeb3";
 import { useIU2UBalance, useNativeU2UBalance } from "@/hooks/useIU2U";
 import { useBridgeTransactions } from "@/hooks/useBridgeTransactions";
 import { useBridgePolling } from "@/hooks/useBridgePolling";
-
 import BridgeForm from "@/components/bridge/BridgeForm";
 import BridgeTransactionHistory from "@/components/bridge/BridgeTransactionHistory";
 import { useWalletModal } from "@/contexts/WalletContext";
@@ -26,8 +25,10 @@ const BridgePage: NextPage = () => {
   // UI state
   const [isInfoDrawerOpen, setIsInfoDrawerOpen] = useState(false);
   const [isFirstTimeGuideOpen, setIsFirstTimeGuideOpen] = useState(false);
-  const [isTransactionCompleteDialogOpen, setIsTransactionCompleteDialogOpen] = useState(false);
-  const [isTransactionStatusDialogOpen, setIsTransactionStatusDialogOpen] = useState(false);
+  const [isTransactionCompleteDialogOpen, setIsTransactionCompleteDialogOpen] =
+    useState(false);
+  const [isTransactionStatusDialogOpen, setIsTransactionStatusDialogOpen] =
+    useState(false);
   const [completedTransaction, setCompletedTransaction] = useState<any>(null);
   const [statusTransaction, setStatusTransaction] = useState<any>(null);
 
@@ -44,7 +45,8 @@ const BridgePage: NextPage = () => {
     crossChainTransactions: bridgeTransactions.crossChainTransactions,
     updateTransaction: bridgeTransactions.updateTransaction,
     addPendingTransactionHash: bridgeTransactions.addPendingTransactionHash,
-    removePendingTransactionHash: bridgeTransactions.removePendingTransactionHash,
+    removePendingTransactionHash:
+      bridgeTransactions.removePendingTransactionHash,
     addCrossChainTransaction: bridgeTransactions.addCrossChainTransaction,
     removeCrossChainTransaction: bridgeTransactions.removeCrossChainTransaction,
     setLastTransactionId: bridgeTransactions.setLastTransactionId,
@@ -52,23 +54,40 @@ const BridgePage: NextPage = () => {
 
   // Watch for transactions that need status dialogs
   useEffect(() => {
-    const pendingCrossChainTx = bridgeTransactions.transactions.find(tx =>
-      tx.status === "pending" &&
-      (tx.type === "sendToken" || tx.type === "callContract" || tx.type === "callContractWithToken")
+    const pendingCrossChainTx = bridgeTransactions.transactions.find(
+      (tx) =>
+        tx.status === "pending" &&
+        (tx.type === "sendToken" ||
+          tx.type === "callContract" ||
+          tx.type === "callContractWithToken"),
     );
 
-    const completedTx = bridgeTransactions.transactions.find(tx => tx.status === "completed");
+    const completedTx = bridgeTransactions.transactions.find(
+      (tx) => tx.status === "completed",
+    );
 
     // Show status dialog for pending cross-chain transactions
-    if (pendingCrossChainTx && !isTransactionStatusDialogOpen && !isTransactionCompleteDialogOpen) {
+    if (
+      pendingCrossChainTx &&
+      !isTransactionStatusDialogOpen &&
+      !isTransactionCompleteDialogOpen
+    ) {
       setStatusTransaction(pendingCrossChainTx);
       setIsTransactionStatusDialogOpen(true);
     }
 
     // Show appropriate dialog for completed transactions that haven't shown their dialog yet
-    if (completedTx && !completedTx.dialogShown && !isTransactionCompleteDialogOpen && !isTransactionStatusDialogOpen) {
+    if (
+      completedTx &&
+      !completedTx.dialogShown &&
+      !isTransactionCompleteDialogOpen &&
+      !isTransactionStatusDialogOpen
+    ) {
       // For cross-chain transactions, use the status dialog which shows progress
-      const isCrossChain = completedTx.type === "sendToken" || completedTx.type === "callContract" || completedTx.type === "callContractWithToken";
+      const isCrossChain =
+        completedTx.type === "sendToken" ||
+        completedTx.type === "callContract" ||
+        completedTx.type === "callContractWithToken";
 
       if (isCrossChain) {
         setStatusTransaction(completedTx);
@@ -84,14 +103,25 @@ const BridgePage: NextPage = () => {
 
     // Update the statusTransaction if it's currently open and the transaction data has changed
     if (isTransactionStatusDialogOpen && statusTransaction) {
-      const updatedTx = bridgeTransactions.transactions.find(tx => tx.id === statusTransaction.id);
-      if (updatedTx && (updatedTx.commandId !== statusTransaction.commandId ||
-                        updatedTx.status !== statusTransaction.status ||
-                        updatedTx.destinationTxHash !== statusTransaction.destinationTxHash)) {
+      const updatedTx = bridgeTransactions.transactions.find(
+        (tx) => tx.id === statusTransaction.id,
+      );
+
+      if (
+        updatedTx &&
+        (updatedTx.commandId !== statusTransaction.commandId ||
+          updatedTx.status !== statusTransaction.status ||
+          updatedTx.destinationTxHash !== statusTransaction.destinationTxHash)
+      ) {
         setStatusTransaction(updatedTx);
       }
     }
-  }, [bridgeTransactions.transactions, isTransactionCompleteDialogOpen, isTransactionStatusDialogOpen, statusTransaction]);
+  }, [
+    bridgeTransactions.transactions,
+    isTransactionCompleteDialogOpen,
+    isTransactionStatusDialogOpen,
+    statusTransaction,
+  ]);
 
   // Balances for display
   const {
@@ -197,8 +227,8 @@ const BridgePage: NextPage = () => {
               whileInView={{ opacity: 1, y: 0 }}
             >
               <BridgeForm
-                onConnectWallet={openConnectModal || undefined}
                 bridgeTransactions={bridgeTransactions}
+                onConnectWallet={openConnectModal || undefined}
               />
             </motion.div>
           </div>
@@ -211,7 +241,9 @@ const BridgePage: NextPage = () => {
             >
               <BridgeTransactionHistory
                 transactions={bridgeTransactions.transactions}
-                onTransactionClick={(tx) => console.log("Transaction clicked:", tx)}
+                onTransactionClick={(tx) =>
+                  console.log("Transaction clicked:", tx)
+                }
               />
             </motion.div>
 
@@ -280,29 +312,33 @@ const BridgePage: NextPage = () => {
       {/* Bridge Transaction Complete Dialog */}
       <BridgeTransactionCompleteDialog
         isOpen={isTransactionCompleteDialogOpen}
+        transaction={completedTransaction}
         onClose={() => {
           // Mark the transaction as dialog shown to prevent reopening
           if (completedTransaction) {
-            bridgeTransactions.updateTransaction(completedTransaction.id, { dialogShown: true });
+            bridgeTransactions.updateTransaction(completedTransaction.id, {
+              dialogShown: true,
+            });
           }
           setIsTransactionCompleteDialogOpen(false);
           setCompletedTransaction(null);
         }}
-        transaction={completedTransaction}
       />
 
       {/* Bridge Transaction Status Dialog */}
       <BridgeTransactionStatusDialog
         isOpen={isTransactionStatusDialogOpen}
+        transaction={statusTransaction}
         onClose={() => {
           // Mark the transaction as dialog shown to prevent reopening
           if (statusTransaction) {
-            bridgeTransactions.updateTransaction(statusTransaction.id, { dialogShown: true });
+            bridgeTransactions.updateTransaction(statusTransaction.id, {
+              dialogShown: true,
+            });
           }
           setIsTransactionStatusDialogOpen(false);
           setStatusTransaction(null);
         }}
-        transaction={statusTransaction}
       />
     </DefaultLayout>
   );

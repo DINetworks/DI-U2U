@@ -26,6 +26,7 @@ export default function TokenAmountInput({
       </label>
       <div className="relative">
         <Input
+          suppressHydrationWarning
           className="pr-20"
           disabled={disabled}
           endContent={
@@ -46,7 +47,6 @@ export default function TokenAmountInput({
           type="number"
           value={amount}
           onChange={(e) => onAmountChange(e.target.value)}
-          suppressHydrationWarning
         />
       </div>
 

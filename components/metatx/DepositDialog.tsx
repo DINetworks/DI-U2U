@@ -18,7 +18,12 @@ import { useWeb3 } from "@/hooks/useWeb3";
 import { useTokenBalance } from "@/hooks/useTokenBalance";
 import { useTokenAllowance } from "@/hooks/useTokenAllowance";
 import { normalizeTokenLogoURI } from "@/utils/token";
-import { ACTIVE_CHAINID, CONTRACT_ADDRESSES, CREDIT_TOKENS, u2uTestnet } from "@/config/web3";
+import {
+  ACTIVE_CHAINID,
+  CONTRACT_ADDRESSES,
+  CREDIT_TOKENS,
+  u2uTestnet,
+} from "@/config/web3";
 import { Token } from "@/types/token";
 import { DepositDialogProps } from "@/types/component";
 import { useBridgeChainSwitching } from "@/hooks/useBridgeChainSwitching";
@@ -189,10 +194,12 @@ export default function DepositDialog({
           {!isOnU2UNetwork ? (
             <div className="text-center py-8">
               <div className="text-4xl mb-4">🌐</div>
-              <h4 className="text-lg font-semibold mb-2">Switch to U2U Network</h4>
+              <h4 className="text-lg font-semibold mb-2">
+                Switch to U2U Network
+              </h4>
               <p className="text-gray-600 dark:text-gray-400">
-                You need to be on the U2U Nebulas Testnet to deposit tokens for gas credit.
-                Click the button below to switch networks.
+                You need to be on the U2U Nebulas Testnet to deposit tokens for
+                gas credit. Click the button below to switch networks.
               </p>
             </div>
           ) : (
@@ -204,129 +211,129 @@ export default function DepositDialog({
                 >
                   Select Token
                 </label>
-            <Select
-              aria-labelledby="deposit-token-label"
-              id="deposit-token-select"
-              placeholder="Choose token to deposit"
-              selectedKeys={
-                selectedToken ? new Set([selectedToken.address]) : new Set()
-              }
-              onSelectionChange={(keys) => {
-                const selectedAddress = Array.from(keys)[0] as string;
-                const token = availableTokens.find(
-                  (t) => t.address === selectedAddress,
-                );
+                <Select
+                  aria-labelledby="deposit-token-label"
+                  id="deposit-token-select"
+                  placeholder="Choose token to deposit"
+                  selectedKeys={
+                    selectedToken ? new Set([selectedToken.address]) : new Set()
+                  }
+                  onSelectionChange={(keys) => {
+                    const selectedAddress = Array.from(keys)[0] as string;
+                    const token = availableTokens.find(
+                      (t) => t.address === selectedAddress,
+                    );
 
-                setSelectedToken(token || null);
-              }}
-            >
-              {availableTokens.map((token) => (
-                <SelectItem
-                  key={token.address}
-                  textValue={`${token.name} (${token.symbol})`}
+                    setSelectedToken(token || null);
+                  }}
                 >
-                  <div className="flex items-center gap-2">
-                    <Image
-                      alt={token.symbol}
-                      className="rounded-full"
-                      height={20}
-                      src={normalizeTokenLogoURI(token.logoURI)}
-                      width={20}
-                    />
-                    <div>
-                      <div className="font-medium">{token.name}</div>
-                      <div className="text-xs text-gray-500">
-                        {token.symbol}
-                      </div>
-                    </div>
-                  </div>
-                </SelectItem>
-              ))}
-            </Select>
-          </div>
-
-          <div>
-            <label
-              className="block text-sm font-medium mb-2"
-              htmlFor="deposit-amount-input"
-            >
-              Amount
-            </label>
-            <Input
-              aria-labelledby="deposit-amount-label"
-              endContent={
-                <div className="pointer-events-none flex items-center">
-                  <span className="text-default-400 text-small">
-                    {selectedToken ? selectedToken.symbol : ""}
-                  </span>
-                </div>
-              }
-              id="deposit-amount-input"
-              placeholder="Enter amount"
-              type="number"
-              value={amount}
-              onChange={(e) => {
-                isUpdatingFromSlider.current = false;
-                setAmount(e.target.value);
-              }}
-            />
-            <div className="space-y-3">
-              <Slider
-                className="max-w-md mt-3"
-                color="foreground"
-                label={`${sliderValue}% of balance`}
-                marks={[
-                  {
-                    value: 20,
-                    label: "20%",
-                  },
-                  {
-                    value: 50,
-                    label: "50%",
-                  },
-                  {
-                    value: 80,
-                    label: "80%",
-                  },
-                ]}
-                maxValue={100}
-                minValue={0}
-                size="sm"
-                step={0.1}
-                value={sliderValue}
-                onChange={(value) => {
-                  isUpdatingFromInput.current = false;
-                  setSliderValue(value as number);
-                }}
-              />
-              <div className="space-y-2">
-                <div className="text-xs text-gray-400 pt-3">
-                  Balance: {tokenBalance}{" "}
-                  {selectedToken ? selectedToken.symbol : ""}
-                </div>
-                {isApproved && (
-                  <div className="text-xs text-green-600 flex items-center gap-1">
-                    <svg
-                      className="w-3 h-3"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
+                  {availableTokens.map((token) => (
+                    <SelectItem
+                      key={token.address}
+                      textValue={`${token.name} (${token.symbol})`}
                     >
-                      <path
-                        clipRule="evenodd"
-                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        fillRule="evenodd"
-                      />
-                    </svg>
-                    Token approved! Click Deposit to continue.
-                  </div>
-                )}
+                      <div className="flex items-center gap-2">
+                        <Image
+                          alt={token.symbol}
+                          className="rounded-full"
+                          height={20}
+                          src={normalizeTokenLogoURI(token.logoURI)}
+                          width={20}
+                        />
+                        <div>
+                          <div className="font-medium">{token.name}</div>
+                          <div className="text-xs text-gray-500">
+                            {token.symbol}
+                          </div>
+                        </div>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </Select>
               </div>
-            </div>
-          </div>
+
+              <div>
+                <label
+                  className="block text-sm font-medium mb-2"
+                  htmlFor="deposit-amount-input"
+                >
+                  Amount
+                </label>
+                <Input
+                  aria-labelledby="deposit-amount-label"
+                  endContent={
+                    <div className="pointer-events-none flex items-center">
+                      <span className="text-default-400 text-small">
+                        {selectedToken ? selectedToken.symbol : ""}
+                      </span>
+                    </div>
+                  }
+                  id="deposit-amount-input"
+                  placeholder="Enter amount"
+                  type="number"
+                  value={amount}
+                  onChange={(e) => {
+                    isUpdatingFromSlider.current = false;
+                    setAmount(e.target.value);
+                  }}
+                />
+                <div className="space-y-3">
+                  <Slider
+                    className="max-w-md mt-3"
+                    color="foreground"
+                    label={`${sliderValue}% of balance`}
+                    marks={[
+                      {
+                        value: 20,
+                        label: "20%",
+                      },
+                      {
+                        value: 50,
+                        label: "50%",
+                      },
+                      {
+                        value: 80,
+                        label: "80%",
+                      },
+                    ]}
+                    maxValue={100}
+                    minValue={0}
+                    size="sm"
+                    step={0.1}
+                    value={sliderValue}
+                    onChange={(value) => {
+                      isUpdatingFromInput.current = false;
+                      setSliderValue(value as number);
+                    }}
+                  />
+                  <div className="space-y-2">
+                    <div className="text-xs text-gray-400 pt-3">
+                      Balance: {tokenBalance}{" "}
+                      {selectedToken ? selectedToken.symbol : ""}
+                    </div>
+                    {isApproved && (
+                      <div className="text-xs text-green-600 flex items-center gap-1">
+                        <svg
+                          className="w-3 h-3"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            clipRule="evenodd"
+                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                            fillRule="evenodd"
+                          />
+                        </svg>
+                        Token approved! Click Deposit to continue.
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
 
               <div className="text-sm text-gray-400">
-                💡 Deposit tokens to build up your gas credit balance for gasless
-                transactions.
+                💡 Deposit tokens to build up your gas credit balance for
+                gasless transactions.
               </div>
             </>
           )}

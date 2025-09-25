@@ -189,11 +189,8 @@ export default function GaslessBatchTransfer({
         transfers={transfers}
         onClose={() => setIsPreviewDialogOpen(false)}
         onSubmit={(response) => {
-          // Handle successful transaction submission
-          console.log("Transaction submitted:", response);
           setIsPreviewDialogOpen(false);
 
-          // Show success dialog with transaction details
           if (response.success && response.data) {
             setTransactionData(response.data);
             setIsSuccessDialogOpen(true);

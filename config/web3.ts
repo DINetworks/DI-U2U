@@ -74,7 +74,6 @@ export const config = createConfig({
   },
 });
 
-
 export const CONTRACT_ADDRESSES = {
   CREDIT_VAULT: "0x0f796dC6bD0fa676BF5CE02658Dab86E1Dc95EFc", // 0x3AA775651fad6271C870762F8A9069ff94E7B542
   METATX_GATEWAY: "0xbee9591415128F7d52279C8df327614d8fD8a9b2",
@@ -96,16 +95,17 @@ export const CONTRACT_ADDRESSES = {
   },
 };
 
-export const ACTIVE_CHAINID = u2uTestnet.id
+export const ACTIVE_CHAINID = u2uTestnet.id;
 
 export const CREDIT_TOKENS = [
   {
     address: CONTRACT_ADDRESSES.IU2U_TOKEN[u2uTestnet.id],
     chainId: u2uTestnet.id.toString(),
-    coingeckoId: 'u2u-network',
+    coingeckoId: "u2u-network",
     decimals: 18,
-    logoURI: 'https://assets.coingecko.com/coins/images/32963/standard/Logo_U2U.jpeg',
-    name: 'Interoperable U2U',
-    symbol: 'IU2U'
-  }
-]
+    logoURI:
+      "https://assets.coingecko.com/coins/images/32963/standard/Logo_U2U.jpeg",
+    name: "Interoperable U2U",
+    symbol: "IU2U",
+  },
+];

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Select, SelectItem } from "@heroui/select";
 
 import TokenAmountInput from "./TokenAmountInput";
@@ -35,7 +34,6 @@ export default function DepositWithdrawTab({
 }: DepositWithdrawTabProps) {
   return (
     <div className="space-y-4 mt-4">
-        
       {/* Chain Info (Fixed) */}
       <div className="bg-default-100 rounded-xl p-3">
         <div className="flex items-center gap-2 text-sm text-gray-400 dark:text-gray-300">
@@ -61,13 +59,11 @@ export default function DepositWithdrawTab({
           selectedKeys={new Set([isDepositMode ? "deposit" : "withdraw"])}
           onSelectionChange={(keys) => {
             const selected = Array.from(keys)[0] as string;
+
             onDepositModeChange(selected === "deposit");
           }}
         >
-          <SelectItem
-            key="deposit"
-            textValue="Deposit U2U → IU2U"
-          >
+          <SelectItem key="deposit" textValue="Deposit U2U → IU2U">
             <div className="flex items-center gap-2">
               <span>Deposit U2U → IU2U</span>
               <span className="text-xs text-gray-400">
@@ -75,10 +71,7 @@ export default function DepositWithdrawTab({
               </span>
             </div>
           </SelectItem>
-          <SelectItem
-            key="withdraw"
-            textValue="Withdraw IU2U → U2U"
-          >
+          <SelectItem key="withdraw" textValue="Withdraw IU2U → U2U">
             <div className="flex items-center gap-2">
               <span>Withdraw IU2U → U2U</span>
               <span className="text-xs text-gray-400">
@@ -88,7 +81,6 @@ export default function DepositWithdrawTab({
           </SelectItem>
         </Select>
       </div>
-
 
       {/* Amount Input */}
       <TokenAmountInput

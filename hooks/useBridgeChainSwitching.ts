@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Chain } from "viem";
 import { useSwitchChain } from "wagmi";
 

@@ -1,10 +1,10 @@
-import { useState } from "react";
 import { Chain } from "viem";
 
 import ChainSelector from "./ChainSelector";
 import AddressInput from "./AddressInput";
 import TokenAmountInput from "./TokenAmountInput";
 import BridgeActionButton from "./BridgeActionButton";
+
 import { SUPPORTED_BRIDGE_CHAINS } from "@/config/bridge";
 
 interface ContractCallTabProps {
@@ -55,7 +55,7 @@ export default function ContractCallTab({
       {/* Source Chain */}
       <div suppressHydrationWarning>
         <ChainSelector
-          chains={SUPPORTED_BRIDGE_CHAINS.filter(chain => chain.id === 2484)} // Only U2U for now
+          chains={SUPPORTED_BRIDGE_CHAINS.filter((chain) => chain.id === 2484)} // Only U2U for now
           label="From Chain"
           selectedChain={selectedSourceChain}
           onChainSelect={onSourceChainSelect}
@@ -65,7 +65,7 @@ export default function ContractCallTab({
       {/* Destination Chain */}
       <div suppressHydrationWarning>
         <ChainSelector
-          chains={SUPPORTED_BRIDGE_CHAINS.filter(chain => chain.id !== 2484)} // All except U2U
+          chains={SUPPORTED_BRIDGE_CHAINS.filter((chain) => chain.id !== 2484)} // All except U2U
           label="To Chain"
           selectedChain={selectedDestinationChain}
           onChainSelect={onDestinationChainSelect}

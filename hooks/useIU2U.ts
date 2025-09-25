@@ -105,7 +105,12 @@ export function useNativeU2UBalance() {
 // Hook for IU2U token operations
 export function useIU2UTokenOperations() {
   const { iu2uToken: tokenAddress } = useIU2UContract();
-  const { writeContractAsync, data: txHash, isPending, error } = useWriteContract();
+  const {
+    writeContractAsync,
+    data: txHash,
+    isPending,
+    error,
+  } = useWriteContract();
 
   // Deposit U2U for IU2U
   const deposit = useCallback(
@@ -181,7 +186,12 @@ export function useIU2UTokenOperations() {
 // Hook for IU2U Gateway operations
 export function useIU2UGatewayOperations() {
   const { iu2uGateway: gatewayAddress } = useIU2UContract();
-  const { writeContractAsync, data: txHash, isPending, error } = useWriteContract();
+  const {
+    writeContractAsync,
+    data: txHash,
+    isPending,
+    error,
+  } = useWriteContract();
 
   // Send IU2U tokens cross-chain
   const sendToken = useCallback(
@@ -202,11 +212,11 @@ export function useIU2UGatewayOperations() {
           destinationChain,
           recipient as Address,
           symbol,
-          parseEther(amount)
+          parseEther(amount),
         ],
       });
     },
-    [gatewayAddress, writeContractAsync]
+    [gatewayAddress, writeContractAsync],
   );
 
   // Call contract cross-chain
@@ -226,11 +236,11 @@ export function useIU2UGatewayOperations() {
         args: [
           destinationChain,
           contractAddress as Address,
-          payload as Address
+          payload as Address,
         ],
       });
     },
-    [gatewayAddress, writeContractAsync]
+    [gatewayAddress, writeContractAsync],
   );
 
   // Call contract with token transfer
@@ -254,8 +264,8 @@ export function useIU2UGatewayOperations() {
           contractAddress as Address,
           payload as Address,
           symbol,
-          parseEther(amount)
-        ]
+          parseEther(amount),
+        ],
       });
     },
     [gatewayAddress, writeContractAsync],

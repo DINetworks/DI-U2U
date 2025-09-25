@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/router";
 import { motion } from "framer-motion";
 import { Address, formatEther, maxUint256 } from "viem";
+import { useWaitForTransactionReceipt } from "wagmi";
 
 import { title, subtitle } from "@/components/primitives";
 import DefaultLayout from "@/layouts/default";
@@ -22,7 +23,6 @@ import { useTokensWithAllowances } from "@/hooks/useTokensWithAllowances";
 import { useCreditTransactionHistory } from "@/hooks/useCreditTransactionHistory";
 import { CONTRACT_ADDRESSES, CREDIT_TOKENS } from "@/config/web3";
 import { TransactionResult } from "@/types/component";
-import { useWaitForTransactionReceipt } from "wagmi";
 
 const GATEWAY = CONTRACT_ADDRESSES.METATX_GATEWAY as Address;
 
@@ -48,7 +48,9 @@ export default function MetaTxPage() {
   const [transactionResult, setTransactionResult] = useState<any>(null);
   const [isInfoDrawerOpen, setIsInfoDrawerOpen] = useState(false);
   const [isFirstTimeGuideOpen, setIsFirstTimeGuideOpen] = useState(false);
-  const [pendingCreditTx, setPendingCreditTx] = useState<TransactionResult | undefined>()
+  const [pendingCreditTx, setPendingCreditTx] = useState<
+    TransactionResult | undefined
+  >();
 
   const navigateToPage = (link: string) => {
     router.push(link);
@@ -58,36 +60,36 @@ export default function MetaTxPage() {
     navigateToPage("/swap");
   };
 
-  const { isSuccess: isCreditTxConfirmed, data: txReceipt } = useWaitForTransactionReceipt({
-    hash: pendingCreditTx?.txHash as `0x${string}` | undefined,
-  });
+  const { isSuccess: isCreditTxConfirmed, data: txReceipt } =
+    useWaitForTransactionReceipt({
+      hash: pendingCreditTx?.txHash as `0x${string}` | undefined,
+    });
 
   const updateTransactionInfo = useCallback(async () => {
     if (pendingCreditTx) {
       const creditAfterRaw = await vaultContract.getCredits();
       const creditAfter = Number(formatEther(creditAfterRaw)).toFixed(3);
-      
+
       addTransaction({
         ...pendingCreditTx,
         creditAfter,
-        creditChanged: `${pendingCreditTx.type == 'deposit'? '+' : '-'} ${pendingCreditTx.amount}`
+        creditChanged: `${pendingCreditTx.type == "deposit" ? "+" : "-"} ${pendingCreditTx.amount}`,
       });
 
       setTransactionResult(pendingCreditTx);
 
       refetchCredit();
       setIsTransactionCompleteDialogOpen(true);
-      setPendingCreditTx(undefined)
+      setPendingCreditTx(undefined);
     }
-  }, [pendingCreditTx, vaultContract, refetchCredit, addTransaction])
-  
+  }, [pendingCreditTx, vaultContract, refetchCredit, addTransaction]);
+
   useEffect(() => {
     if (isCreditTxConfirmed && txReceipt && pendingCreditTx) {
       // Add to credit transaction history
       updateTransactionInfo();
     }
-
-  }, [isCreditTxConfirmed, txReceipt, updateTransactionInfo])
+  }, [isCreditTxConfirmed, txReceipt, updateTransactionInfo]);
 
   const handleDeposit = async (tokenAddress: Address, amount: bigint) => {
     if (!vaultContract) return;
@@ -108,9 +110,8 @@ export default function MetaTxPage() {
         token: tokenInfo,
         amount: displayAmount,
         creditBefore,
-        txHash
-      })
-
+        txHash,
+      });
     } catch (error) {
       console.error("Deposit failed:", error);
       throw error; // Re-throw to let dialog handle error display
@@ -134,8 +135,8 @@ export default function MetaTxPage() {
         type: "withdraw",
         amount: displayAmount,
         creditBefore,
-        txHash
-      })
+        txHash,
+      });
     } catch (error) {
       console.error("Withdraw failed:", error);
       throw error; // Re-throw to let dialog handle error display
@@ -199,26 +200,19 @@ export default function MetaTxPage() {
   useEffect(() => {
     const hasSeenGuide = localStorage.getItem("metatx-guide-seen");
 
-    console.log("Guide check - hasSeenGuide:", hasSeenGuide);
-
     // Show guide if user hasn't explicitly chosen "don't show again"
     if (hasSeenGuide !== "true") {
-      console.log("Showing first-time guide");
-      // Show guide after a short delay to let the page load
       const timer = setTimeout(() => {
         setIsFirstTimeGuideOpen(true);
       }, 1500);
 
       return () => clearTimeout(timer);
-    } else {
-      console.log("Skipping guide - user chose not to show again");
     }
   }, []);
 
   // Debug function to reset guide (can be called from browser console)
   const resetGuide = () => {
     localStorage.removeItem("metatx-guide-seen");
-    console.log("Guide reset - will show on next page load");
   };
 
   // Make resetGuide available globally for debugging

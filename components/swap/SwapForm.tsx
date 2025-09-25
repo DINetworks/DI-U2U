@@ -115,9 +115,6 @@ export default function SwapForm({ onExecuteSwap }: SwapFormProps) {
       const response = await executeSwap();
 
       if (response.success) {
-        // Handle success
-        console.log("Swap executed successfully:", response.data);
-        // Reset form
         setAmount("");
         onExecuteSwap?.(response);
       } else {
@@ -273,9 +270,9 @@ export default function SwapForm({ onExecuteSwap }: SwapFormProps) {
                           <div className="flex justify-between items-center mb-2">
                             <span className="text-gray-400">Gas Fee</span>
                             <span className="text-white font-medium">
-                              {parseFloat(
-                                quote.bestRoute.totalGasCost,
-                              ).toFixed(6)}{" "}
+                              {parseFloat(quote.bestRoute.totalGasCost).toFixed(
+                                6,
+                              )}{" "}
                               IU2U
                             </span>
                           </div>
@@ -286,13 +283,9 @@ export default function SwapForm({ onExecuteSwap }: SwapFormProps) {
 
                         <div className="p-4 bg-black/60 rounded-lg">
                           <div className="flex justify-between items-center mb-2">
-                            <span className="text-gray-400">
-                              Bridge Fee
-                            </span>
+                            <span className="text-gray-400">Bridge Fee</span>
                             <span className="text-white font-medium">
-                              {parseFloat(
-                                quote.bestRoute.bridgeFee,
-                              ).toFixed(6)}{" "}
+                              {parseFloat(quote.bestRoute.bridgeFee).toFixed(6)}{" "}
                               IU2U
                             </span>
                           </div>
@@ -373,9 +366,7 @@ export default function SwapForm({ onExecuteSwap }: SwapFormProps) {
                     <SwapRoutes
                       animationDelay={0.4}
                       route={quote?.bestRoute}
-                      onClick={() =>
-                        setShowRoutesDetails(!showRoutesDetails)
-                      }
+                      onClick={() => setShowRoutesDetails(!showRoutesDetails)}
                     />
 
                     {/* Switch Tokens Button in the middle */}
@@ -412,13 +403,15 @@ export default function SwapForm({ onExecuteSwap }: SwapFormProps) {
                     <Fees
                       animationDelay={0.4}
                       currency="IU2U"
-                      totalCost={quote ? (
-                        parseFloat(quote.bestRoute.totalGasCost) +
-                        parseFloat(quote.bestRoute.bridgeFee)
-                      ).toString() : "0"}
-                      onClick={() =>
-                        setShowFeesDetails(!showFeesDetails)
+                      totalCost={
+                        quote
+                          ? (
+                              parseFloat(quote.bestRoute.totalGasCost) +
+                              parseFloat(quote.bestRoute.bridgeFee)
+                            ).toString()
+                          : "0"
                       }
+                      onClick={() => setShowFeesDetails(!showFeesDetails)}
                     />
                   </motion.div>
 
@@ -456,9 +449,7 @@ export default function SwapForm({ onExecuteSwap }: SwapFormProps) {
                             className="text-xs"
                             color="warning"
                             size="sm"
-                            variant={
-                              slippage === value ? "solid" : "flat"
-                            }
+                            variant={slippage === value ? "solid" : "flat"}
                             onPress={() => setSlippage(value)}
                           >
                             {value}%
@@ -472,9 +463,7 @@ export default function SwapForm({ onExecuteSwap }: SwapFormProps) {
                   {isError && error && (
                     <Card className="bg-red-900/20 border border-red-500/20">
                       <CardBody className="p-4">
-                        <p className="text-red-400 text-sm">
-                          {error.message}
-                        </p>
+                        <p className="text-red-400 text-sm">{error.message}</p>
                       </CardBody>
                     </Card>
                   )}
