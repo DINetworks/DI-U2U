@@ -11,6 +11,8 @@ import HistoryDialog from "./HistoryDialog";
 import { useWeb3 } from "@/hooks/useWeb3";
 import { GaslessBatchTransferProps } from "@/types/metatx";
 import TransferRow from "@/components/metatx/TransferRow";
+import { useCreditTransactionHistory } from "@/hooks/useCreditTransactionHistory";
+import { useBatchTransferHistory } from "@/hooks/useBatchTransferHistory";
 
 export default function GaslessBatchTransfer({
   credit,
@@ -27,6 +29,8 @@ export default function GaslessBatchTransfer({
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [showValidationAlert, setShowValidationAlert] = useState(false);
   const [isHistoryDialogOpen, setIsHistoryDialogOpen] = useState(false);
+
+  const { addBatchTransfer } = useBatchTransferHistory()
 
   const addTransfer = () => {
     setTransfers([
@@ -193,6 +197,12 @@ export default function GaslessBatchTransfer({
 
           if (response.success && response.data) {
             setTransactionData(response.data);
+            addBatchTransfer({
+              id: 'random',
+              ...response.data,
+              transfers,
+              creditConsumed: response.data.usdValueConsumed,
+            })
             setIsSuccessDialogOpen(true);
           }
         }}

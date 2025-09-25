@@ -63,7 +63,7 @@ export default function IndexPage() {
                 href="/swap"
                 variant="flat"
               >
-                Start Swapping
+                Start Gasless transaction
               </Button>
             </CardBody>
           </Card>

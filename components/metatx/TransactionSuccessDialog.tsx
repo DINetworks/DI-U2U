@@ -1,3 +1,5 @@
+import { useWeb3 } from "@/hooks/useWeb3";
+import { getBlockExplorerTxUrl } from "@/utils/token";
 import {
   Modal,
   ModalContent,
@@ -36,11 +38,7 @@ export default function TransactionSuccessDialog({
 }: TransactionSuccessDialogProps) {
   if (!transactionData) return null;
 
-  const getBlockExplorerUrl = (txHash: string) => {
-    // You can configure this based on the current chain
-    // For now, using a generic block explorer pattern
-    return `https://polygonscan.com/tx/${txHash}`;
-  };
+  const { chain } = useWeb3()
 
   const formatTimestamp = (timestamp: number) => {
     return new Date(timestamp * 1000).toLocaleString();
@@ -89,7 +87,7 @@ export default function TransactionSuccessDialog({
                 </span>
                 <Link
                   className="flex items-center gap-1 text-blue-600 hover:text-blue-800"
-                  href={getBlockExplorerUrl(transactionData.txHash)}
+                  href={getBlockExplorerTxUrl(transactionData.txHash, chain)}
                   rel="noopener noreferrer"
                   target="_blank"
                 >

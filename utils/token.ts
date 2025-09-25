@@ -1,4 +1,5 @@
-import { CONTRACT_ADDRESSES } from "@/config/web3";
+import { CONTRACT_ADDRESSES, u2uTestnet } from "@/config/web3";
+import { Chain } from "viem";
 
 export const nativeEvmTokenAddress =
   "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
@@ -34,12 +35,16 @@ export const linkToBlockExplorer = (address: string) => {
   return `${process.env.NEXT_PUBLIC_DOMA_BLOCK_EXPLORER}/address/${address}`;
 };
 
-export const linkToDomainOnBlockExplorer = (tokenId: string) => {
-  return `${process.env.NEXT_PUBLIC_DOMA_BLOCK_EXPLORER}/token/${CONTRACT_ADDRESSES.OWNERSHIP_TOKEN}/instance/${tokenId}`;
+export const getBlockExplorerUrl = (address: string, chain: Chain = u2uTestnet) => {
+  if (!chain?.blockExplorers?.default) return "#";
+
+  return `${chain.blockExplorers.default.url}/address/${address}`;
 };
 
-export const openLinkToDomainExplorer = (tokenId: string) => {
-  window.open(linkToDomainOnBlockExplorer(tokenId), "_blank");
+export const getBlockExplorerTxUrl = (txHash: string, chain: Chain = u2uTestnet) => {
+  if (!chain?.blockExplorers?.default) return "#";
+
+  return `${chain.blockExplorers.default.url}/tx/${txHash}`;
 };
 
 export const sortAllTokens = (tokenA: any, tokenB: any) => {

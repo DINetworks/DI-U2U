@@ -9,11 +9,6 @@ export const useCreditTransactionHistory = () => {
   const { address: userAddress } = useAccount();
   const [history, setHistory] = useState<CreditTransactionHistory[]>([]);
 
-  // Get block explorer URL for credit transactions (BSC)
-  const getBlockExplorerUrl = useCallback((txHash: string) => {
-    return `https://bscscan.com/tx/${txHash}`;
-  }, []);
-
   // Load history from localStorage
   const loadHistory = useCallback(() => {
     if (!userAddress) {
@@ -96,6 +91,5 @@ export const useCreditTransactionHistory = () => {
     history,
     addTransaction,
     clearHistory,
-    getBlockExplorerUrl,
   };
 };

@@ -26,7 +26,7 @@ import { useState, useEffect } from "react";
 import { formatEther } from "viem";
 
 import { config } from "@/config/web3";
-import { shortenAddress } from "@/utils/token";
+import { getBlockExplorerUrl, shortenAddress } from "@/utils/token";
 import { useWalletModal } from "@/contexts/WalletContext";
 import { getChainLogo } from "@/config/chains";
 
@@ -59,12 +59,6 @@ export function WalletConnect() {
       await navigator.clipboard.writeText(address);
       // You could add a toast notification here
     }
-  };
-
-  const getBlockExplorerUrl = (address: string) => {
-    if (!currentChain?.blockExplorers?.default) return "#";
-
-    return `${currentChain.blockExplorers.default.url}/address/${address}`;
   };
 
   const handleChainSwitch = async (targetChainId: number) => {

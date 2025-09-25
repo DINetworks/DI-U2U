@@ -17,14 +17,14 @@ import {
 import { useCreditTransactionHistory } from "@/hooks/useCreditTransactionHistory";
 import { useBatchTransferHistory } from "@/hooks/useBatchTransferHistory";
 import { HistoryDialogProps } from "@/types/component";
+import { getBlockExplorerTxUrl } from "@/utils/token";
 
 export default function HistoryDialog({
   isOpen,
   onClose,
   initialTab = "transfers",
 }: HistoryDialogProps) {
-  const { history: creditTransactionHistory, getBlockExplorerUrl } =
-    useCreditTransactionHistory();
+  const { history: creditTransactionHistory } = useCreditTransactionHistory();
   const { history: batchTransferHistory } = useBatchTransferHistory();
   const [selectedTab, setSelectedTab] = useState(initialTab);
 
@@ -173,7 +173,7 @@ export default function HistoryDialog({
                           </div>
                           <Link
                             className="flex items-center gap-1 text-blue-600 hover:text-blue-800 text-sm"
-                            href={getBlockExplorerUrl(transfer.txHash)}
+                            href={getBlockExplorerTxUrl(transfer.txHash)}
                             rel="noopener noreferrer"
                             target="_blank"
                           >
@@ -268,7 +268,7 @@ export default function HistoryDialog({
                             <div className="flex justify-end">
                               <Link
                                 className="flex items-center gap-1 text-blue-600 hover:text-blue-800 text-sm"
-                                href={getBlockExplorerUrl(transaction.txHash)}
+                                href={getBlockExplorerTxUrl(transaction.txHash)}
                                 rel="noopener noreferrer"
                                 target="_blank"
                               >
