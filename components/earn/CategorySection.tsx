@@ -48,7 +48,6 @@ export default function CategorySection({
           {pools.slice(0, 9).map((pool, index) => (
             <PoolCard
               key={`${pool.address}-${index}`}
-              category={category}
               pool={pool}
             />
           ))}
