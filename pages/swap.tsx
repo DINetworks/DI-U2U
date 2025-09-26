@@ -19,22 +19,6 @@ const SwapPage: NextPage = () => {
 
       {/* Hero Section */}
       <section className="relative z-10 flex flex-col items-center justify-center gap-4 py-6 md:py-12">
-        <motion.div
-          animate={{ opacity: 1, y: 0 }}
-          className="inline-block max-w-2xl text-center justify-center"
-          initial={{ opacity: 0, y: 20 }}
-          transition={{ duration: 0.5 }}
-        >
-          <div className="flex items-center justify-center gap-4">
-            <h1 className="text-4xl font-bold gradient-metal">
-              Cross-Chain Swap
-            </h1>
-          </div>
-          <p className="text-gray-300 mt-4">
-            Find the best rates across multiple DEXes and chains
-          </p>
-        </motion.div>
-
         <div className="w-full max-w-2xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

@@ -15,7 +15,7 @@ export default function SlippageSetting({
       initial={{ opacity: 0, y: 10 }}
       transition={{ delay: 0.5, duration: 0.3 }}
     >
-      <span className="text-sm text-gray-300">Slippage Tolerance</span>
+      <span className="text-sm text-gray-300">Slippage</span>
       <div className="flex gap-2">
         {[0.1, 0.5, 1.0].map((value, index) => (
           <motion.div

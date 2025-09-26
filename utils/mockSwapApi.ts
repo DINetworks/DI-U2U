@@ -186,7 +186,7 @@ export async function getSwapRoutes(
       {
         address: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
         symbol: "ETH",
-        usdPrice: 2500,
+        usdPrice: 4035,
         chainId: "1",
       },
       {
@@ -198,19 +198,19 @@ export async function getSwapRoutes(
       {
         address: "0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0",
         symbol: "MATIC",
-        usdPrice: 0.8,
+        usdPrice: 0.2196,
         chainId: "137",
       },
       {
         address: "0x912CE59144191C1204E64559FE8253a0e49E6548",
         symbol: "ARB",
-        usdPrice: 1.2,
+        usdPrice: 0.4223,
         chainId: "42161",
       },
       {
         address: "0x2551f9E86a20bf4627332A053BEE14DA623d1007",
         symbol: "IU2U",
-        usdPrice: 0.1,
+        usdPrice: 0.0062,
         chainId: "2484",
       },
     ];
@@ -225,6 +225,8 @@ export async function getSwapRoutes(
     const destinationToken = mockTokens.find(
       (t) => t.address === request.destinationTokenAddress,
     );
+
+    const destinationAmount = (sourceToken?.usdPrice || 0) * parseFloat(request.amount) / (destinationToken?.usdPrice || 1)
 
     if (
       !sourceChain ||
@@ -270,7 +272,7 @@ export async function getSwapRoutes(
       routes,
       bestRoute,
       sourceAmount: request.amount,
-      destinationAmount: bestRoute.destinationDexRoute.amountOut,
+      destinationAmount: destinationAmount.toFixed(3),
       exchangeRate,
       timestamp: Date.now(),
     };
