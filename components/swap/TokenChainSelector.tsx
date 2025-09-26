@@ -1,11 +1,10 @@
+import { useMemo } from "react";
 import { motion } from "framer-motion";
-import { Card, CardBody } from "@heroui/card";
-import { Image } from "@heroui/image";
+
+import { Card, CardBody, Image } from "@heroui/react";
 
 import { SwapToken, SwapChain } from "@/types/swap";
 import { normalizeTokenLogoURI } from "@/utils/token";
-import { useMemo } from "react";
-import { Button } from "@heroui/react";
 
 interface TokenChainSelectorProps {
   label: string;
@@ -28,8 +27,7 @@ export default function TokenChainSelector({
   setAmount,
   animationDelay = 0,
 }: TokenChainSelectorProps) {
-
-  const tokenInUsd = useMemo(() => {
+const tokenInUsd = useMemo(() => {
     if (amount && token?.usdPrice) {
       return parseFloat(amount) * token.usdPrice;
     }
@@ -56,6 +54,12 @@ export default function TokenChainSelector({
                 role="button"
                 tabIndex={0}
                 onClick={onClick}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    onClick();
+                  }
+                }}
               >
                 {/* Chain Icon */}
                 {chain && (
@@ -105,13 +109,13 @@ export default function TokenChainSelector({
               <div className="text-gray-400">
                 {label == "From" ? (
                   <input
-                    className="w-full p-4 bg-transparent border border-white/5 bg-white/5 rounded-lg text-2xl text-right placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/15"
+                    className="w-full p-4 border border-white/5 bg-white/5 rounded-lg text-2xl text-right placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/15"
                     placeholder="0.00"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
                   />
                 ) : (
-                  <div className="w-full p-4 bg-transparent border border-white/5 bg-white/5 rounded-lg text-2xl text-right placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/15">
+                  <div className="w-full p-4 border border-white/5 bg-white/5 rounded-lg text-2xl text-right placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/15">
                     {amount || "0.00"}
                   </div>
                 )}
@@ -125,18 +129,19 @@ export default function TokenChainSelector({
                     {token && balance ? parseFloat(balance).toFixed(6) : "--"}
                   </div>
 
-                  <div
-                    className="text-xs font-medium text-success-500 cursor-pointer"
+                  <button
+                    className="text-xs font-medium text-success-500 hover:text-success-400"
                     onClick={() => setAmount(balance || "")}
+                    type="button"
                   >
                     Max
-                  </div>
+                  </button>
                 </div>
 
                 {/* Usd Vaule */}
                 <div className="flex items-center gap-2">
                   <div className="text-xs font-medium text-gray-400">
-                    {`${tokenInUsd < 0.01 ? '< $0.01' :  '$' + tokenInUsd.toFixed(3)}`}
+                    {tokenInUsd < 0.01 ? "< $0.01" : `$${tokenInUsd.toFixed(3)}`}
                   </div>
                 </div>
               </div>

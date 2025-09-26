@@ -1,26 +1,29 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Card, CardBody, CardHeader } from "@heroui/card";
-import { Spinner } from "@heroui/spinner";
+import { Address } from "viem";
+
+import { Card, CardBody, CardHeader, Spinner } from "@heroui/react";
 
 import { useWeb3 } from "@/hooks/useWeb3";
 import { useTokenAndChainStore } from "@/store/useTokenAndChainStore";
 import { useTokenBalance } from "@/hooks/useTokenBalance";
 import { useSwapQuote } from "@/hooks/useSwapQuote";
+
 import RouterStepsModal from "@/components/swap/RouterStepsModal";
 import SwapButton from "@/components/swap/SwapButton";
 import TokenChainSelector from "@/components/swap/TokenChainSelector";
 import ChainTokenSelectionModal from "@/components/swap/ChainTokenSelectionModal";
 import SwapRoutes from "@/components/swap/SwapRoutes";
 import Fees from "@/components/swap/Fees";
+
 import { SwapToken, SwapChain, CrossChainRoute } from "@/types/swap";
 import { executeSwap } from "@/utils/mockSwapApi";
+
 import SwithchToken from "./SwithchToken";
 import SlippageSetting from "./Slippage";
 import ReceiverAddress from "./ReceiverAddress";
 import RoutesDetails from "./RoutesDetails";
 import FeesDetails from "./FeesDetails";
-import { Address } from "viem";
 
 interface SwapFormProps {
   onExecuteSwap?: (result: any) => void;
@@ -59,7 +62,7 @@ export default function SwapForm({ onExecuteSwap }: SwapFormProps) {
   const [selectedChainForTokens, setSelectedChainForTokens] =
     useState<SwapChain | null>(null);
 
-  const [receiver, setReceiver] = useState(address || "")
+  const [receiver, setReceiver] = useState(address || "");
 
   // Flip animation states
   const [showRoutesDetails, setShowRoutesDetails] = useState(false);
@@ -133,16 +136,10 @@ export default function SwapForm({ onExecuteSwap }: SwapFormProps) {
         setAmount("");
         onExecuteSwap?.(response);
       } else {
-        console.error(
-          "Swap execution failed:",
-          response.error || "Unknown error",
-        );
+        // Swap execution failed
       }
     } catch (err) {
-      console.error(
-        "Swap execution failed:",
-        err instanceof Error ? err.message : "Unknown error",
-      );
+      // Swap execution failed
     } finally {
       setIsExecutingSwap(false);
     }
@@ -204,7 +201,9 @@ export default function SwapForm({ onExecuteSwap }: SwapFormProps) {
       <Card className="bg-[#ffffff]/25 backdrop-blur-sm p-6">
         <CardHeader>
           <div className="flex flex-col gap-2">
-            <h2 className="text-2xl font-bold text-white">Cross-Chain Exchange</h2>
+            <h2 className="text-2xl font-bold text-white">
+              Cross-Chain Exchange
+            </h2>
             <p className="text-gray-300 text-sm">
               Find the best rates across multiple DEXes and chains
             </p>
@@ -216,10 +215,10 @@ export default function SwapForm({ onExecuteSwap }: SwapFormProps) {
             showRoutesDetails ? (
               // Routes Details View
               <RoutesDetails
-                quote={quote}
-                sourceToken={sourceToken}
                 destinationToken={destinationToken}
+                quote={quote}
                 setShowRoutesDetails={setShowRoutesDetails}
+                sourceToken={sourceToken}
               />
 
             ) : showFeesDetails ? (
@@ -254,9 +253,10 @@ export default function SwapForm({ onExecuteSwap }: SwapFormProps) {
                   />
 
                   {/* Switch Tokens Button in the middle */}
-                  <SwithchToken 
+                  <SwithchToken
                     className="-mt-4"
-                    switchTokens={switchTokens}/>
+                    switchTokens={switchTokens}
+                  />
 
                   {/* Destination Token & Chain Selector */}
                   <TokenChainSelector
@@ -271,9 +271,9 @@ export default function SwapForm({ onExecuteSwap }: SwapFormProps) {
                   />
 
                   {/* Receiver Address Input */}
-                  <ReceiverAddress 
-                    receiver={receiver} 
-                    setReceiver={setReceiver} 
+                  <ReceiverAddress
+                    receiver={receiver}
+                    setReceiver={setReceiver}
                   />
                   
                   {/* SwapRoutes, Switch Button, and Fees Row */}
@@ -307,9 +307,9 @@ export default function SwapForm({ onExecuteSwap }: SwapFormProps) {
                   </motion.div>
 
                   {/* Slippage Settings */}
-                  <SlippageSetting 
-                    slippage={slippage} 
-                    setSlippage={setSlippage} 
+                  <SlippageSetting
+                    setSlippage={setSlippage}
+                    slippage={slippage}
                   />
 
                   {/* Error Display */}
