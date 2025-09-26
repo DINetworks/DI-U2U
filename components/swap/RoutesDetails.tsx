@@ -1,5 +1,6 @@
 import { Button, CardBody } from "@heroui/react";
 import { motion } from "framer-motion";
+
 import RouteDetails from "./RouteDetails";
 
 interface RouteDetailsProps {

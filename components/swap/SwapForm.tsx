@@ -1,29 +1,26 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Address } from "viem";
-
 import { Card, CardBody, CardHeader, Spinner } from "@heroui/react";
-
-import { useWeb3 } from "@/hooks/useWeb3";
-import { useTokenAndChainStore } from "@/store/useTokenAndChainStore";
-import { useTokenBalance } from "@/hooks/useTokenBalance";
-import { useSwapQuote } from "@/hooks/useSwapQuote";
-
-import RouterStepsModal from "@/components/swap/RouterStepsModal";
-import SwapButton from "@/components/swap/SwapButton";
-import TokenChainSelector from "@/components/swap/TokenChainSelector";
-import ChainTokenSelectionModal from "@/components/swap/ChainTokenSelectionModal";
-import SwapRoutes from "@/components/swap/SwapRoutes";
-import Fees from "@/components/swap/Fees";
-
-import { SwapToken, SwapChain, CrossChainRoute } from "@/types/swap";
-import { executeSwap } from "@/utils/mockSwapApi";
 
 import SwithchToken from "./SwithchToken";
 import SlippageSetting from "./Slippage";
 import ReceiverAddress from "./ReceiverAddress";
 import RoutesDetails from "./RoutesDetails";
 import FeesDetails from "./FeesDetails";
+
+import { useWeb3 } from "@/hooks/useWeb3";
+import { useTokenAndChainStore } from "@/store/useTokenAndChainStore";
+import { useTokenBalance } from "@/hooks/useTokenBalance";
+import { useSwapQuote } from "@/hooks/useSwapQuote";
+import RouterStepsModal from "@/components/swap/RouterStepsModal";
+import SwapButton from "@/components/swap/SwapButton";
+import TokenChainSelector from "@/components/swap/TokenChainSelector";
+import ChainTokenSelectionModal from "@/components/swap/ChainTokenSelectionModal";
+import SwapRoutes from "@/components/swap/SwapRoutes";
+import Fees from "@/components/swap/Fees";
+import { SwapToken, SwapChain, CrossChainRoute } from "@/types/swap";
+import { executeSwap } from "@/utils/mockSwapApi";
 
 interface SwapFormProps {
   onExecuteSwap?: (result: any) => void;
@@ -220,7 +217,6 @@ export default function SwapForm({ onExecuteSwap }: SwapFormProps) {
                 setShowRoutesDetails={setShowRoutesDetails}
                 sourceToken={sourceToken}
               />
-
             ) : showFeesDetails ? (
               // Fees Details View
               <FeesDetails
@@ -242,31 +238,28 @@ export default function SwapForm({ onExecuteSwap }: SwapFormProps) {
                 <CardBody>
                   {/* Source Token & Chain Selector */}
                   <TokenChainSelector
+                    amount={amount}
                     animationDelay={0.1}
                     balance={sourceBalance?.formatted}
                     chain={sourceChain}
                     label="From"
-                    token={sourceToken}
-                    amount={amount}
                     setAmount={setAmount}
+                    token={sourceToken}
                     onClick={() => enterSelectionMode("source")}
                   />
 
                   {/* Switch Tokens Button in the middle */}
-                  <SwithchToken
-                    className="-mt-4"
-                    switchTokens={switchTokens}
-                  />
+                  <SwithchToken className="-mt-4" switchTokens={switchTokens} />
 
                   {/* Destination Token & Chain Selector */}
                   <TokenChainSelector
+                    amount={quote?.destinationAmount}
                     animationDelay={0.2}
                     balance={destinationBalance?.formatted}
                     chain={destinationChain}
                     label="To"
-                    token={destinationToken}
-                    amount={quote?.destinationAmount}
                     setAmount={setAmount}
+                    token={destinationToken}
                     onClick={() => enterSelectionMode("destination")}
                   />
 
@@ -275,7 +268,7 @@ export default function SwapForm({ onExecuteSwap }: SwapFormProps) {
                     receiver={receiver}
                     setReceiver={setReceiver}
                   />
-                  
+
                   {/* SwapRoutes, Switch Button, and Fees Row */}
                   <motion.div
                     animate={{ opacity: 1, y: 0 }}
@@ -333,8 +326,8 @@ export default function SwapForm({ onExecuteSwap }: SwapFormProps) {
 
                   {/* Swap Button */}
                   <motion.div
-                    className="mt-6"
                     animate={{ opacity: 1, y: 0 }}
+                    className="mt-6"
                     initial={{ opacity: 0, y: 20 }}
                     transition={{ delay: 0.6, duration: 0.4 }}
                   >

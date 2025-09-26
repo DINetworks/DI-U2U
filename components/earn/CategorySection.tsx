@@ -46,10 +46,7 @@ export default function CategorySection({
       {pools.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {pools.slice(0, 9).map((pool, index) => (
-            <PoolCard
-              key={`${pool.address}-${index}`}
-              pool={pool}
-            />
+            <PoolCard key={`${pool.address}-${index}`} pool={pool} />
           ))}
         </div>
       ) : (

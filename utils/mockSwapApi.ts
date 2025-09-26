@@ -226,7 +226,9 @@ export async function getSwapRoutes(
       (t) => t.address === request.destinationTokenAddress,
     );
 
-    const destinationAmount = (sourceToken?.usdPrice || 0) * parseFloat(request.amount) / (destinationToken?.usdPrice || 1)
+    const destinationAmount =
+      ((sourceToken?.usdPrice || 0) * parseFloat(request.amount)) /
+      (destinationToken?.usdPrice || 1);
 
     if (
       !sourceChain ||

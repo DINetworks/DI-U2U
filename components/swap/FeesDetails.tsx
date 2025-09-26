@@ -10,7 +10,6 @@ export default function FeesDetails({
   quote,
   setShowFeesDetails,
 }: FeesDetailsProps) {
-
   return (
     <motion.div
       key="fees-details"

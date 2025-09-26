@@ -38,7 +38,7 @@ export default function TransactionSuccessDialog({
   transactionData,
 }: TransactionSuccessDialogProps) {
   const { chain } = useWeb3();
-  
+
   if (!transactionData) return null;
 
   const formatTimestamp = (timestamp: number) => {

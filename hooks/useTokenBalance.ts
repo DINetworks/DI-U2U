@@ -1,7 +1,8 @@
-import { nativeEvmTokenAddress } from "@/utils/token";
 import { useQuery } from "@tanstack/react-query";
 import { Address, erc20Abi, formatUnits } from "viem";
 import { usePublicClient } from "wagmi";
+
+import { nativeEvmTokenAddress } from "@/utils/token";
 
 interface UseTokenBalanceProps {
   chainId?: number;

@@ -13,7 +13,7 @@ export default function SwithchToken({
   return (
     <motion.div
       animate={{ opacity: 1, scale: 1 }}
-			className={`relative z-10 flex items-center justify-center ${className}`}
+      className={`relative z-10 flex items-center justify-center ${className}`}
       initial={{ opacity: 0, scale: 0.8 }}
       transition={{ delay: 0.5, duration: 0.3 }}
     >

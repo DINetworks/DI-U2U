@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 import { motion } from "framer-motion";
-
 import { Card, CardBody, Image } from "@heroui/react";
 
 import { SwapToken, SwapChain } from "@/types/swap";
@@ -27,7 +26,7 @@ export default function TokenChainSelector({
   setAmount,
   animationDelay = 0,
 }: TokenChainSelectorProps) {
-const tokenInUsd = useMemo(() => {
+  const tokenInUsd = useMemo(() => {
     if (amount && token?.usdPrice) {
       return parseFloat(amount) * token.usdPrice;
     }
@@ -131,8 +130,8 @@ const tokenInUsd = useMemo(() => {
 
                   <button
                     className="text-xs font-medium text-success-500 hover:text-success-400"
-                    onClick={() => setAmount(balance || "")}
                     type="button"
+                    onClick={() => setAmount(balance || "")}
                   >
                     Max
                   </button>
@@ -141,7 +140,9 @@ const tokenInUsd = useMemo(() => {
                 {/* Usd Vaule */}
                 <div className="flex items-center gap-2">
                   <div className="text-xs font-medium text-gray-400">
-                    {tokenInUsd < 0.01 ? "< $0.01" : `$${tokenInUsd.toFixed(3)}`}
+                    {tokenInUsd < 0.01
+                      ? "< $0.01"
+                      : `$${tokenInUsd.toFixed(3)}`}
                   </div>
                 </div>
               </div>
