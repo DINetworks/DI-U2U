@@ -106,7 +106,7 @@ export default function ChainTokenSelectionModal({
             />
 
             {/* Chains List */}
-            <div className="max-h-64 overflow-y-auto space-y-2">
+            <div className="max-h-80 overflow-y-auto space-y-2 pr-3">
               {filteredChains.map((chain) => (
                 <button
                   key={chain.id}
@@ -163,7 +163,7 @@ export default function ChainTokenSelectionModal({
             />
 
             {/* Tokens List */}
-            <div className="max-h-64 overflow-y-auto space-y-2">
+            <div className="max-h-80 overflow-y-auto space-y-2">
               {selectedChain ? (
                 availableTokens.length > 0 ? (
                   availableTokens.map((token) => (

@@ -17,6 +17,8 @@ import Fees from "@/components/swap/Fees";
 import RouteDetails from "@/components/swap/RouteDetails";
 import { SwapToken, SwapChain, CrossChainRoute } from "@/types/swap";
 import { executeSwap } from "@/utils/mockSwapApi";
+import SwithchToken from "./SwithchToken";
+import SlippageSetting from "./Slippage";
 
 interface SwapFormProps {
   onExecuteSwap?: (result: any) => void;
@@ -325,7 +327,7 @@ export default function SwapForm({ onExecuteSwap }: SwapFormProps) {
                   ease: [0.25, 0.46, 0.45, 0.94],
                 }}
               >
-                <CardBody className="space-y-6">
+                <CardBody>
                   {/* Source Token & Chain Selector */}
                   <TokenChainSelector
                     animationDelay={0.1}
@@ -333,32 +335,31 @@ export default function SwapForm({ onExecuteSwap }: SwapFormProps) {
                     chain={sourceChain}
                     label="From"
                     token={sourceToken}
+                    amount={amount}
+                    setAmount={setAmount}
                     onClick={() => enterSelectionMode("source")}
                   />
 
-                  {/* Amount Input */}
-                  <motion.div
-                    animate={{ opacity: 1, y: 0 }}
-                    className="space-y-2"
-                    initial={{ opacity: 0, y: 10 }}
-                    transition={{ delay: 0.4, duration: 0.3 }}
-                  >
-                    <label className="block text-sm font-medium text-white">
-                      Amount ({sourceToken?.symbol || "TOKEN"})
-                    </label>
-                    <input
-                      className="w-full p-4 bg-black/80 border border-white/20 rounded-2xl text-white text-2xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="0.00"
-                      type="number"
-                      value={amount}
-                      onChange={(e) => setAmount(e.target.value)}
-                    />
-                  </motion.div>
+                  {/* Switch Tokens Button in the middle */}
+                  <SwithchToken 
+                    className="-mt-4"
+                    switchTokens={switchTokens}/>
 
+                  {/* Destination Token & Chain Selector */}
+                  <TokenChainSelector
+                    animationDelay={0.3}
+                    chain={destinationChain}
+                    label="To"
+                    token={destinationToken}
+                    amount={amount}
+                    setAmount={setAmount}
+                    onClick={() => enterSelectionMode("destination")}
+                  />
+                  
                   {/* SwapRoutes, Switch Button, and Fees Row */}
                   <motion.div
                     animate={{ opacity: 1, y: 0 }}
-                    className="flex items-center gap-8"
+                    className="flex items-center gap-6 mt-6"
                     initial={{ opacity: 0, y: 10 }}
                     transition={{ delay: 0.4, duration: 0.3 }}
                   >
@@ -368,36 +369,6 @@ export default function SwapForm({ onExecuteSwap }: SwapFormProps) {
                       route={quote?.bestRoute}
                       onClick={() => setShowRoutesDetails(!showRoutesDetails)}
                     />
-
-                    {/* Switch Tokens Button in the middle */}
-                    <motion.div
-                      animate={{ opacity: 1, scale: 1 }}
-                      className="flex-shrink-0"
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      transition={{ delay: 0.5, duration: 0.3 }}
-                    >
-                      <Button
-                        isIconOnly
-                        className="bg-white/10 hover:bg-white/20 border border-white/20"
-                        size="lg"
-                        variant="flat"
-                        onPress={switchTokens}
-                      >
-                        <svg
-                          className="w-4 h-4 text-white"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                          />
-                        </svg>
-                      </Button>
-                    </motion.div>
 
                     {/* Fees on the right */}
                     <Fees
@@ -415,53 +386,15 @@ export default function SwapForm({ onExecuteSwap }: SwapFormProps) {
                     />
                   </motion.div>
 
-                  {/* Destination Token & Chain Selector */}
-                  <TokenChainSelector
-                    animationDelay={0.3}
-                    chain={destinationChain}
-                    label="To"
-                    token={destinationToken}
-                    onClick={() => enterSelectionMode("destination")}
-                  />
-
                   {/* Slippage Settings */}
-                  <motion.div
-                    animate={{ opacity: 1, y: 0 }}
-                    className="flex items-center justify-between"
-                    initial={{ opacity: 0, y: 10 }}
-                    transition={{ delay: 0.5, duration: 0.3 }}
-                  >
-                    <span className="text-sm text-gray-300">
-                      Slippage Tolerance
-                    </span>
-                    <div className="flex gap-2">
-                      {[0.1, 0.5, 1.0].map((value, index) => (
-                        <motion.div
-                          key={value}
-                          animate={{ opacity: 1, scale: 1 }}
-                          initial={{ opacity: 0, scale: 0.8 }}
-                          transition={{
-                            delay: 0.5 + index * 0.1,
-                            duration: 0.2,
-                          }}
-                        >
-                          <Button
-                            className="text-xs"
-                            color="warning"
-                            size="sm"
-                            variant={slippage === value ? "solid" : "flat"}
-                            onPress={() => setSlippage(value)}
-                          >
-                            {value}%
-                          </Button>
-                        </motion.div>
-                      ))}
-                    </div>
-                  </motion.div>
+                  <SlippageSetting 
+                    slippage={slippage} 
+                    setSlippage={setSlippage} 
+                  />
 
                   {/* Error Display */}
                   {isError && error && (
-                    <Card className="bg-red-900/20 border border-red-500/20">
+                    <Card className="bg-red-900/20 border border-red-500/20 mt-3">
                       <CardBody className="p-4">
                         <p className="text-red-400 text-sm">{error.message}</p>
                       </CardBody>
@@ -480,6 +413,7 @@ export default function SwapForm({ onExecuteSwap }: SwapFormProps) {
 
                   {/* Swap Button */}
                   <motion.div
+                    className="mt-6"
                     animate={{ opacity: 1, y: 0 }}
                     initial={{ opacity: 0, y: 20 }}
                     transition={{ delay: 0.6, duration: 0.4 }}

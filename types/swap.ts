@@ -155,15 +155,6 @@ export interface SwapState {
   slippage: number;
 }
 
-export interface SwapTokenSelectorProps {
-  token: SwapToken | null;
-  onTokenSelect: (token: SwapToken) => void;
-  tokens: SwapToken[];
-  label: string;
-  disabled?: boolean;
-  balance?: string;
-}
-
 export interface SwapChainSelectorProps {
   chain: SwapChain | null;
   onChainSelect: (chain: SwapChain) => void;
