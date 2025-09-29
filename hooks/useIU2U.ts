@@ -14,7 +14,7 @@ import { useWeb3 } from "./useWeb3";
 
 import { IU2U_ABI, IU2U_GATEWAY_ABI } from "@/contracts/abi-gmp";
 import { UseIU2UContractReturn, UseIU2UBalanceReturn } from "@/types/bridge";
-import { CONTRACT_ADDRESSES } from "@/config/web3";
+import { ACTIVE_CHAINID, CONTRACT_ADDRESSES } from "@/config/web3";
 import { SUPPORTED_BRIDGE_CHAINS } from "@/config/bridge";
 // Hook for IU2U contract instances
 export function useIU2UContract(): UseIU2UContractReturn {
@@ -88,9 +88,9 @@ export function useNativeU2UBalance() {
     refetch,
   } = useBalance({
     address: address as Address,
-    chainId: 2484, // U2U Nebulas Testnet
+    chainId: ACTIVE_CHAINID, // U2U Solaris Mainnet
     query: {
-      enabled: !!address && chainId === 2484,
+      enabled: !!address && chainId === ACTIVE_CHAINID,
     },
   });
 

@@ -20,12 +20,20 @@ IU2U (Interoperable U2U) is a cross-chain protocol that enables seamless token t
 
 ## Contract Addresses
 
-### U2U Nebulas Testnet (Chain ID: 2484)
+### U2U Solaris Mainnet (Chain ID: 2484)
 
 | Contract | Address |
 |----------|---------|
 | IU2U Token | `0x2551f9E86a20bf4627332A053BEE14DA623d1007` |
 | IU2U Gateway | `0x7Ccba78c7224577DDDEa5B3302b81db7915e5377` |
+
+
+### U2U Solaris Mainnet (Chain ID: 39)
+
+| Contract | Address |
+|----------|---------|
+| IU2U Token | `0x48A4C62Af369D37c7411AcB2aF59c87E0A7a0983` |
+| IU2U Gateway | `0x9E5e98FFaD3F779Ed3459631694788E38B822261` |
 
 ### Polygon Mainnet (Chain ID: 1)
 
@@ -257,7 +265,7 @@ console.log("Command executed:", isExecuted);
 
 ## Testing
 
-Test on U2U Nebulas Testnet before mainnet deployment:
+Test on U2U Solaris Mainnet before mainnet deployment:
 
 ```bash
 npx hardhat run scripts/deploy-gmp.js --network u2u-nebulas-testnet

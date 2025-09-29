@@ -355,7 +355,7 @@ export const APP_CONTENT = {
     },
 
     supportedChains: {
-      u2uTestnet: "U2U Nebulas Testnet",
+      u2u: "U2U Solaris Mainnet",
       polygon: "Polygon",
       bsc: "BSC",
       base: "Base",

@@ -58,7 +58,7 @@ const IU2U_ADDRESSES: Record<string, string> = {
   "10": "0x9649a304bD0cd3c4dbe72116199990df06d87329", // Optimism
   "8453": "0xF69C5FB9359a4641469cd457412C7086fd32041D", // Base
   "43114": "0x9649a304bD0cd3c4dbe72116199990df06d87329", // Avalanche
-  "2484": "0x2551f9E86a20bf4627332A053BEE14DA623d1007", // U2U Testnet
+  "39": "0x2551f9E86a20bf4627332A053BEE14DA623d1007", // U2U Testnet
 };
 
 // Generate mock DEX route
@@ -179,7 +179,7 @@ export async function getSwapRoutes(
       { id: "56", name: "BSC", chainType: "evm" },
       { id: "137", name: "Polygon", chainType: "evm" },
       { id: "42161", name: "Arbitrum", chainType: "evm" },
-      { id: "2484", name: "U2U Nebulas Testnet", chainType: "evm" },
+      { id: "39", name: "U2U Solaris Mainnet", chainType: "evm" },
     ];
 
     const mockTokens = [
@@ -208,10 +208,10 @@ export async function getSwapRoutes(
         chainId: "42161",
       },
       {
-        address: "0x2551f9E86a20bf4627332A053BEE14DA623d1007",
+        address: "0x48A4C62Af369D37c7411AcB2aF59c87E0A7a0983",
         symbol: "IU2U",
         usdPrice: 0.0062,
-        chainId: "2484",
+        chainId: "39",
       },
     ];
 

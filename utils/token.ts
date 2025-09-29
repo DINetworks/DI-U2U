@@ -1,6 +1,6 @@
 import { Chain } from "viem";
 
-import { u2uTestnet } from "@/config/web3";
+import { u2u } from "@/config/web3";
 
 export const nativeEvmTokenAddress =
   "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
@@ -32,19 +32,13 @@ export const normalizeTokenLogoURI = (uri: string): string => {
   return uri;
 };
 
-export const getBlockExplorerUrl = (
-  address: string,
-  chain: Chain = u2uTestnet,
-) => {
+export const getBlockExplorerUrl = (address: string, chain: Chain = u2u) => {
   if (!chain?.blockExplorers?.default) return "#";
 
   return `${chain.blockExplorers.default.url}/address/${address}`;
 };
 
-export const getBlockExplorerTxUrl = (
-  txHash: string,
-  chain: Chain = u2uTestnet,
-) => {
+export const getBlockExplorerTxUrl = (txHash: string, chain: Chain = u2u) => {
   if (!chain?.blockExplorers?.default) return "#";
 
   return `${chain.blockExplorers.default.url}/tx/${txHash}`;

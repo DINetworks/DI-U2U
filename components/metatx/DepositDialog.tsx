@@ -22,7 +22,7 @@ import {
   ACTIVE_CHAINID,
   CONTRACT_ADDRESSES,
   CREDIT_TOKENS,
-  u2uTestnet,
+  u2u,
 } from "@/config/web3";
 import { Token } from "@/types/token";
 import { DepositDialogProps } from "@/types/component";
@@ -44,7 +44,7 @@ export default function DepositDialog({
   const [isApproving, setIsApproving] = useState(false);
   const [isApproved, setIsApproved] = useState(false);
 
-  // Check if current chain is U2U Nebulas Testnet
+  // Check if current chain is U2U Solaris Mainnet
   const isOnU2UNetwork = chain?.id === ACTIVE_CHAINID;
 
   // Filter tokens by whitelisted addresses
@@ -139,7 +139,7 @@ export default function DepositDialog({
   }, [selectedToken, amount]);
 
   const handleSwitchToU2U = async () => {
-    await switchToChain(u2uTestnet);
+    await switchToChain(u2u);
   };
 
   const handleDeposit = async () => {
@@ -198,7 +198,7 @@ export default function DepositDialog({
                 Switch to U2U Network
               </h4>
               <p className="text-gray-600 dark:text-gray-400">
-                You need to be on the U2U Nebulas Testnet to deposit tokens for
+                You need to be on the U2U Solaris Mainnet to deposit tokens for
                 gas credit. Click the button below to switch networks.
               </p>
             </div>

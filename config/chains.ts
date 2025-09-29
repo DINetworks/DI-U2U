@@ -1,3 +1,5 @@
+import { ACTIVE_CHAINID } from "./web3";
+
 // Chain logos and icons configuration
 export const CHAIN_LOGOS: Record<number, string> = {
   // Mainnet chains
@@ -10,7 +12,7 @@ export const CHAIN_LOGOS: Record<number, string> = {
   43114: "/images/icons/chains/avalanche.png", // Avalanche
 
   // Testnet chains
-  2484: "/images/icons/chains/u2u.png", // U2U Nebulas Testnet (using u2s icon as placeholder)
+  [ACTIVE_CHAINID]: "/images/icons/chains/u2u.png", // U2U Solaris Mainnet (using u2s icon as placeholder)
 };
 
 // Helper function to get chain logo
@@ -30,7 +32,7 @@ export const getChainName = (chainId: number | undefined): string => {
     42161: "Arbitrum",
     10: "Optimism",
     43114: "Avalanche",
-    2484: "U2U Nebulas Testnet",
+    [ACTIVE_CHAINID]: "U2U Solaris Mainnet",
   };
 
   return chainNames[chainId] || "Unknown";
@@ -45,7 +47,7 @@ export const getChainNameForGateway = (chainId: number) => {
     42161: "arbitrum",
     10: "optimism",
     43114: "avalanche",
-    2484: "u2u-nebulas-testnet",
+    [ACTIVE_CHAINID]: "u2u-solaris-mainnet",
   };
 
   return chainNames[chainId] || "Unknown";

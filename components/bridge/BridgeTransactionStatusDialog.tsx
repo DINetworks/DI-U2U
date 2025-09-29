@@ -112,7 +112,7 @@ export default function BridgeTransactionStatusDialog({
 
   const getChainIcon = (chainName: string) => {
     const chainIconMap: Record<string, string> = {
-      "U2U Nebulas Testnet": "/images/icons/chains/u2u.png",
+      "U2U Solaris Mainnet": "/images/icons/chains/u2u.png",
       Ethereum: "/images/icons/chains/ethereum.png",
       BSC: "/images/icons/chains/bsc.png",
       "BNB Smart Chain": "/images/icons/chains/bsc.png",

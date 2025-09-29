@@ -1,7 +1,7 @@
 import { Select, SelectItem } from "@heroui/select";
 
 import TokenAmountInput from "./TokenAmountInput";
-import BridgeActionButton from "./BridgeActionButton";
+import DepositWithdrawButton from "./DepositWithdrawButton";
 
 interface DepositWithdrawTabProps {
   amount: string;
@@ -38,7 +38,7 @@ export default function DepositWithdrawTab({
       <div className="bg-default-100 rounded-xl p-3">
         <div className="flex items-center gap-2 text-sm text-gray-400 dark:text-gray-300">
           <span className="font-medium">Chain:</span>
-          <span>U2U Nebulas Testnet (Fixed)</span>
+          <span>U2U Solaris Mainnet (Fixed)</span>
         </div>
       </div>
 
@@ -94,23 +94,15 @@ export default function DepositWithdrawTab({
 
       {/* Action Button */}
       <div className="flex gap-4">
-        {isConnected ? (
-          <BridgeActionButton
-            disabled={!amount || parseFloat(amount) <= 0 || isLoading}
-            loading={isLoading}
-            onClick={isDepositMode ? onDeposit : onWithdraw}
-          >
-            {isDepositMode ? "Deposit U2U → IU2U" : "Withdraw IU2U → U2U"}
-          </BridgeActionButton>
-        ) : (
-          <BridgeActionButton
-            disabled={false}
-            loading={false}
-            onClick={onConnectWallet || (() => {})}
-          >
-            Connect Wallet to Perform Operation
-          </BridgeActionButton>
-        )}
+        <DepositWithdrawButton
+          amount={amount}
+          isConnected={isConnected}
+          isDepositMode={isDepositMode}
+          isLoading={isLoading}
+          onConnectWallet={onConnectWallet}
+          onDeposit={onDeposit}
+          onWithdraw={onWithdraw}
+        />
       </div>
     </div>
   );

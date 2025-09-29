@@ -68,7 +68,7 @@ export default function BridgeForm({
   // Initialize default chains
   useEffect(() => {
     if (SUPPORTED_BRIDGE_CHAINS.length > 0) {
-      setSelectedSourceChain(SUPPORTED_BRIDGE_CHAINS[0]); // U2U Nebulas Testnet
+      setSelectedSourceChain(SUPPORTED_BRIDGE_CHAINS[0]); // U2U Solaris Mainnet
       setSelectedDestinationChain(SUPPORTED_BRIDGE_CHAINS[2]); // Polygon
     }
   }, []);
@@ -76,7 +76,7 @@ export default function BridgeForm({
   // Fix source chain to U2U testnet for deposit/withdraw operations
   useEffect(() => {
     if (activeTab === "operations" && SUPPORTED_BRIDGE_CHAINS.length > 0) {
-      setSelectedSourceChain(SUPPORTED_BRIDGE_CHAINS[0]); // Always U2U Nebulas Testnet
+      setSelectedSourceChain(SUPPORTED_BRIDGE_CHAINS[0]); // Always U2U Solaris Mainnet
     }
   }, [activeTab]);
 

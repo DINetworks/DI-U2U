@@ -21,6 +21,7 @@ import SwapRoutes from "@/components/swap/SwapRoutes";
 import Fees from "@/components/swap/Fees";
 import { SwapToken, SwapChain, CrossChainRoute } from "@/types/swap";
 import { executeSwap } from "@/utils/mockSwapApi";
+import { ACTIVE_CHAINID } from "@/config/web3";
 
 interface SwapFormProps {
   onExecuteSwap?: (result: any) => void;
@@ -109,9 +110,9 @@ export default function SwapForm({ onExecuteSwap }: SwapFormProps) {
   useEffect(() => {
     if (evmChains.length > 0 && !sourceChain) {
       // Set U2U Testnet as default source if available
-      const u2uTestnet = evmChains.find((chain: any) => chain.id === "2484");
+      const u2u = evmChains.find((chain: any) => chain.id === ACTIVE_CHAINID);
 
-      setSourceChain(u2uTestnet || evmChains[0]);
+      setSourceChain(u2u || evmChains[0]);
 
       // Set Ethereum as default destination
       const ethereum = evmChains.find((chain: any) => chain.id === "1");

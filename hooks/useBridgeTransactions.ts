@@ -155,7 +155,7 @@ export function useBridgeTransactions(): UseBridgeTransactionsReturn {
         // Add transaction to history after user approval
         const transactionId = addTransaction({
           type: "deposit",
-          sourceChain: "U2U Nebulas Testnet", // Fixed for deposit
+          sourceChain: "U2U Solaris Mainnet", // Fixed for deposit
           amount,
           symbol: "IU2U",
           status: "pending",
@@ -180,7 +180,7 @@ export function useBridgeTransactions(): UseBridgeTransactionsReturn {
         // Add transaction to history after user approval
         const transactionId = addTransaction({
           type: "withdraw",
-          sourceChain: "U2U Nebulas Testnet", // Fixed for withdraw
+          sourceChain: "U2U Solaris Mainnet", // Fixed for withdraw
           amount,
           symbol: "IU2U",
           status: "pending",
@@ -217,7 +217,7 @@ export function useBridgeTransactions(): UseBridgeTransactionsReturn {
         // Add transaction to history after user approval
         const transactionId = addTransaction({
           type: "sendToken",
-          sourceChain: "U2U Nebulas Testnet", // Assuming source is always U2U for now
+          sourceChain: "U2U Solaris Mainnet", // Assuming source is always U2U for now
           destinationChain: destinationChain.name,
           recipient: recipientAddress,
           amount: bridgeAmount,
@@ -269,7 +269,7 @@ export function useBridgeTransactions(): UseBridgeTransactionsReturn {
         // Add transaction to history after user approval
         const transactionId = addTransaction({
           type: callAmount ? "callContractWithToken" : "callContract",
-          sourceChain: "U2U Nebulas Testnet", // Assuming source is always U2U for now
+          sourceChain: "U2U Solaris Mainnet", // Assuming source is always U2U for now
           destinationChain: destinationChain.name,
           contractAddress,
           amount: callAmount || "",

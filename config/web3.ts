@@ -12,9 +12,32 @@ import {
 } from "viem/chains";
 
 // U2U Nebulas Testnet
-export const u2uTestnet = {
-  id: 2484,
-  name: "U2U Nebulas Testnet",
+// export const u2uTestnet = {
+//   id: 2484,
+//   name: "U2U Nebulas Testnet",
+//   nativeCurrency: {
+//     decimals: 18,
+//     name: "U2U",
+//     symbol: "U2U",
+//   },
+//   rpcUrls: {
+//     default: {
+//       http: ["https://rpc-nebulas-testnet.uniultra.xyz/"],
+//     },
+//   },
+//   blockExplorers: {
+//     default: {
+//       name: "U2U Scan",
+//       url: "https://testnet.u2uscan.xyz",
+//     },
+//   },
+//   testnet: true,
+// };
+
+// U2U Nebulas Testnet
+export const u2u = {
+  id: 39,
+  name: "U2U Solaris Mainnet",
   nativeCurrency: {
     decimals: 18,
     name: "U2U",
@@ -22,13 +45,13 @@ export const u2uTestnet = {
   },
   rpcUrls: {
     default: {
-      http: ["https://rpc-nebulas-testnet.uniultra.xyz/"],
+      http: ["https://rpc-mainnet.u2u.xyz"],
     },
   },
   blockExplorers: {
     default: {
       name: "U2U Scan",
-      url: "https://testnet.u2uscan.xyz",
+      url: "https://u2uscan.xyz",
     },
   },
   testnet: true,
@@ -45,7 +68,8 @@ export const config = createConfig({
     polygon,
     arbitrum,
     avalanche,
-    u2uTestnet,
+    // u2uTestnet,
+    u2u,
   ],
   connectors: [
     injected(),
@@ -70,12 +94,13 @@ export const config = createConfig({
       `https://avalanche-mainnet.alchemyapi.io/v2/${ALCHEMY_API_KEY}`,
     ),
     [base.id]: http(`https://base-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}`),
-    [u2uTestnet.id]: http("https://rpc-nebulas-testnet.uniultra.xyz/"),
+    // [u2uTestnet.id]: http("https://rpc-nebulas-testnet.uniultra.xyz/"),
+    [u2u.id]: http("https://rpc-mainnet.u2u.xyz"),
   },
 });
 
 export const CONTRACT_ADDRESSES = {
-  CREDIT_VAULT: "0x0f796dC6bD0fa676BF5CE02658Dab86E1Dc95EFc", // 0x3AA775651fad6271C870762F8A9069ff94E7B542
+  CREDIT_VAULT: "0x0f796dC6bD0fa676BF5CE02658Dab86E1Dc95EFc",
   METATX_GATEWAY: "0xbee9591415128F7d52279C8df327614d8fD8a9b2",
 
   // IU2U Bridge Contracts
@@ -84,23 +109,25 @@ export const CONTRACT_ADDRESSES = {
     [polygon.id]: "0x9649a304bD0cd3c4dbe72116199990df06d87329",
     [bsc.id]: "0x365235b4ea2F5439f27b10f746C52B0B47c33761",
     [base.id]: "0xF69C5FB9359a4641469cd457412C7086fd32041D",
-    [u2uTestnet.id]: "0x2551f9E86a20bf4627332A053BEE14DA623d1007",
+    // [u2uTestnet.id]: "0x2551f9E86a20bf4627332A053BEE14DA623d1007",
+    [u2u.id]: "0xA3A350214b699578bF9df1Eeb743ab7C139119d6",
   },
   IU2U_GATEWAY: {
     [mainnet.id]: "0xe5DE1F17974B1758703C4bF9a8885F7e24983bb7",
     [polygon.id]: "0xe5DE1F17974B1758703C4bF9a8885F7e24983bb7",
     [bsc.id]: "0xe4A31447871c39eD854279acCEAeB023e79dDCC5",
     [base.id]: "0x9649a304bD0cd3c4dbe72116199990df06d87329",
-    [u2uTestnet.id]: "0x7Ccba78c7224577DDDEa5B3302b81db7915e5377",
+    // [u2uTestnet.id]: "0x7Ccba78c7224577DDDEa5B3302b81db7915e5377",
+    [u2u.id]: "0x560d354E9f690f9749594840120B4b5903c20E07",
   },
 };
 
-export const ACTIVE_CHAINID = u2uTestnet.id;
+export const ACTIVE_CHAINID = u2u.id;
 
 export const CREDIT_TOKENS = [
   {
-    address: CONTRACT_ADDRESSES.IU2U_TOKEN[u2uTestnet.id],
-    chainId: u2uTestnet.id.toString(),
+    address: CONTRACT_ADDRESSES.IU2U_TOKEN[u2u.id],
+    chainId: u2u.id.toString(),
     coingeckoId: "u2u-network",
     decimals: 18,
     logoURI:

@@ -50,7 +50,7 @@ export default function BridgeInfoDrawer({
                   </p>
                   <div className="bg-white dark:bg-gray-800 p-3 rounded-lg">
                     <p className="text-xs text-gray-600 dark:text-gray-400">
-                      <strong>Supported Networks:</strong> U2U Nebulas Testnet,
+                      <strong>Supported Networks:</strong> U2U Solaris Mainnet,
                       Polygon, Arbitrum, BSC, Ethereum, Optimism, Base
                     </p>
                   </div>
@@ -83,7 +83,7 @@ export default function BridgeInfoDrawer({
                         </h5>
                         <p className="text-sm text-gray-600 dark:text-gray-400">
                           Convert between native U2U tokens and IU2U tokens on
-                          U2U Nebulas Testnet
+                          U2U Solaris Mainnet
                         </p>
                       </div>
                     </div>

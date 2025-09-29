@@ -63,7 +63,7 @@ export default function BridgeFirstTimeGuide({
                 </h5>
                 <p className="text-sm text-green-700 dark:text-green-300">
                   Deposit native U2U to get IU2U tokens, or withdraw IU2U back
-                  to native U2U on the U2U Nebulas Testnet.
+                  to native U2U on the U2U Solaris Mainnet.
                 </p>
               </CardBody>
             </Card>
@@ -96,7 +96,7 @@ export default function BridgeFirstTimeGuide({
                 1. Select &quot;Deposit U2U → IU2U&quot; from the operation
                 dropdown
               </li>
-              <li>2. The chain is automatically set to U2U Nebulas Testnet</li>
+              <li>2. The chain is automatically set to U2U Solaris Mainnet</li>
               <li>
                 3. Enter the amount of native U2U tokens you want to deposit
               </li>
@@ -116,7 +116,7 @@ export default function BridgeFirstTimeGuide({
                 1. Select &quot;Withdraw IU2U → U2U&quot; from the operation
                 dropdown
               </li>
-              <li>2. The chain is automatically set to U2U Nebulas Testnet</li>
+              <li>2. The chain is automatically set to U2U Solaris Mainnet</li>
               <li>3. Enter the amount of IU2U tokens you want to withdraw</li>
               <li>
                 4. Click &quot;Withdraw IU2U → U2U&quot; to complete the

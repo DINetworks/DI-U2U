@@ -1,6 +1,7 @@
 import { encodePacked, keccak256 } from "viem";
 
 import { BridgeTransaction } from "@/types/bridge";
+import { ACTIVE_CHAINID } from "@/config/web3";
 
 /**
  * Get the color string for a transaction status
@@ -51,7 +52,7 @@ export const getExplorerUrl = (chainName: string, txHash: string) => {
     Arbitrum: "https://arbiscan.io/tx/",
     Optimism: "https://optimistic.etherscan.io/tx/",
     Avalanche: "https://snowtrace.io/tx/",
-    "U2U Nebulas Testnet": "https://testnet.u2uscan.xyz/tx/",
+    "U2U Solaris Mainnet": "https://u2uscan.xyz/tx/",
   };
 
   const baseUrl = explorerUrls[chainName] || "https://etherscan.io/tx/";
@@ -101,7 +102,7 @@ export const getChainNameForGateway = (chainId: number) => {
     10: "optimism",
     8453: "base",
     43114: "avalanche",
-    2484: "u2u-nebulas-testnet",
+    [ACTIVE_CHAINID]: "u2u-solaris-mainnet",
   };
 
   return chainMap[chainId] || "ethereum";
