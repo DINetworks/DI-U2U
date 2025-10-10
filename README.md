@@ -1,250 +1,379 @@
 <div align="center">
-    <a href="https://ixfi.network.com">
-        <img alt="logo" src="https://github.com/0xawang/DomaAuction/blob/main/domain-auction-banner.png" style="width: 100%;">
+    <a href="https://dinetwork.xyz">
+        <img alt="logo" src="https://github.com/DINetworks/DI-U2U-Protocol/blob/main/IU2U-Banner.png" style="width: 100%;">
     </a>
 </div>
 
-# DomaAuction - Dual Auction Protocol
+## 🚀 Welcome to IU2U Protocol
+IU2U Protocol is dedicated to building next-generation cross-chain interoperability solutions using the **Interoperable U2U (IU2U) Protocol**. Our mission is to enable seamless, gas-efficient, and highly programmable cross-chain transactions, driving adoption and utility for **U2U**, the native token of the **U2U Chain**.
 
-A comprehensive auction ecosystem for domain NFTs featuring two specialized systems: Hybrid Batch Auctions for portfolios and Premium Single Domain Auctions with sophisticated betting mechanisms.
+## 🌉 What is IU2U Protocol?
+The **Interoperable U2U (IU2U) Protocol** is a cutting-edge solution that enhances **U2U Chain's** interoperability, enabling seamless asset transfers, smart contract execution, and data messaging across multiple blockchain ecosystems.
 
-## Two Specialized Auction Systems
+### 🌟 Key Features
 
-## 🎯 System 1: Hybrid Batch Auctions (HybridDutchAuction)
+### 1️⃣ **Gasless Meta-Transaction System (U2U as Primary Gas Token)**
+- Users pay gas fees exclusively in **U2U**, regardless of the blockchain they interact with.
+- Supports **Ethereum, BNB Chain, Polygon, Optimism, Base, and any EVM-compatible chain**.
+- Simplifies user experience by abstracting gas fees and reducing transaction friction.
 
-### Batch Dutch Auctions
-- Auction multiple domain NFTs as a portfolio
-- Fractional ownership support (buy specific token counts)
-- Linear price decay over time
-- Reserve price protection
+### 2️⃣ **Enhanced U2U Interoperability (Replacing WU2U)**
+- Eliminates the need for **wrapped U2U (WU2U)** by introducing a **native cross-chain U2U token**.
+- Enables **data transmission** and **smart contract execution** alongside asset transfers.
+- Expands **U2U’s programmability** across different chains, making it more developer-friendly.
 
-### Gamified Bidding System
-- **Soft Bids**: Intent-based bidding with auto-conversion
-- **Hard Bids**: Immediate purchase at current price
-- **Bonds**: 0.2% refundable deposit prevents spam
-- **Loyalty Rewards**: Time-weighted points for early engagement
-- **Sale-Gated**: Rewards only distributed on successful auctions
+### 3️⃣ **Cross-Chain Swap Powered by U2U**
+- **DEX Aggregator & Liquidity Router** ensures the most efficient swaps using **U2U for gas**.
+- **Gas Fee Abstraction:**
+  - Off-chain transaction signing to reduce gas costs.
+  - Automatic **U2U Gas Conversion** where required.
+  - **Meta-Transaction Relayer** executes transactions on behalf of users.
 
-### Reverse Royalty Engine
-- Dynamic royalties starting at 0%
-- Increases per block to incentivize quick trades
-- Optional feature for secondary sales
-- Automatic distribution to original creators
+### 4️⃣ **Cross-Chain Bridge & General Message Passing (U2U-Based)**
+- Supports advanced cross-chain **token transfers**, **data transmission**, and **smart contract interactions**.
+- **Cross-Chain Smart Contract Calls** allow contracts on one chain to trigger actions on another.
+- Future support for **non-EVM blockchains** to expand the IU2U ecosystem.
 
-## 🏆 System 2: Premium Domain Auctions with Betting (DomainAuctionBetting)
+### 5️⃣ **High-Performance Optimization**
+- **Routing Algorithm** finds optimal paths for cost-effective swaps.
+- **Batch Transactions** reduce fees by bundling multiple operations.
+- **Dynamic Fee Structure** optimizes gas costs to encourage frequent transactions.
 
-### Single Domain Dutch Auctions
-- Independent auction system for premium domains
-- First bid wins and ends auction immediately
-- Timestamp-based duration
-- Configurable price thresholds for betting
+## 🏗️ Technical Architecture
 
-### 4-Tier Price Betting Mechanism
-- **Commit-Reveal Betting**: Hidden bets on auction price outcomes
-- **Price Categories**: Above High (3), High~Low Range (2), Below Low (1), Uncleared (0)
-- **Seller-Defined Thresholds**: High price and low price boundaries
-- **Anti-Manipulation**: Prevents sniping with secret commitments
-- **Configurable Distribution**: Owner can adjust cuts (default: 90% winners, 5% seller, 3% buyer, 2% protocol)
-- **Penalty System**: Unrevealed bets redistributed to winners
+### Core System Components
 
-## Contract Architecture
-
-### Core Contracts
-
-**System 1 - Hybrid Batch Auctions:**
-- `HybridDutchAuction.sol` - Batch auction logic with gamification
-- `LoyaltyNFT.sol` - Gamification rewards and loyalty points
-
-**System 2 - Premium Domain + Betting:**
-- `DomainAuctionBetting.sol` - Independent single-domain auctions with 4-tier betting
-
-**Shared:**
-- `IOwnershipToken.sol` - Interface for Doma domain NFTs
-
-### Key Functions
-
-#### System 1: Hybrid Batch Auction Functions
-```solidity
-function createBatchAuction(
-    IOwnershipToken nftContract,
-    uint256[] memory tokenIds,
-    uint256 startPrice,
-    uint256 reservePrice,
-    uint256 priceDecrement,
-    uint256 duration,
-    uint256 rewardBudgetBps,
-    uint256 royaltyIncrement,
-    address paymentToken
-) external returns (uint256)
-
-function placeSoftBid(uint256 auctionId, uint256 threshold, uint256 desiredCount) external payable
-function placeHardBid(uint256 auctionId, uint256 desiredCount) external payable
-function processConversions(uint256 auctionId) external
+```mermaid
+flowchart TB
+    subgraph "U2U Chain (Source)"
+        U2U[U2U Token]
+        VAULT[MetaTxGasCreditVault]
+        GATEWAY[IU2U Gateway]
+        ORACLE[DIA Oracle]
+    end
+    
+    subgraph "Destination Chains"
+        DGATEWAY[IU2U Gateway]
+        METATX[MetaTxGateway]
+        AGG[CrossChainAggregator]
+        DEX[37+ DEX Protocols]
+    end
+    
+    subgraph "Relayer Network"
+        RELAYER1[Relayer 1]
+        RELAYER2[Relayer 2]
+        RELAYERN[Relayer N]
+        MULTISIG[Multi-Sig Validator]
+    end
+    
+    U2U --> VAULT
+    VAULT --> GATEWAY
+    ORACLE --> VAULT
+    GATEWAY --> RELAYER1
+    GATEWAY --> RELAYER2
+    GATEWAY --> RELAYERN
+    RELAYER1 --> MULTISIG
+    RELAYER2 --> MULTISIG
+    RELAYERN --> MULTISIG
+    MULTISIG --> DGATEWAY
+    DGATEWAY --> METATX
+    DGATEWAY --> AGG
+    AGG --> DEX
 ```
 
-#### System 2: Premium Single Domain + Betting Functions
+### 🔧 Smart Contract Architecture
+
+#### 1. **IU2U Gateway Contract** (`IU2U.sol`)
+**Core Functions:**
+- `deposit()` - Convert U2U to IU2U (1:1 ratio) on U2U chain
+- `withdraw(amount)` - Convert IU2U back to U2U on U2U chain
+- `callContract()` - Execute cross-chain contract calls
+- `callContractWithToken()` - Execute cross-chain calls with token transfer
+- `sendToken()` - Simple cross-chain token transfers
+- `execute()` - Process relayer-submitted cross-chain commands
+
+**Security Features:**
+- Multi-signature relayer validation
+- Command replay protection
+- Payload hash verification
+- Whitelisted relayer system
+
+#### 2. **Meta-Transaction System**
+**MetaTxGasCreditVault** (U2U Chain):
+- `depositCredits()` - Deposit IU2U for gas credits
+- `withdrawCredits()` - Withdraw unused gas credits
+- `consumeCredits()` - Deduct gas costs from user balance
+- DIA Oracle integration for real-time gas price conversion
+
+**MetaTxGateway** (Destination Chains):
+- `executeMetaTransaction()` - Execute gasless transactions
+- `batchExecuteMetaTransactions()` - Batch execution for efficiency
+- EIP-712 signature validation
+- Nonce management and replay protection
+
+#### 3. **Cross-Chain DEX Aggregation**
+**Supported Protocols (37+):**
+- **V2 AMMs**: Uniswap V2, SushiSwap, PancakeSwap, TraderJoe, etc.
+- **V3 Concentrated Liquidity**: Uniswap V3, SushiSwap V3, PancakeSwap V3
+- **Stableswap**: Curve, Ellipsis, Solidly forks
+- **Specialized**: Balancer, 1inch, Kyber Network, GMX, WOOFi
+
+**Routing Features:**
+- Multi-DEX optimal path finding
+- Gas-optimized execution
+- Slippage protection
+- MEV resistance
+
+### 🔗 Integration Patterns
+
+#### For DeFi Protocols:
 ```solidity
-// Create single domain auction with betting price thresholds
-function createSingleDomainAuction(uint256 tokenId, uint256 startPrice, uint256 reservePrice, uint256 priceDecrement, uint256 duration, uint256 highPrice, uint256 lowPrice) external
-
-// Place bid on single domain (ends auction immediately)
-function placeBid(uint256 auctionId) external payable
-
-// Create betting pool with 4 price categories
-function createBettingPool(uint256 auctionId, uint256 commitDuration, uint256 revealDuration) external
-
-// Commit bet with hash of (choice, amount, secret)
-function commitBet(uint256 auctionId, bytes32 commitHash, uint256 amount) external
-
-// Reveal committed bet (choice: 3=Above High, 2=High~Low, 1=Below Low, 0=Uncleared)
-function revealBet(uint256 auctionId, uint8 choice, uint256 amount, uint256 secret) external
-
-// Settle betting after auction ends
-function settleBetting(uint256 auctionId) external
-
-// Owner functions
-function setCuts(uint256 _sellerCut, uint256 _buyerCut, uint256 _protocolCut, uint256 _winnerCut) external onlyOwner
+contract MyDeFiProtocol is IU2UExecutable {
+    constructor(address gateway_) IU2UExecutable(gateway_) {}
+    
+    function _execute(
+        string calldata sourceChain,
+        string calldata sourceAddress,
+        bytes calldata payload
+    ) internal override {
+        // Process cross-chain DeFi operation
+    }
+}
 ```
 
-## Examples
-
-### Example 1: Hybrid Batch Portfolio Auction with Gamification
-
-**Setup:**
-- Item: 100-domain bundle
-- Start price: 1,000 USDC (Dutch, linearly down)
-- Reserve floor: 700 USDC
-- Reward budget: 1% of final sale, only if cleared
-- Bond: 0.2% of intended spend
-
-**Early Phase:**
-- Alice: soft bid for 10% of bundle, threshold = 900 → bond posted
-- Bob: soft bid 5%, threshold = 860 → bond posted
-- Carol: soft bid 40%, threshold = 820 → bond posted
-- Dana: soft bid 50%, threshold = 780 → bond posted
-
-**Price Progression:**
-- At 900: Alice auto-converts (10%). Cumulative = 10% — continue
-- At 860: Bob auto-converts (5%). Cumulative = 15% — continue
-- At 820: Carol auto-converts (40%). Cumulative = 55% — continue
-- At 780: Dana auto-converts (50%). Cumulative = 105% ≥ 100% → auction clears at 780
-
-**Settlement:**
-- Pro-rata fill at clearing price (if over-subscribed)
-- Bonds returned
-- Rewards minted (since sale cleared):
-  - Alice (earliest, highest price distance) gets largest share of points
-  - Dana gets less (later threshold), even though she cleared the auction
-
-```solidity
-// Create batch auction
-createBatchAuction(
-    ownershipToken,
-    [1,2,3,...,100],  // 100 domain token IDs
-    1000e18,          // 1000 USDC start price
-    700e18,           // 700 USDC reserve
-    1e18,             // 1 USDC per block decrement
-    300,              // 300 blocks duration
-    100,              // 1% reward budget (100 bps)
-    0,                // No reverse royalty
-    address(0)        // ETH payments
-);
-
-// Alice places early soft bid
-placeSoftBid{value: 1.8e18}(auctionId, 900e18, 10); // 10 tokens at 900, bond = 1.8 USDC
+#### For Cross-Chain Swaps:
+```javascript
+// Execute cross-chain swap
+await iu2uGateway.executeSwap({
+    tokenIn: USDC_ADDRESS,
+    tokenOut: WETH_ADDRESS,
+    amountIn: ethers.utils.parseUnits("1000", 6),
+    minAmountOut: minOutput,
+    routerType: 0, // Uniswap V2
+    to: userAddress,
+    deadline: deadline,
+    swapData: "0x"
+});
 ```
 
-### Example 2: Premium Domain Auction with 4-Tier Betting
+## 🔥 Use Cases & Ecosystem Expansion
+The **IU2U Protocol** serves as the foundation for **next-generation cross-chain DApps**, including:
 
-**Setup:**
-- Single premium domain with price range betting
-- Bettors wager on final price category
-- 4 betting tiers: Above High, High~Low Range, Below Low, Uncleared
+- **🚀 Cross-Chain DEX Aggregators & Swap Platforms**
+- **💰 Cross-Chain Lending & Borrowing Protocols**
+- **📊 Multi-Chain Liquidity Provisioning & Yield Aggregation**
+- **🔗 Cross-Chain Staking & Yield Farming**
+- **📡 Decentralized Cross-Chain Messaging & Smart Contract Execution**
 
-```solidity
-// Create single domain auction with betting thresholds
-createSingleDomainAuction(tokenId, 100e18, 50e18, 0.5e18, 3600, 80e18, 60e18);
-// highPrice = 80 ETH, lowPrice = 60 ETH
+## 📈 Why IU2U Matters for U2U
+By implementing **IU2U**, **U2U Chain** will establish itself as a leader in **blockchain interoperability**, significantly increasing **U2U’s real-world utility** while driving network adoption and growth.
 
-// Create betting pool
-createBettingPool(auctionId, 3600, 1800); // 1hr commit, 30min reveal
+## 📜 IU2U Labs Open Source Projects
+We are committed to **open-source development** and actively contribute to building a robust **cross-chain ecosystem**. Here’s what you’ll find in our repositories:
 
-// Commit bets (hidden)
-bytes32 hash1 = keccak256(abi.encodePacked(uint8(3), 100e18, 12345)); // bet >80 ETH
-bytes32 hash2 = keccak256(abi.encodePacked(uint8(2), 50e18, 67890)); // bet 60-80 ETH
-commitBet(auctionId, hash1, 100e18);
-commitBet(auctionId, hash2, 50e18);
+- **🔗 IU2U.sol & IU2UGateway.sol** – Core smart contracts for IU2U interoperability.
+- **💻 SDKs & Developer Tools** – Libraries and APIs for seamless integration.
+- **🚀 Relayer Infrastructure** – Gasless transaction relayer implementation.
+- **📡 Bridge & Message Passing Protocols** – Enabling cross-chain interactions. 
+- **📊 DEX Aggregation & Liquidity Routing** – Efficient U2U-powered trading solutions.
 
-// Someone bids on auction
-placeBid{value: 75e18}(auctionId); // Auction clears at 75 ETH (category 2)
+## Open Source Repository
 
-// Reveal after auction ends
-revealBet(auctionId, 3, 100e18, 12345); // Wrong prediction
-revealBet(auctionId, 2, 50e18, 67890); // Correct prediction (60-80 ETH range)
+- **Smart Contracts**: [https://github.com/DINetworks/DI-U2U-Contracts](https://github.com/DINetworks/DI-U2U-Contracts)
+- **Frontend**: [https://github.com/DINetworks/DI-U2U](https://github.com/DINetworks/DI-U2U)
+- **MetaTxRelayer**: [https://github.com/DINetworks/MetaTx-Relayer](https://github.com/DINetworks/MetaTx-Relayer)
 
-// Settle betting
-settleBetting(auctionId); // Category 2 bettors win 90% of pool
-```
+- **GMP Relayer**: [https://github.com/DINetworks/DI-U2U-Contracts/tree/main/relayer](https://github.com/DINetworks/DI-U2U-Contracts/tree/main/relayer)
 
-**Betting Categories:**
-- **Category 3**: Final price > High Price (above 80 ETH)
-- **Category 2**: Low Price ≤ Final price ≤ High Price (60-80 ETH)
-- **Category 1**: Final price < Low Price (below 60 ETH)
-- **Category 0**: Auction fails to clear (no sale)
-
-## Deployment
+## � Quick Start & Deployment
 
 ### Prerequisites
+- **Node.js** >= 18.0.0
+- **Hardhat** development framework
+- **Funded wallets** on target chains
+- **RPC endpoints** for all supported networks
+
+### Contract Deployment
+
+#### 1. Environment Setup
 ```bash
+# Clone the contracts repository
+git clone https://github.com/DINetworks/DI-U2U-Contracts.git
+cd DI-U2U-Contracts
+
+# Install dependencies
 npm install
-```
+cd relayer && npm install && cd ..
 
-### Compile
-```bash
-npx hardhat compile
-```
-
-### Deploy to Doma Testnet
-```bash
-# Set PRIVATE_KEY in .env
+# Configure environment
 cp .env.example .env
-
-# Deploy contracts
-npx hardhat run scripts/deploy.js --network doma
+# Edit .env with your private keys and RPC URLs
 ```
 
-## Contract Addresses
+#### 2. Network Configuration
+```javascript
+// hardhat.config.js
+networks: {
+  u2u: {
+    chainId: 2484, // 39 for mainnet
+    url: "https://rpc.testnet.ms",
+    accounts: [process.env.PRIVATE_KEY]
+  },
+  ethereum: {
+    chainId: 1,
+    url: process.env.ETHEREUM_RPC,
+    accounts: [process.env.PRIVATE_KEY]
+  }
+  // ... other networks
+}
+```
 
-- **Doma OwnershipToken**: `0x424bDf2E8a6F52Bd2c1C81D9437b0DC0309DF90f`
+#### 3. Deploy Core Contracts
+```bash
+# Deploy on U2U (Gateway + Vault)
+npx hardhat run scripts/deploy-gmp.js --network u2u
+npx hardhat run scripts/deploy-meta-tx.js --network u2u
 
-**System 1 - Hybrid Batch Auctions:**
-- **HybridDutchAuction**: Deployed via script
-- **LoyaltyNFT**: Deployed via script
+# Deploy on other chains (Gateway + MetaTx)
+npx hardhat run scripts/deploy-gmp.js --network ethereum
+npx hardhat run scripts/deploy-meta-tx.js --network ethereum
+```
 
-**System 2 - Premium Single Domain + Betting:**
-- **DomainAuctionBetting**: Deployed via script
+### Relayer Setup
 
-## Events
+#### GMP Relayer Configuration
+```json
+{
+  "relayerPrivateKey": "0x...",
+  "chains": {
+    "u2u": {
+      "rpc": "https://rpc.testnet.ms",
+      "iu2uAddress": "0x...",
+      "startBlock": 1000000
+    },
+    "ethereum": {
+      "rpc": "https://mainnet.infura.io/v3/YOUR_KEY",
+      "iu2uAddress": "0x...",
+      "startBlock": 18500000
+    }
+  }
+}
+```
 
-### System 1: Batch Auction Events
+#### Start Relayer Services
+```bash
+# Start GMP relayer
+cd relayer
+node IU2URelayer.js
+
+# Start Meta-Transaction relayer (separate terminal)
+node MetaTxRelayer.js
+```
+
+### Integration Examples
+
+#### Smart Contract Integration
 ```solidity
-event AuctionCreated(uint256 indexed auctionId, address seller, uint256 startPrice, uint256 reservePrice, bool hasReverseRoyalty);
-event SoftBidPlaced(uint256 indexed auctionId, address bidder, uint256 threshold, uint256 count, uint256 bond);
-event SoftBidConverted(uint256 indexed auctionId, address bidder, uint256 price, uint256 count);
-event AuctionCleared(uint256 indexed auctionId, uint256 clearingPrice, uint256 totalRewards, uint256 royaltyAmount);
+import "@iu2u/contracts/interfaces/IIU2UGateway.sol";
+
+contract MyContract {
+    IIU2UGateway public iu2uGateway;
+    
+    constructor(address _gateway) {
+        iu2uGateway = IIU2UGateway(_gateway);
+    }
+    
+    function sendCrossChain(
+        string memory destinationChain,
+        string memory contractAddress,
+        bytes memory payload
+    ) external {
+        iu2uGateway.callContract(
+            destinationChain,
+            contractAddress,
+            payload
+        );
+    }
+}
 ```
 
-### System 2: Premium Auction + Betting Events
-```solidity
-event AuctionCreated(uint256 indexed auctionId, address seller, uint256 tokenId, uint256 startPrice);
-event BidPlaced(uint256 indexed auctionId, address bidder, uint256 price);
-event AuctionEnded(uint256 indexed auctionId, bool cleared, address winner, uint256 finalPrice);
-event BettingPoolCreated(uint256 indexed auctionId, uint256 commitDeadline, uint256 revealDeadline);
-event BetCommitted(uint256 indexed auctionId, address indexed bettor, bytes32 commitHash, uint256 amount);
-event BetRevealed(uint256 indexed auctionId, address indexed bettor, uint8 choice, uint256 amount);
-event BettingSettled(uint256 indexed auctionId, uint8 auctionResult, uint256 totalPool);
+#### Frontend Integration
+```javascript
+import { ethers } from 'ethers';
+import { IU2UProvider } from '@iu2u/sdk';
+
+// Initialize IU2U provider
+const iu2u = new IU2UProvider({
+  rpcs: {
+    u2u: 'https://rpc.testnet.ms',
+    ethereum: 'https://mainnet.infura.io/v3/KEY'
+  },
+  contracts: {
+    u2u: '0x...',
+    ethereum: '0x...'
+  }
+});
+
+// Deposit U2U for gasless transactions
+await iu2u.deposit('100'); // 100 U2U
+
+// Execute cross-chain transaction
+await iu2u.callContract(
+  'ethereum',
+  '0xTargetContract',
+  '0xPayloadData'
+);
 ```
 
-## License
+## 🌐 Network Support & Contract Addresses
 
-MIT License
+### Mainnet Deployments
+| Network | Chain ID | IU2U Gateway | MetaTx Gateway | Aggregator |
+|---------|----------|--------------|----------------|------------|
+| U2U | 39 | `0x560d354E9f690f9749594840120B4b5903c20E07` | `0xbee9591415128F7d52279C8df327614d8fD8a9b2` | `0x...` |
+| Ethereum | 1 | `0x...` | `0xbee9591415128F7d52279C8df327614d8fD8a9b2` | `0x...` |
+| BSC | 56 | `0xe4A31447871c39eD854279acCEAeB023e79dDCC5` | `0xbee9591415128F7d52279C8df327614d8fD8a9b2` | `0x...` |
+| Polygon | 137 | `0xe5DE1F17974B1758703C4bF9a8885F7e24983bb7` | `0xbee9591415128F7d52279C8df327614d8fD8a9b2` | `0x...` |
+| Avalanche | 43114 | `0x2e33C951e4cdDbccB5945C9f32095FccD1171259` | `0xbee9591415128F7d52279C8df327614d8fD8a9b2` | `0x...` |
+| Arbitrum | 42161 | `0x9E5e98FFaD3F779Ed3459631694788E38B822261` | `0xbee9591415128F7d52279C8df327614d8fD8a9b2` | `0x...` |
+| Optimism | 10 | `0xeD93D637b13Ca7f61875BB31386E9a54Bab51C9B` | `0xbee9591415128F7d52279C8df327614d8fD8a9b2` | `0x...` |
+| Base | 8453 | `0x9649a304bD0cd3c4dbe72116199990df06d87329` | `0xbee9591415128F7d52279C8df327614d8fD8a9b2` | `0x...` |
+
+*Note: Actual contract addresses are available in the [IU2U-Contracts repository deployment files](https://github.com/DINetworks/IU2U-Contracts/tree/main/deployments).*
+
+### Testnet Deployments
+| Network | Chain ID | Status | Purpose |
+|---------|----------|--------|---------|
+| U2U Testnet | 2484 | ✅ Active | Development & Testing |
+
+## �📌 Join Us
+🚀 **IU2U Labs** is actively seeking **developers, researchers, and contributors** passionate about building the future of cross-chain finance. Get involved!
+
+### 🌐 Official Links
+- **Website:** [https://iu2u.fi](https://iu2u.fi)
+- **Smart Contracts:** [https://github.com/DINetworks/IU2U-Contracts](https://github.com/DINetworks/IU2U-Contracts)
+- **Technical Documentation:** [IU2U Technical Docs](https://docs.iu2u.fi)
+- **API Reference:** [Contract API Reference](https://github.com/DINetworks/IU2U-Contracts/blob/main/API_REFERENCE.md)
+- **Deployment Guide:** [Deployment Instructions](https://github.com/DINetworks/IU2U-Contracts/blob/main/DEPLOYMENT_GUIDE.md)
+
+### 📚 Developer Resources
+- **Integration Guide:** [Smart Contract Integration](https://github.com/DINetworks/IU2U-Contracts/blob/main/docs/guides/smart-contract-integration.md)
+- **Frontend Examples:** [Frontend Integration Guide](https://github.com/DINetworks/IU2U-Contracts/blob/main/docs/guides/frontend-integration.md)
+- **Core Concepts:** [Cross-Chain Architecture](https://github.com/DINetworks/IU2U-Contracts/blob/main/docs/core-concepts/cross-chain-architecture.md)
+- **IU2U Token Documentation:** [Token Specifications](https://github.com/DINetworks/IU2U-Contracts/blob/main/docs/core-concepts/iu2u-token.md)
+
+### 💬 Community & Support
+- **Twitter:** [--](#)
+- **Discord:** [--](#)
+- **GitHub Issues:** [Report Bugs & Feature Requests](https://github.com/DINetworks/IU2U-Contracts/issues)
+- **Developer Support:** support@iu2u.com
+
+### 🔧 Development Tools
+- **Solidity Version:** 0.8.24
+- **Framework:** Hardhat v2.22.19
+- **Security:** OpenZeppelin Contracts v5.2.0
+- **Oracles:** DIA Oracle integration
+- **Testing:** Comprehensive test suite with cross-chain simulations
+
+📢 Stay tuned for updates, and let’s build the future of **cross-chain interoperability** together! 🔥
+
