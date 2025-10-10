@@ -28,7 +28,7 @@ export const useTokensWithAllowances = (spender: Address) => {
     isError,
   } = useReadContracts({
     contracts: allowanceContracts,
-    batchSize: 8192,
+    batchSize: 1024,
     query: {
       enabled:
         !!owner && !!spender && !!chainId && allowanceContracts.length > 0,
