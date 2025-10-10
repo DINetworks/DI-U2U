@@ -80,7 +80,7 @@ export const config = createConfig({
     [mainnet.id]: http(
       `https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_API_KEY}`,
     ),
-    [bsc.id]: http("https://binance.llamarpc.com"),
+    [bsc.id]: http("https://bsc-dataseed.binance.org"),
     [polygon.id]: http(
       `https://polygon-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
     ),
