@@ -45,7 +45,7 @@ export default function BridgeForm({
     formattedBalance: iu2uBalance,
     isLoading: balanceLoading,
     refetch: refetchBalance,
-  } = useIU2UBalance();
+  } = useIU2UBalance(chain?.id || 0);
   const {
     formattedBalance: nativeU2UBalance,
     isLoading: nativeBalanceLoading,
@@ -60,6 +60,10 @@ export default function BridgeForm({
     ? nativeBalanceLoading
     : balanceLoading;
   const displayTokenSymbol = isDepositMode ? "U2U" : "IU2U";
+
+  const {
+    formattedBalance: iu2uBalanceInSourceChain
+  } = useIU2UBalance(selectedSourceChain?.id || 0);
 
   // Check if source chain matches current chain
   const isSourceChainCurrent =
@@ -175,7 +179,7 @@ export default function BridgeForm({
               )}
               isSourceChainCurrent={isSourceChainCurrent}
               isSwitchingChain={isSwitchingChain}
-              iu2uBalance={iu2uBalance}
+              iu2uBalance={iu2uBalanceInSourceChain}
               recipientAddress={recipientAddress}
               selectedDestinationChain={selectedDestinationChain}
               selectedSourceChain={selectedSourceChain}

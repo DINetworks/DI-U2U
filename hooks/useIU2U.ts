@@ -47,9 +47,8 @@ export function useIU2UContract(): UseIU2UContractReturn {
   };
 }
 // Hook for IU2U token balance
-export function useIU2UBalance(): UseIU2UBalanceReturn {
+export function useIU2UBalance(chainId: number): UseIU2UBalanceReturn {
   const { address } = useWeb3();
-  const chainId = useChainId();
 
   const tokenAddress = CONTRACT_ADDRESSES.IU2U_TOKEN[chainId];
 
@@ -90,7 +89,7 @@ export function useNativeU2UBalance() {
     address: address as Address,
     chainId: ACTIVE_CHAINID, // U2U Solaris Mainnet
     query: {
-      enabled: !!address && chainId === ACTIVE_CHAINID,
+      enabled: !!address,
     },
   });
 

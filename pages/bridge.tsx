@@ -128,7 +128,7 @@ const BridgePage: NextPage = () => {
     formattedBalance: iu2uBalance,
     isLoading: balanceLoading,
     refetch: refetchIU2UBalance,
-  } = useIU2UBalance();
+  } = useIU2UBalance(chain?.id || 0);
   const {
     formattedBalance: nativeU2UBalance,
     isLoading: nativeBalanceLoading,
