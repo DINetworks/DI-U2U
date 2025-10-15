@@ -78,22 +78,22 @@ export const config = createConfig({
   ],
   transports: {
     [mainnet.id]: http(
-      `https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_API_KEY}`,
+      `https://mainnet.gateway.tenderly.co`,
     ),
-    [bsc.id]: http("https://bsc-dataseed.binance.org"),
+    [bsc.id]: http("https://bsc-dataseed.binance.org/"),
     [polygon.id]: http(
-      `https://polygon-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
+      `https://polygon-rpc.com/`,
     ),
     [optimism.id]: http(
-      `https://opt-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
+      `https://optimism-rpc.publicnode.com/`,
     ),
     [arbitrum.id]: http(
-      `https://arb-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
+      `https://arbitrum-one-rpc.publicnode.com/`,
     ),
     [avalanche.id]: http(
-      `https://avalanche-mainnet.alchemyapi.io/v2/${ALCHEMY_API_KEY}`,
+      `https://avalanche-c-chain-rpc.publicnode.com/`,
     ),
-    [base.id]: http(`https://base-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}`),
+    [base.id]: http(`https://mainnet.base.org/`),
     // [u2uTestnet.id]: http("https://rpc-nebulas-testnet.uniultra.xyz/"),
     [u2u.id]: http("https://rpc-mainnet.u2u.xyz"),
   },

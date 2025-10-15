@@ -50,6 +50,8 @@ export function useIU2UContract(): UseIU2UContractReturn {
 export function useIU2UBalance(chainId: number): UseIU2UBalanceReturn {
   const { address } = useWeb3();
 
+  console.log(chainId, 'chainId')
+
   const tokenAddress = CONTRACT_ADDRESSES.IU2U_TOKEN[chainId];
 
   const {
